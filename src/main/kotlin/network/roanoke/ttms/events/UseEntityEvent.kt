@@ -1,0 +1,90 @@
+package network.roanoke.ttms.events
+
+import com.cobblemon.mod.common.CobblemonSounds
+import com.cobblemon.mod.common.api.moves.BenchedMove
+import com.cobblemon.mod.common.api.moves.Move
+import com.cobblemon.mod.common.api.moves.MoveTemplate
+import com.cobblemon.mod.common.api.moves.Moves
+import com.cobblemon.mod.common.entity.pokemon.PokemonEntity
+import com.cobblemon.mod.common.pokemon.Pokemon
+import net.fabricmc.fabric.api.event.player.UseEntityCallback
+import net.minecraft.entity.Entity
+import net.minecraft.entity.player.PlayerEntity
+import net.minecraft.sound.SoundCategory
+import net.minecraft.text.Text
+import net.minecraft.util.ActionResult
+import net.minecraft.util.Hand
+import net.minecraft.util.hit.EntityHitResult
+import net.minecraft.world.World
+import network.roanoke.ttms.utils.Utils
+
+class UseEntityEvent: UseEntityCallback {
+    override fun interact(
+        player: PlayerEntity?,
+        world: World?,
+        hand: Hand?,
+        entity: Entity?,
+        hitResult: EntityHitResult?
+    ): ActionResult {
+
+        if (entity !is PokemonEntity)
+            return ActionResult.PASS
+
+        if (player == null)
+            return ActionResult.PASS
+
+        if (!entity.isOwner(player))
+            return ActionResult.PASS
+
+        if (hand != Hand.MAIN_HAND)
+            return ActionResult.PASS
+
+        if (player.isSneaking)
+            return ActionResult.PASS
+
+        if (player.mainHandStack.isEmpty)
+            return ActionResult.PASS
+
+        var moveName = player.mainHandStack.name.content.toString().split(":")[1].split("}")[0].trim()
+        val capitalizedName = moveName.replaceFirstChar { it.uppercaseChar() }
+        moveName = moveName.replace(" ", "").replace("-", "").lowercase()
+
+        val moveTemplate = Moves.getByName(moveName)
+
+        val move = BenchedMove(moveTemplate!!, 0)
+
+        entity.pokemon.benchedMoves.forEach {
+            if (it.moveTemplate.name.lowercase() == moveName) {
+                player.sendMessage(Text.literal("§c${entity.pokemon.species.name} already knows ${capitalizedName}!"))
+                return ActionResult.PASS
+            }
+        }
+
+        entity.pokemon.moveSet.forEach {
+            if (it.name.lowercase() == moveName) {
+                player.sendMessage(Text.literal("§c${entity.pokemon.species.name} already knows ${capitalizedName}!"))
+                return ActionResult.PASS
+            }
+        }
+
+        var canLearn = false
+        entity.pokemon.species.moves.tmMoves.forEach {
+            if (it.name.lowercase() == moveName)
+                canLearn = true
+        }
+
+        if (canLearn) {
+            entity.pokemon.benchedMoves.add(move)
+            player.sendMessage(Text.literal("§a${entity.pokemon.species.name} learned ${capitalizedName}!"))
+            player.world.playSound(null, player.steppingPos, CobblemonSounds.MEDICINE_PILLS_USE, SoundCategory.NEUTRAL, 1f, 1f)
+        } else {
+            player.sendMessage(Text.literal("§c${entity.pokemon.species.name} cannot learn ${capitalizedName}!"))
+            return ActionResult.PASS
+        }
+
+        if (!player.isCreative)
+            player.mainHandStack.decrement(1)
+
+        return ActionResult.SUCCESS
+    }
+}

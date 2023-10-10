@@ -1,0 +1,29 @@
+{
+  "gens": [
+    {
+      "name": "gen1",
+      "moves": [
+        {
+          "name": "Flamethrower",
+          "id": 35,
+          "type": "fire"
+        },
+        {
+          "name": "Hyper Beam",
+          "id": 15,
+          "type": "normal"
+        }
+      ]
+    },
+    {
+      "name": "gen2",
+      "moves": [
+        {
+          "name": "Protect",
+          "id": 17,
+          "type": "normal"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "id": "ttms",
+  "version": "${version}",
+  "name": "TTMs",
+  "description": "Adds usable TMs to Cobblemon",
+  "authors": [
+    "GuitarXpress"
+  ],
+  "contact": {
+    "repo": ""
+  },
+  "license": "All Rights Reserved",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "network.roanoke.ttms.TTMs"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.14.22",
+    "fabric": "*",
+    "minecraft": "1.20.1",
+    "cobblemon": ">=1.4.0+1.20.1"
+  }
+}
