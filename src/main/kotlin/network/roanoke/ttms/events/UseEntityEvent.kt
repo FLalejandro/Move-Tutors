@@ -16,6 +16,7 @@ import net.minecraft.util.ActionResult
 import net.minecraft.util.Hand
 import net.minecraft.util.hit.EntityHitResult
 import net.minecraft.world.World
+import network.roanoke.ttms.TTMs
 import network.roanoke.ttms.utils.Utils
 
 class UseEntityEvent: UseEntityCallback {
@@ -45,6 +46,12 @@ class UseEntityEvent: UseEntityCallback {
         if (player.mainHandStack.isEmpty)
             return ActionResult.PASS
 
+        if (!Utils.isTM(player.mainHandStack))
+            return ActionResult.PASS
+
+        if (TTMs.onCooldown)
+            return ActionResult.PASS
+
         var moveName = player.mainHandStack.name.content.toString().split(":")[1].split("}")[0].trim()
         val capitalizedName = moveName.replaceFirstChar { it.uppercaseChar() }
         moveName = moveName.replace(" ", "").replace("-", "").lowercase()
@@ -56,6 +63,7 @@ class UseEntityEvent: UseEntityCallback {
         entity.pokemon.benchedMoves.forEach {
             if (it.moveTemplate.name.lowercase() == moveName) {
                 player.sendMessage(Text.literal("§c${entity.pokemon.species.name} already knows ${capitalizedName}!"))
+                TTMs.onCooldown = true
                 return ActionResult.PASS
             }
         }
@@ -63,6 +71,7 @@ class UseEntityEvent: UseEntityCallback {
         entity.pokemon.moveSet.forEach {
             if (it.name.lowercase() == moveName) {
                 player.sendMessage(Text.literal("§c${entity.pokemon.species.name} already knows ${capitalizedName}!"))
+                TTMs.onCooldown = true
                 return ActionResult.PASS
             }
         }
@@ -79,12 +88,14 @@ class UseEntityEvent: UseEntityCallback {
             player.world.playSound(null, player.steppingPos, CobblemonSounds.MEDICINE_PILLS_USE, SoundCategory.NEUTRAL, 1f, 1f)
         } else {
             player.sendMessage(Text.literal("§c${entity.pokemon.species.name} cannot learn ${capitalizedName}!"))
+            TTMs.onCooldown = true
             return ActionResult.PASS
         }
 
         if (!player.isCreative)
             player.mainHandStack.decrement(1)
 
+        TTMs.onCooldown = true
         return ActionResult.SUCCESS
     }
 }

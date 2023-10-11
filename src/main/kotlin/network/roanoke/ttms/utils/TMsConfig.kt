@@ -2,37 +2,40 @@ package network.roanoke.ttms.utils
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.google.gson.JsonArray
+import com.google.gson.JsonParser
 import com.google.gson.reflect.TypeToken
 import net.fabricmc.loader.api.FabricLoader
 import network.roanoke.ttms.TTMs
 import java.io.*
 
 class TMsConfig {
-
-    private lateinit var _tmsData: TmsData
-    val tmsData: TmsData
-        get() = _tmsData
+    private val _moveData: List<MoveData>
+    val moveData: List<MoveData>
+        get() = _moveData
 
     init {
         createFolders()
-        _tmsData = loadTmsData()!!
+        _moveData = loadMoveData() ?: emptyList()
+        println("Loaded ${_moveData.size} TMs")
     }
 
     private fun createFolders() {
         val folderPath = FabricLoader.getInstance().configDir.resolve("ttms")
         val folder = folderPath.toFile()
-        if (!folder.exists())
+        if (!folder.exists()) {
             folder.mkdir()
+        }
     }
 
-    private fun getTmsFile(): File {
+    private fun getMoveDataFile(): File {
         val savePath = FabricLoader.getInstance().configDir.resolve("ttms/tms.json")
         val saveFile = savePath.toFile()
         if (!saveFile.exists()) {
             if (saveFile.createNewFile()) {
-                loadStartingTms().let { array ->
+                loadStartingMoveData().let { list ->
                     FileWriter(saveFile).use {
-                        GsonBuilder().setPrettyPrinting().create().toJson(array, it)
+                        GsonBuilder().setPrettyPrinting().create().toJson(list, it)
                     }
                 }
             }
@@ -40,25 +43,22 @@ class TMsConfig {
         return saveFile
     }
 
-    private fun loadStartingTms(): TmsData? {
+    private fun loadStartingMoveData(): JsonArray? {
         val jsonStream: InputStream? = TTMs::class.java.getResourceAsStream("/tms.json")
         return jsonStream?.use {
             InputStreamReader(it).use { reader ->
-                val gson = Gson()
-                gson.fromJson(reader, TmsData::class.java)
+                JsonParser.parseReader(reader).asJsonArray
             }
         }
     }
 
-
-
-    private fun loadTmsData(): TmsData? {
+    private fun loadMoveData(): List<MoveData>? {
         val gson = Gson()
-        val file = getTmsFile()
+        val file = getMoveDataFile()
 
         try {
             FileReader(file).use {
-                val typeToken = object : TypeToken<TmsData>() {}.type
+                val typeToken = object : TypeToken<List<MoveData>>() {}.type
                 return gson.fromJson(it, typeToken)
             }
         } catch (e: Exception) {
@@ -67,7 +67,4 @@ class TMsConfig {
 
         return null
     }
-
-
-
 }

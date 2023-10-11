@@ -1,5 +1,6 @@
 package network.roanoke.ttms.utils
 
+import net.minecraft.item.ItemStack
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.Text
 import network.roanoke.ttms.TTMs
@@ -37,6 +38,10 @@ class Utils {
             val playerManager = server.playerManager
 
             return playerManager.playerNames
+        }
+
+        fun isTM(item: ItemStack): Boolean {
+            return item.orCreateNbt.get("id").toString().contains("ttms:tm_")
         }
 
     }

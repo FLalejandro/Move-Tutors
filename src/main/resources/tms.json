@@ -1,29 +1,1102 @@
-{
-  "gens": [
+[
     {
-      "name": "gen1",
-      "moves": [
-        {
-          "name": "Flamethrower",
-          "id": 35,
-          "type": "fire"
-        },
-        {
-          "name": "Hyper Beam",
-          "id": 15,
-          "type": "normal"
-        }
-      ]
+        "move": "fireblast",
+        "number": 1
     },
     {
-      "name": "gen2",
-      "moves": [
-        {
-          "name": "Protect",
-          "id": 17,
-          "type": "normal"
-        }
-      ]
+        "move": "grassyterrain",
+        "number": 2
+    },
+    {
+        "move": "foulplay",
+        "number": 3
+    },
+    {
+        "move": "willowisp",
+        "number": 4
+    },
+    {
+        "move": "brutalswing",
+        "number": 5
+    },
+    {
+        "move": "uproar",
+        "number": 6
+    },
+    {
+        "move": "amnesia",
+        "number": 7
+    },
+    {
+        "move": "steelbeam",
+        "number": 8
+    },
+    {
+        "move": "recycle",
+        "number": 9
+    },
+    {
+        "move": "trick",
+        "number": 10
+    },
+    {
+        "move": "storedpower",
+        "number": 11
+    },
+    {
+        "move": "pollenpuff",
+        "number": 12
+    },
+    {
+        "move": "acrobatics",
+        "number": 13
+    },
+    {
+        "move": "gigaimpact",
+        "number": 14
+    },
+    {
+        "move": "drainingkiss",
+        "number": 15
+    },
+    {
+        "move": "gigadrain",
+        "number": 16
+    },
+    {
+        "move": "eerieimpulse",
+        "number": 17
+    },
+    {
+        "move": "razorshell",
+        "number": 18
+    },
+    {
+        "move": "mudshot",
+        "number": 19
+    },
+    {
+        "move": "strugglebug",
+        "number": 20
+    },
+    {
+        "move": "calmmind",
+        "number": 21
+    },
+    {
+        "move": "rocksmash",
+        "number": 22
+    },
+    {
+        "move": "toxic",
+        "number": 23
+    },
+    {
+        "move": "irondefense",
+        "number": 24
+    },
+    {
+        "move": "roost",
+        "number": 25
+    },
+    {
+        "move": "snarl",
+        "number": 26
+    },
+    {
+        "move": "flamecharge",
+        "number": 27
+    },
+    {
+        "move": "drillrun",
+        "number": 28
+    },
+    {
+        "move": "electroweb",
+        "number": 29
+    },
+    {
+        "move": "firepledge",
+        "number": 30
+    },
+    {
+        "move": "silverwind",
+        "number": 31
+    },
+    {
+        "move": "bulldoze",
+        "number": 32
+    },
+    {
+        "move": "defog",
+        "number": 33
+    },
+    {
+        "move": "rocktomb",
+        "number": 34
+    },
+    {
+        "move": "wildcharge",
+        "number": 35
+    },
+    {
+        "move": "brine",
+        "number": 36
+    },
+    {
+        "move": "echoedvoice",
+        "number": 37
+    },
+    {
+        "move": "focusenergy",
+        "number": 38
+    },
+    {
+        "move": "airslash",
+        "number": 39
+    },
+    {
+        "move": "secretpower",
+        "number": 40
+    },
+    {
+        "move": "shadowclaw",
+        "number": 41
+    },
+    {
+        "move": "blizzard",
+        "number": 42
+    },
+    {
+        "move": "disarmingvoice",
+        "number": 43
+    },
+    {
+        "move": "muddywater",
+        "number": 44
+    },
+    {
+        "move": "drainpunch",
+        "number": 45
+    },
+    {
+        "move": "lowsweep",
+        "number": 46
+    },
+    {
+        "move": "swordsdance",
+        "number": 47
+    },
+    {
+        "move": "embargo",
+        "number": 48
+    },
+    {
+        "move": "stompingtantrum",
+        "number": 49
+    },
+    {
+        "move": "seedbomb",
+        "number": 50
+    },
+    {
+        "move": "dig",
+        "number": 51
+    },
+    {
+        "move": "grassknot",
+        "number": 52
+    },
+    {
+        "move": "chargebeam",
+        "number": 53
+    },
+    {
+        "move": "poweruppunch",
+        "number": 54
+    },
+    {
+        "move": "screech",
+        "number": 55
+    },
+    {
+        "move": "leafstorm",
+        "number": 56
+    },
+    {
+        "move": "iciclespear",
+        "number": 57
+    },
+    {
+        "move": "mysticalfire",
+        "number": 58
+    },
+    {
+        "move": "snatch",
+        "number": 59
+    },
+    {
+        "move": "seismictoss",
+        "number": 60
+    },
+    {
+        "move": "payback",
+        "number": 61
+    },
+    {
+        "move": "cosmicpower",
+        "number": 62
+    },
+    {
+        "move": "frenzyplant",
+        "number": 63
+    },
+    {
+        "move": "torment",
+        "number": 64
+    },
+    {
+        "move": "attract",
+        "number": 65
+    },
+    {
+        "move": "whirlpool",
+        "number": 66
+    },
+    {
+        "move": "toxicspikes",
+        "number": 67
+    },
+    {
+        "move": "faketears",
+        "number": 68
+    },
+    {
+        "move": "thief",
+        "number": 69
+    },
+    {
+        "move": "gyroball",
+        "number": 70
+    },
+    {
+        "move": "reversal",
+        "number": 71
+    },
+    {
+        "move": "snore",
+        "number": 72
+    },
+    {
+        "move": "bravebird",
+        "number": 73
+    },
+    {
+        "move": "overheat",
+        "number": 74
+    },
+    {
+        "move": "dragondance",
+        "number": 75
+    },
+    {
+        "move": "terablast",
+        "number": 76
+    },
+    {
+        "move": "allyswitch",
+        "number": 77
+    },
+    {
+        "move": "auroraveil",
+        "number": 78
+    },
+    {
+        "move": "psybeam",
+        "number": 79
+    },
+    {
+        "move": "strength",
+        "number": 80
+    },
+    {
+        "move": "grasspledge",
+        "number": 81
+    },
+    {
+        "move": "hiddenpower",
+        "number": 82
+    },
+    {
+        "move": "naturepower",
+        "number": 83
+    },
+    {
+        "move": "cut",
+        "number": 84
+    },
+    {
+        "move": "agility",
+        "number": 85
+    },
+    {
+        "move": "solarblade",
+        "number": 86
+    },
+    {
+        "move": "speedswap",
+        "number": 87
+    },
+    {
+        "move": "icespinner",
+        "number": 88
+    },
+    {
+        "move": "pounce",
+        "number": 89
+    },
+    {
+        "move": "fling",
+        "number": 90
+    },
+    {
+        "move": "return",
+        "number": 91
+    },
+    {
+        "move": "safeguard",
+        "number": 92
+    },
+    {
+        "move": "telekinesis",
+        "number": 93
+    },
+    {
+        "move": "venoshock",
+        "number": 94
+    },
+    {
+        "move": "icywind",
+        "number": 95
+    },
+    {
+        "move": "leechlife",
+        "number": 96
+    },
+    {
+        "move": "lightscreen",
+        "number": 97
+    },
+    {
+        "move": "snowscape",
+        "number": 98
+    },
+    {
+        "move": "gunkshot",
+        "number": 99
+    },
+    {
+        "move": "playrough",
+        "number": 100
+    },
+    {
+        "move": "swagger",
+        "number": 101
+    },
+    {
+        "move": "firefang",
+        "number": 102
+    },
+    {
+        "move": "rockclimb",
+        "number": 103
+    },
+    {
+        "move": "metronome",
+        "number": 104
+    },
+    {
+        "move": "incinerate",
+        "number": 105
+    },
+    {
+        "move": "icefang",
+        "number": 106
+    },
+    {
+        "move": "dreameater",
+        "number": 107
+    },
+    {
+        "move": "falseswipe",
+        "number": 108
+    },
+    {
+        "move": "nightshade",
+        "number": 109
+    },
+    {
+        "move": "electricterrain",
+        "number": 110
+    },
+    {
+        "move": "mudslap",
+        "number": 111
+    },
+    {
+        "move": "waterfall",
+        "number": 112
+    },
+    {
+        "move": "chillingwater",
+        "number": 113
+    },
+    {
+        "move": "weatherball",
+        "number": 114
+    },
+    {
+        "move": "dazzlinggleam",
+        "number": 115
+    },
+    {
+        "move": "bodyslam",
+        "number": 116
+    },
+    {
+        "move": "imprison",
+        "number": 117
+    },
+    {
+        "move": "doubleteam",
+        "number": 118
+    },
+    {
+        "move": "electroball",
+        "number": 119
+    },
+    {
+        "move": "quash",
+        "number": 120
+    },
+    {
+        "move": "rest",
+        "number": 121
+    },
+    {
+        "move": "payday",
+        "number": 122
+    },
+    {
+        "move": "sludgebomb",
+        "number": 123
+    },
+    {
+        "move": "stoneedge",
+        "number": 124
+    },
+    {
+        "move": "solarbeam",
+        "number": 125
+    },
+    {
+        "move": "reflect",
+        "number": 126
+    },
+    {
+        "move": "closecombat",
+        "number": 127
+    },
+    {
+        "move": "heavyslam",
+        "number": 128
+    },
+    {
+        "move": "bodypress",
+        "number": 129
+    },
+    {
+        "move": "psychicterrain",
+        "number": 130
+    },
+    {
+        "move": "flashcannon",
+        "number": 131
+    },
+    {
+        "move": "scaryface",
+        "number": 132
+    },
+    {
+        "move": "powerwhip",
+        "number": 133
+    },
+    {
+        "move": "captivate",
+        "number": 134
+    },
+    {
+        "move": "uturn",
+        "number": 135
+    },
+    {
+        "move": "focusblast",
+        "number": 136
+    },
+    {
+        "move": "pluck",
+        "number": 137
+    },
+    {
+        "move": "psyshock",
+        "number": 138
+    },
+    {
+        "move": "taunt",
+        "number": 139
+    },
+    {
+        "move": "confuseray",
+        "number": 140
+    },
+    {
+        "move": "hypervoice",
+        "number": 141
+    },
+    {
+        "move": "highhorsepower",
+        "number": 142
+    },
+    {
+        "move": "scald",
+        "number": 143
+    },
+    {
+        "move": "bounce",
+        "number": 144
+    },
+    {
+        "move": "irontail",
+        "number": 145
+    },
+    {
+        "move": "spikes",
+        "number": 146
+    },
+    {
+        "move": "facade",
+        "number": 147
+    },
+    {
+        "move": "dive",
+        "number": 148
+    },
+    {
+        "move": "throatchop",
+        "number": 149
+    },
+    {
+        "move": "thunderfang",
+        "number": 150
+    },
+    {
+        "move": "bugbuzz",
+        "number": 151
+    },
+    {
+        "move": "energyball",
+        "number": 152
+    },
+    {
+        "move": "icepunch",
+        "number": 153
+    },
+    {
+        "move": "brickbreak",
+        "number": 154
+    },
+    {
+        "move": "poisonjab",
+        "number": 155
+    },
+    {
+        "move": "smartstrike",
+        "number": 156
+    },
+    {
+        "move": "trailblaze",
+        "number": 157
+    },
+    {
+        "move": "beatup",
+        "number": 158
+    },
+    {
+        "move": "blazekick",
+        "number": 159
+    },
+    {
+        "move": "acidspray",
+        "number": 160
+    },
+    {
+        "move": "leafblade",
+        "number": 161
+    },
+    {
+        "move": "hydrocannon",
+        "number": 162
+    },
+    {
+        "move": "confide",
+        "number": 163
+    },
+    {
+        "move": "shadowball",
+        "number": 164
+    },
+    {
+        "move": "thunderbolt",
+        "number": 165
+    },
+    {
+        "move": "revenge",
+        "number": 166
+    },
+    {
+        "move": "zenheadbutt",
+        "number": 167
+    },
+    {
+        "move": "takedown",
+        "number": 168
+    },
+    {
+        "move": "megahorn",
+        "number": 169
+    },
+    {
+        "move": "psychocut",
+        "number": 170
+    },
+    {
+        "move": "focuspunch",
+        "number": 171
+    },
+    {
+        "move": "voltswitch",
+        "number": 172
+    },
+    {
+        "move": "skydrop",
+        "number": 173
+    },
+    {
+        "move": "avalanche",
+        "number": 174
+    },
+    {
+        "move": "psychic",
+        "number": 175
+    },
+    {
+        "move": "megapunch",
+        "number": 176
+    },
+    {
+        "move": "psychup",
+        "number": 177
+    },
+    {
+        "move": "charm",
+        "number": 178
+    },
+    {
+        "move": "fly",
+        "number": 179
+    },
+    {
+        "move": "infestation",
+        "number": 180
+    },
+    {
+        "move": "bulletseed",
+        "number": 181
+    },
+    {
+        "move": "trickroom",
+        "number": 182
+    },
+    {
+        "move": "stealthrock",
+        "number": 183
+    },
+    {
+        "move": "magicalleaf",
+        "number": 184
+    },
+    {
+        "move": "surf",
+        "number": 185
+    },
+    {
+        "move": "wonderroom",
+        "number": 186
+    },
+    {
+        "move": "dragontail",
+        "number": 187
+    },
+    {
+        "move": "darkpulse",
+        "number": 188
+    },
+    {
+        "move": "batonpass",
+        "number": 189
+    },
+    {
+        "move": "flash",
+        "number": 190
+    },
+    {
+        "move": "magicroom",
+        "number": 191
+    },
+    {
+        "move": "firespin",
+        "number": 192
+    },
+    {
+        "move": "metalclaw",
+        "number": 193
+    },
+    {
+        "move": "flamethrower",
+        "number": 194
+    },
+    {
+        "move": "steelwing",
+        "number": 195
+    },
+    {
+        "move": "blastburn",
+        "number": 196
+    },
+    {
+        "move": "xscissor",
+        "number": 197
+    },
+    {
+        "move": "aircutter",
+        "number": 198
+    },
+    {
+        "move": "megakick",
+        "number": 199
+    },
+    {
+        "move": "darkestlariat",
+        "number": 200
+    },
+    {
+        "move": "futuresight",
+        "number": 201
+    },
+    {
+        "move": "workup",
+        "number": 202
+    },
+    {
+        "move": "lowkick",
+        "number": 203
+    },
+    {
+        "move": "naturalgift",
+        "number": 204
+    },
+    {
+        "move": "selfdestruct",
+        "number": 205
+    },
+    {
+        "move": "endure",
+        "number": 206
+    },
+    {
+        "move": "frustration",
+        "number": 207
+    },
+    {
+        "move": "sandtomb",
+        "number": 208
+    },
+    {
+        "move": "waterpledge",
+        "number": 209
+    },
+    {
+        "move": "round",
+        "number": 210
+    },
+    {
+        "move": "swift",
+        "number": 211
+    },
+    {
+        "move": "heatcrash",
+        "number": 212
+    },
+    {
+        "move": "powergem",
+        "number": 213
+    },
+    {
+        "move": "earthpower",
+        "number": 214
+    },
+    {
+        "move": "breakingswipe",
+        "number": 215
+    },
+    {
+        "move": "substitute",
+        "number": 216
+    },
+    {
+        "move": "rockblast",
+        "number": 217
+    },
+    {
+        "move": "dracometeor",
+        "number": 218
+    },
+    {
+        "move": "rockpolish",
+        "number": 219
+    },
+    {
+        "move": "tailslap",
+        "number": 220
+    },
+    {
+        "move": "rockslide",
+        "number": 221
+    },
+    {
+        "move": "thunder",
+        "number": 222
+    },
+    {
+        "move": "shockwave",
+        "number": 223
+    },
+    {
+        "move": "heatwave",
+        "number": 224
+    },
+    {
+        "move": "outrage",
+        "number": 225
+    },
+    {
+        "move": "icebeam",
+        "number": 226
+    },
+    {
+        "move": "phantomforce",
+        "number": 227
+    },
+    {
+        "move": "crosspoison",
+        "number": 228
+    },
+    {
+        "move": "sludgewave",
+        "number": 229
+    },
+    {
+        "move": "retaliate",
+        "number": 230
+    },
+    {
+        "move": "crunch",
+        "number": 231
+    },
+    {
+        "move": "pinmissile",
+        "number": 232
+    },
+    {
+        "move": "waterpulse",
+        "number": 233
+    },
+    {
+        "move": "superpower",
+        "number": 234
+    },
+    {
+        "move": "raindance",
+        "number": 235
+    },
+    {
+        "move": "dragonpulse",
+        "number": 236
+    },
+    {
+        "move": "bulkup",
+        "number": 237
+    },
+    {
+        "move": "hyperbeam",
+        "number": 238
+    },
+    {
+        "move": "explosion",
+        "number": 239
+    },
+    {
+        "move": "dragonclaw",
+        "number": 240
+    },
+    {
+        "move": "earthquake",
+        "number": 241
+    },
+    {
+        "move": "nastyplot",
+        "number": 242
+    },
+    {
+        "move": "hex",
+        "number": 243
+    },
+    {
+        "move": "liquidation",
+        "number": 244
+    },
+    {
+        "move": "headbutt",
+        "number": 245
+    },
+    {
+        "move": "hurricane",
+        "number": 246
+    },
+    {
+        "move": "mistyterrain",
+        "number": 247
+    },
+    {
+        "move": "firepunch",
+        "number": 248
+    },
+    {
+        "move": "triattack",
+        "number": 249
+    },
+    {
+        "move": "honeclaws",
+        "number": 250
+    },
+    {
+        "move": "sandstorm",
+        "number": 251
+    },
+    {
+        "move": "ironhead",
+        "number": 252
+    },
+    {
+        "move": "guardswap",
+        "number": 253
+    },
+    {
+        "move": "hydropump",
+        "number": 254
+    },
+    {
+        "move": "smackdown",
+        "number": 255
+    },
+    {
+        "move": "frostbreath",
+        "number": 256
+    },
+    {
+        "move": "protect",
+        "number": 257
+    },
+    {
+        "move": "thunderwave",
+        "number": 258
+    },
+    {
+        "move": "skillswap",
+        "number": 259
+    },
+    {
+        "move": "venomdrench",
+        "number": 260
+    },
+    {
+        "move": "helpinghand",
+        "number": 261
+    },
+    {
+        "move": "sleeptalk",
+        "number": 262
+    },
+    {
+        "move": "thunderpunch",
+        "number": 263
+    },
+    {
+        "move": "hail",
+        "number": 264
+    },
+    {
+        "move": "roar",
+        "number": 265
+    },
+    {
+        "move": "sunnyday",
+        "number": 266
+    },
+    {
+        "move": "assurance",
+        "number": 267
+    },
+    {
+        "move": "aurasphere",
+        "number": 268
+    },
+    {
+        "move": "aerialace",
+        "number": 269
+    },
+    {
+        "move": "encore",
+        "number": 270
+    },
+    {
+        "move": "powerswap",
+        "number": 271
+    },
+    {
+        "move": "poisontail",
+        "number": 272
+    },
+    {
+        "move": "psychicfangs",
+        "number": 273
+    },
+    {
+        "move": "tailwind",
+        "number": 274
+    },
+    {
+        "move": "flareblitz",
+        "number": 275
     }
-  ]
-}
+]
