@@ -41,7 +41,7 @@ class Utils {
         }
 
         fun isTM(item: ItemStack): Boolean {
-            return item.orCreateNbt.get("id").toString().contains("ttms:tm_")
+            return item.orCreateNbt.contains("tm_move")
         }
 
     }

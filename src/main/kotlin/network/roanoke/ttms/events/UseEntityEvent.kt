@@ -52,9 +52,7 @@ class UseEntityEvent: UseEntityCallback {
         if (TTMs.onCooldown)
             return ActionResult.PASS
 
-        var moveName = player.mainHandStack.name.content.toString().split(":")[1].split("}")[0].trim()
-        val capitalizedName = moveName.replaceFirstChar { it.uppercaseChar() }
-        moveName = moveName.replace(" ", "").replace("-", "").lowercase()
+        var moveName = player.mainHandStack.orCreateNbt.getString("tm_move")
 
         val moveTemplate = Moves.getByName(moveName)
 
@@ -62,7 +60,7 @@ class UseEntityEvent: UseEntityCallback {
 
         entity.pokemon.benchedMoves.forEach {
             if (it.moveTemplate.name.lowercase() == moveName) {
-                player.sendMessage(Text.literal("§c${entity.pokemon.species.name} already knows ${capitalizedName}!"))
+                player.sendMessage(Text.literal("§c${entity.pokemon.species.name} already knows ").append(moveTemplate.displayName))
                 TTMs.onCooldown = true
                 return ActionResult.PASS
             }
@@ -70,7 +68,7 @@ class UseEntityEvent: UseEntityCallback {
 
         entity.pokemon.moveSet.forEach {
             if (it.name.lowercase() == moveName) {
-                player.sendMessage(Text.literal("§c${entity.pokemon.species.name} already knows ${capitalizedName}!"))
+                player.sendMessage(Text.literal("§c${entity.pokemon.species.name} already knows ").append(moveTemplate.displayName))
                 TTMs.onCooldown = true
                 return ActionResult.PASS
             }
@@ -84,16 +82,17 @@ class UseEntityEvent: UseEntityCallback {
 
         if (canLearn) {
             entity.pokemon.benchedMoves.add(move)
-            player.sendMessage(Text.literal("§a${entity.pokemon.species.name} learned ${capitalizedName}!"))
+            player.sendMessage(Text.literal("§a${entity.pokemon.species.name} learned ").append(moveTemplate.displayName))
             player.world.playSound(null, player.steppingPos, CobblemonSounds.MEDICINE_PILLS_USE, SoundCategory.NEUTRAL, 1f, 1f)
         } else {
-            player.sendMessage(Text.literal("§c${entity.pokemon.species.name} cannot learn ${capitalizedName}!"))
+            player.sendMessage(Text.literal("§c${entity.pokemon.species.name} cannot learn ").append(moveTemplate.displayName))
             TTMs.onCooldown = true
             return ActionResult.PASS
         }
 
-        if (!player.isCreative)
+        if (player.mainHandStack.orCreateNbt.getBoolean("is_tr")) {
             player.mainHandStack.decrement(1)
+        }
 
         TTMs.onCooldown = true
         return ActionResult.SUCCESS

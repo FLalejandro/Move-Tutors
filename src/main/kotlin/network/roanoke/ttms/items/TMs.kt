@@ -17,9 +17,12 @@ class TMs {
 
             var id = -1
 
+            val move = Moves.getByName(name)
             TTMs.tmsConfig.moveData.forEach {
-               if (it.move.replace(" ", "").lowercase() == name.lowercase()) {
-                   item.setCustomName(Text.literal("§fTM${it.number}: ${it.move}"))
+               if (it.move == name) {
+                   if (move != null) {
+                       item.setCustomName(Text.literal("§fTM${it.number}: ").append(move.displayName))
+                   }
                    id = it.number
                }
             }
@@ -27,7 +30,6 @@ class TMs {
             if (id == -1)
                 return ItemStack.EMPTY
 
-            val move = Moves.getByName(name.lowercase())
 
             val modelData = when (move!!.elementalType) {
                 ElementalTypes.NORMAL -> 420
@@ -51,12 +53,26 @@ class TMs {
                 else -> 420
             }
 
-            nbt.putString("id", "ttms:tm_$id")
-            nbt.putInt("CustomModelData", modelData)
             nbt.putInt("tm_id", id)
+            nbt.putInt("CustomModelData", modelData)
+            nbt.putString("tm_move", move.name)
+            nbt.putBoolean("is_tr", false)
             item.nbt = nbt
 
             return item
+        }
+
+        fun getTR(name: String): ItemStack {
+            var tm = getTM(name)
+            if (tm == ItemStack.EMPTY) return ItemStack.EMPTY
+
+            val move = Moves.getByName(name)
+            if (move != null) {
+                tm.setCustomName(Text.literal("TR" + tm.orCreateNbt.getInt("tm_id") + ": ").append(move.displayName))
+            }
+
+            tm.orCreateNbt.putBoolean("is_tr", true)
+            return tm
         }
 
 

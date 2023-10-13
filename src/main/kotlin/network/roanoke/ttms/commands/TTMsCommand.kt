@@ -10,6 +10,7 @@ import net.minecraft.server.command.CommandManager
 import net.minecraft.server.command.CommandManager.argument
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.text.Text
+import network.roanoke.ttms.TTMs
 import network.roanoke.ttms.items.TMs
 import network.roanoke.ttms.utils.Utils
 
@@ -24,8 +25,13 @@ class TTMsCommand() {
                             argument("player", StringArgumentType.string())
                                 .suggests(playerSuggestionProvider())
                                 .then(
-                                    argument("tm", StringArgumentType.string())
-                                        .executes(giveCap())
+                                    argument("trtm", StringArgumentType.string())
+                                        .suggests(tmTrSuggestionProvider())
+                                        .then(
+                                            argument("move", StringArgumentType.string())
+                                                .suggests(tmMovesSuggestionProvider())
+                                                .executes(giveCap())
+                                        )
                                 )
                         )
                     )
@@ -33,18 +39,24 @@ class TTMsCommand() {
         })
     }
 
+
     private fun giveCap(): Command<ServerCommandSource> {
         return Command {
             val source = it.source
 
             val player = StringArgumentType.getString(it, "player")
-            val name = StringArgumentType.getString(it, "tm")
+            val name = StringArgumentType.getString(it, "move")
+            val tmortr = StringArgumentType.getString(it, "trtm")
+
 
             val p = Utils.getPlayerByName(player)
 
-            val tm = TMs.getTM(name)
+            var tm = TMs.getTM(name)
+            if (tmortr == "tr") {
+                tm = TMs.getTR(name)
+            }
             if (tm == ItemStack.EMPTY) {
-                source.player?.sendMessage(Text.literal("§cInvalid TM Name: $name"))
+                source.player?.sendMessage(Text.literal("§cInvalid Move Name: $name"))
                 return@Command 1
             }
 
@@ -55,6 +67,27 @@ class TTMsCommand() {
                 Text.literal("§7Gave $player TM $name")
             )
             1
+        }
+    }
+
+    private fun tmMovesSuggestionProvider(): SuggestionProvider<ServerCommandSource>? {
+        return SuggestionProvider { _, builder ->
+
+            TTMs.tmsConfig.moveData.forEach {
+                builder.suggest(it.move)
+            }
+
+            builder.buildFuture()
+        }
+    }
+
+    private fun tmTrSuggestionProvider(): SuggestionProvider<ServerCommandSource>? {
+        return SuggestionProvider { _, builder ->
+
+            builder.suggest("tr")
+            builder.suggest("tm")
+
+            builder.buildFuture()
         }
     }
 
