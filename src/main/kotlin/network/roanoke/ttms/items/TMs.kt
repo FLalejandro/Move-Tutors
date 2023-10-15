@@ -32,25 +32,25 @@ class TMs {
 
 
             val modelData = when (move!!.elementalType) {
-                ElementalTypes.NORMAL -> 420
-                ElementalTypes.FIRE -> 520
-                ElementalTypes.WATER -> 620
-                ElementalTypes.GRASS -> 720
-                ElementalTypes.ELECTRIC -> 820
-                ElementalTypes.ICE -> 920
-                ElementalTypes.FIGHTING -> 1020
-                ElementalTypes.POISON -> 1120
-                ElementalTypes.GROUND -> 1220
-                ElementalTypes.FLYING -> 1320
-                ElementalTypes.PSYCHIC -> 1420
-                ElementalTypes.BUG -> 1520
-                ElementalTypes.ROCK -> 1620
-                ElementalTypes.GHOST -> 1720
-                ElementalTypes.DRAGON -> 1820
-                ElementalTypes.DARK -> 1920
-                ElementalTypes.STEEL -> 2020
-                ElementalTypes.FAIRY -> 2120
-                else -> 420
+                ElementalTypes.NORMAL -> 2420
+                ElementalTypes.FIRE -> 2520
+                ElementalTypes.WATER -> 2620
+                ElementalTypes.GRASS -> 2720
+                ElementalTypes.ELECTRIC -> 2820
+                ElementalTypes.ICE -> 2920
+                ElementalTypes.FIGHTING -> 21020
+                ElementalTypes.POISON -> 21120
+                ElementalTypes.GROUND -> 21220
+                ElementalTypes.FLYING -> 21320
+                ElementalTypes.PSYCHIC -> 21420
+                ElementalTypes.BUG -> 21520
+                ElementalTypes.ROCK -> 21620
+                ElementalTypes.GHOST -> 21720
+                ElementalTypes.DRAGON -> 21820
+                ElementalTypes.DARK -> 21920
+                ElementalTypes.STEEL -> 22020
+                ElementalTypes.FAIRY -> 22120
+                else -> 2420
             }
 
             nbt.putInt("tm_id", id)
