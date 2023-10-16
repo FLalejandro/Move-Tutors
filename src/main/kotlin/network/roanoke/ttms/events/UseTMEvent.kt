@@ -49,7 +49,7 @@ class UseTMEvent: UseEntityCallback {
         if (TTMs.onCooldown)
             return ActionResult.PASS
 
-        var moveName = player.mainHandStack.orCreateNbt.getString("tm_move")
+        val moveName = player.mainHandStack.orCreateNbt.getString("tm_move")
 
         val moveTemplate = Moves.getByName(moveName)
 

@@ -6,6 +6,7 @@ import com.cobblemon.mod.common.api.moves.Moves
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity
 import net.fabricmc.fabric.api.event.player.UseEntityCallback
 import net.minecraft.entity.Entity
+import net.minecraft.entity.passive.VillagerEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.sound.SoundCategory
 import net.minecraft.text.Text
@@ -35,10 +36,13 @@ class UseNPCEvent: UseEntityCallback {
         if (hand != Hand.MAIN_HAND)
             return ActionResult.PASS
 
-        if (TTMs.onCooldown)
+        if (entity !is VillagerEntity)
             return ActionResult.PASS
 
         if (TTMs.npcModePlayers.contains(player.uuid)) {
+            if (TTMs.onCooldown)
+                return ActionResult.PASS
+
             if (TTMs.npcs.contains(entity.uuid)) {
                 TTMs.npcs.remove(entity.uuid)
                 player.sendMessage(Text.literal("§cNPC removed"))
@@ -50,17 +54,17 @@ class UseNPCEvent: UseEntityCallback {
                 entity.isCustomNameVisible = true
                 entity.isInvulnerable = true
             }
+            TTMs.tmsConfig.saveNPCs()
         } else {
             if (TTMs.npcs.contains(entity.uuid)) {
+                if (TTMs.onCooldown)
+                    return ActionResult.PASS
+
                 GUIs.getTMShop(Utils.getPlayerByUUID(player.uuid)!!).open()
                 TTMs.onCooldown = true
                 return ActionResult.FAIL
             }
         }
-
-        TTMs.tmsConfig.saveNPCs()
-
-        TTMs.onCooldown = true
-        return ActionResult.FAIL
+        return ActionResult.PASS
     }
 }
