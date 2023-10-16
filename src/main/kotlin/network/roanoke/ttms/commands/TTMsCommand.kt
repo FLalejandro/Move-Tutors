@@ -1,7 +1,6 @@
 package network.roanoke.ttms.commands
 
 import com.mojang.brigadier.Command
-import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.suggestion.SuggestionProvider
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
@@ -20,6 +19,7 @@ class TTMsCommand() {
         CommandRegistrationCallback.EVENT.register(CommandRegistrationCallback { dispatcher, _, _ ->
             dispatcher.register(
                 CommandManager.literal("ttms")
+                    .then(CommandManager.literal("npc").requires { it.hasPermissionLevel(2) }.executes(toggleNpcMode()))
                     .then(CommandManager.literal("give").requires { it.hasPermissionLevel(2) }
                         .then(
                             argument("player", StringArgumentType.string())
@@ -30,7 +30,7 @@ class TTMsCommand() {
                                         .then(
                                             argument("move", StringArgumentType.string())
                                                 .suggests(tmMovesSuggestionProvider())
-                                                .executes(giveCap())
+                                                .executes(giveTm())
                                         )
                                 )
                         )
@@ -39,8 +39,26 @@ class TTMsCommand() {
         })
     }
 
+    private fun toggleNpcMode(): Command<ServerCommandSource> {
+        return Command {
+            val source = it.source
 
-    private fun giveCap(): Command<ServerCommandSource> {
+            if (source.player == null)
+                return@Command 1
+
+            if (TTMs.npcModePlayers.contains(source.player?.uuid)) {
+                TTMs.npcModePlayers.remove(source.player?.uuid)
+                source.player!!.sendMessage(Text.literal("§cNPC Mode disabled"))
+            } else {
+                TTMs.npcModePlayers.add(source.player?.uuid!!)
+                source.player!!.sendMessage(Text.literal("§aNPC Mode enabled"))
+            }
+
+            1
+        }
+    }
+
+    private fun giveTm(): Command<ServerCommandSource> {
         return Command {
             val source = it.source
 

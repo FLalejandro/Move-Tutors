@@ -2,11 +2,8 @@ package network.roanoke.ttms.events
 
 import com.cobblemon.mod.common.CobblemonSounds
 import com.cobblemon.mod.common.api.moves.BenchedMove
-import com.cobblemon.mod.common.api.moves.Move
-import com.cobblemon.mod.common.api.moves.MoveTemplate
 import com.cobblemon.mod.common.api.moves.Moves
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity
-import com.cobblemon.mod.common.pokemon.Pokemon
 import net.fabricmc.fabric.api.event.player.UseEntityCallback
 import net.minecraft.entity.Entity
 import net.minecraft.entity.player.PlayerEntity
@@ -19,7 +16,7 @@ import net.minecraft.world.World
 import network.roanoke.ttms.TTMs
 import network.roanoke.ttms.utils.Utils
 
-class UseEntityEvent: UseEntityCallback {
+class UseTMEvent: UseEntityCallback {
     override fun interact(
         player: PlayerEntity?,
         world: World?,
@@ -82,10 +79,10 @@ class UseEntityEvent: UseEntityCallback {
 
         if (canLearn) {
             entity.pokemon.benchedMoves.add(move)
-            player.sendMessage(Text.literal("§a${entity.pokemon.species.name} learned ").append(moveTemplate.displayName))
+            player.sendMessage(Text.literal("§a${entity.pokemon.species.name} learned ").append(moveTemplate.displayName).append("§a!"))
             player.world.playSound(null, player.steppingPos, CobblemonSounds.MEDICINE_PILLS_USE, SoundCategory.NEUTRAL, 1f, 1f)
         } else {
-            player.sendMessage(Text.literal("§c${entity.pokemon.species.name} cannot learn ").append(moveTemplate.displayName))
+            player.sendMessage(Text.literal("§c${entity.pokemon.species.name} cannot learn ").append(moveTemplate.displayName).append("§c."))
             TTMs.onCooldown = true
             return ActionResult.PASS
         }

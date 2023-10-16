@@ -8,6 +8,7 @@ import com.google.gson.reflect.TypeToken
 import net.fabricmc.loader.api.FabricLoader
 import network.roanoke.ttms.TTMs
 import java.io.*
+import java.util.*
 
 class TMsConfig {
     private val _moveData: List<MoveData>
@@ -16,8 +17,11 @@ class TMsConfig {
 
     init {
         createFolders()
-        _moveData = loadMoveData() ?: emptyList()
+        _moveData = loadTMs() ?: emptyList()
         println("Loaded ${_moveData.size} TMs")
+
+        if (npcFileExists())
+            loadNPCs()
     }
 
     private fun createFolders() {
@@ -28,12 +32,12 @@ class TMsConfig {
         }
     }
 
-    private fun getMoveDataFile(): File {
+    private fun getTMsFile(): File {
         val savePath = FabricLoader.getInstance().configDir.resolve("ttms/tms.json")
         val saveFile = savePath.toFile()
         if (!saveFile.exists()) {
             if (saveFile.createNewFile()) {
-                loadStartingMoveData().let { list ->
+                loadStartingTMs().let { list ->
                     FileWriter(saveFile).use {
                         GsonBuilder().setPrettyPrinting().create().toJson(list, it)
                     }
@@ -43,7 +47,7 @@ class TMsConfig {
         return saveFile
     }
 
-    private fun loadStartingMoveData(): JsonArray? {
+    private fun loadStartingTMs(): JsonArray? {
         val jsonStream: InputStream? = TTMs::class.java.getResourceAsStream("/tms.json")
         return jsonStream?.use {
             InputStreamReader(it).use { reader ->
@@ -52,9 +56,9 @@ class TMsConfig {
         }
     }
 
-    private fun loadMoveData(): List<MoveData>? {
+    private fun loadTMs(): List<MoveData>? {
         val gson = Gson()
-        val file = getMoveDataFile()
+        val file = getTMsFile()
 
         try {
             FileReader(file).use {
@@ -67,4 +71,37 @@ class TMsConfig {
 
         return null
     }
+
+    private fun getNPCFile(): File {
+        val savePath = FabricLoader.getInstance().configDir.resolve("ttms/npcs.json")
+        val saveFile = savePath.toFile()
+        saveFile.createNewFile()
+        return saveFile
+    }
+
+    private fun npcFileExists(): Boolean {
+        val savePath = FabricLoader.getInstance().configDir.resolve("ttms/npcs.json")
+        val saveFile = savePath.toFile()
+        return saveFile.exists()
+    }
+
+    fun saveNPCs() {
+        val gson = GsonBuilder().setPrettyPrinting().create()
+        val file = getNPCFile()
+
+        FileWriter(file).use {
+            gson.toJson(TTMs.npcs, it)
+        }
+    }
+
+    private fun loadNPCs() {
+        val gson = Gson()
+        val file = getNPCFile()
+        FileReader(file).use { reader ->
+            val uuidStrings = gson.fromJson(reader, Array<String>::class.java)
+            val uuidList = uuidStrings.map { UUID.fromString(it) }
+            TTMs.setNPCs(uuidList)
+        }
+    }
+
 }

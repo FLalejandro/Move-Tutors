@@ -1,1102 +1,1377 @@
 [
     {
         "move": "fireblast",
-        "number": 1
+        "number": 1,
+        "price": 8000
     },
     {
         "move": "grassyterrain",
-        "number": 2
+        "number": 2,
+        "price": 1000
     },
     {
         "move": "foulplay",
-        "number": 3
+        "number": 3,
+        "price": 4000
     },
     {
         "move": "willowisp",
-        "number": 4
+        "number": 4,
+        "price": 3000
     },
     {
         "move": "brutalswing",
-        "number": 5
+        "number": 5,
+        "price": 2000
     },
     {
         "move": "uproar",
-        "number": 6
+        "number": 6,
+        "price": 3000
     },
     {
         "move": "amnesia",
-        "number": 7
+        "number": 7,
+        "price": 1000
     },
     {
         "move": "steelbeam",
-        "number": 8
+        "number": 8,
+        "price": 2000
     },
     {
         "move": "recycle",
-        "number": 9
+        "number": 9,
+        "price": 1000
     },
     {
         "move": "trick",
-        "number": 10
+        "number": 10,
+        "price": 2000
     },
     {
         "move": "storedpower",
-        "number": 11
+        "number": 11,
+        "price": 3000
     },
     {
         "move": "pollenpuff",
-        "number": 12
+        "number": 12,
+        "price": 2000
     },
     {
         "move": "acrobatics",
-        "number": 13
+        "number": 13,
+        "price": 3000
     },
     {
         "move": "gigaimpact",
-        "number": 14
+        "number": 14,
+        "price": 10000
     },
     {
         "move": "drainingkiss",
-        "number": 15
+        "number": 15,
+        "price": 2000
     },
     {
         "move": "gigadrain",
-        "number": 16
+        "number": 16,
+        "price": 4000
     },
     {
         "move": "eerieimpulse",
-        "number": 17
+        "number": 17,
+        "price": 1000
     },
     {
         "move": "razorshell",
-        "number": 18
+        "number": 18,
+        "price": 3000
     },
     {
         "move": "mudshot",
-        "number": 19
+        "number": 19,
+        "price": 1000
     },
     {
         "move": "strugglebug",
-        "number": 20
+        "number": 20,
+        "price": 1000
     },
     {
         "move": "calmmind",
-        "number": 21
+        "number": 21,
+        "price": 6000
     },
     {
         "move": "rocksmash",
-        "number": 22
+        "number": 22,
+        "price": 1000
     },
     {
         "move": "toxic",
-        "number": 23
+        "number": 23,
+        "price": 6000
     },
     {
         "move": "irondefense",
-        "number": 24
+        "number": 24,
+        "price": 3000
     },
     {
         "move": "roost",
-        "number": 25
+        "number": 25,
+        "price": 4000
     },
     {
         "move": "snarl",
-        "number": 26
+        "number": 26,
+        "price": 4000
     },
     {
         "move": "flamecharge",
-        "number": 27
+        "number": 27,
+        "price": 2000
     },
     {
         "move": "drillrun",
-        "number": 28
+        "number": 28,
+        "price": 3000
     },
     {
         "move": "electroweb",
-        "number": 29
+        "number": 29,
+        "price": 1000
     },
     {
         "move": "firepledge",
-        "number": 30
+        "number": 30,
+        "price": 1000
     },
     {
         "move": "silverwind",
-        "number": 31
+        "number": 31,
+        "price": 2000
     },
     {
         "move": "bulldoze",
-        "number": 32
+        "number": 32,
+        "price": 2000
     },
     {
         "move": "defog",
-        "number": 33
+        "number": 33,
+        "price": 6000
     },
     {
         "move": "rocktomb",
-        "number": 34
+        "number": 34,
+        "price": 1000
     },
     {
         "move": "wildcharge",
-        "number": 35
+        "number": 35,
+        "price": 4000
     },
     {
         "move": "brine",
-        "number": 36
+        "number": 36,
+        "price": 2000
     },
     {
         "move": "echoedvoice",
-        "number": 37
+        "number": 37,
+        "price": 1000
     },
     {
         "move": "focusenergy",
-        "number": 38
+        "number": 38,
+        "price": 2000
     },
     {
         "move": "airslash",
-        "number": 39
+        "number": 39,
+        "price": 4000
     },
     {
         "move": "secretpower",
-        "number": 40
+        "number": 40,
+        "price": 1000
     },
     {
         "move": "shadowclaw",
-        "number": 41
+        "number": 41,
+        "price": 4000
     },
     {
         "move": "blizzard",
-        "number": 42
+        "number": 42,
+        "price": 8000
     },
     {
         "move": "disarmingvoice",
-        "number": 43
+        "number": 43,
+        "price": 1000
     },
     {
         "move": "muddywater",
-        "number": 44
+        "number": 44,
+        "price": 3000
     },
     {
         "move": "drainpunch",
-        "number": 45
+        "number": 45,
+        "price": 3000
     },
     {
         "move": "lowsweep",
-        "number": 46
+        "number": 46,
+        "price": 2000
     },
     {
         "move": "swordsdance",
-        "number": 47
+        "number": 47,
+        "price": 6000
     },
     {
         "move": "embargo",
-        "number": 48
+        "number": 48,
+        "price": 2000
     },
     {
         "move": "stompingtantrum",
-        "number": 49
+        "number": 49,
+        "price": 3000
     },
     {
         "move": "seedbomb",
-        "number": 50
+        "number": 50,
+        "price": 2000
     },
     {
         "move": "dig",
-        "number": 51
+        "number": 51,
+        "price": 1000
     },
     {
         "move": "grassknot",
-        "number": 52
+        "number": 52,
+        "price": 3000
     },
     {
         "move": "chargebeam",
-        "number": 53
+        "number": 53,
+        "price": 1000
     },
     {
         "move": "poweruppunch",
-        "number": 54
+        "number": 54,
+        "price": 3000
     },
     {
         "move": "screech",
-        "number": 55
+        "number": 55,
+        "price": 1000
     },
     {
         "move": "leafstorm",
-        "number": 56
+        "number": 56,
+        "price": 8000
     },
     {
         "move": "iciclespear",
-        "number": 57
+        "number": 57,
+        "price": 3000
     },
     {
         "move": "mysticalfire",
-        "number": 58
+        "number": 58,
+        "price": 3000
     },
     {
         "move": "snatch",
-        "number": 59
+        "number": 59,
+        "price": 1000
     },
     {
         "move": "seismictoss",
-        "number": 60
+        "number": 60,
+        "price": 3000
     },
     {
         "move": "payback",
-        "number": 61
+        "number": 61,
+        "price": 2000
     },
     {
         "move": "cosmicpower",
-        "number": 62
+        "number": 62,
+        "price": 6000
     },
     {
         "move": "frenzyplant",
-        "number": 63
+        "number": 63,
+        "price": 10000
     },
     {
         "move": "torment",
-        "number": 64
+        "number": 64,
+        "price": 3000
     },
     {
         "move": "attract",
-        "number": 65
+        "number": 65,
+        "price": 2000
     },
     {
         "move": "whirlpool",
-        "number": 66
+        "number": 66,
+        "price": 3000
     },
     {
         "move": "toxicspikes",
-        "number": 67
+        "number": 67,
+        "price": 3000
     },
     {
         "move": "faketears",
-        "number": 68
+        "number": 68,
+        "price": 1000
     },
     {
         "move": "thief",
-        "number": 69
+        "number": 69,
+        "price": 1000
     },
     {
         "move": "gyroball",
-        "number": 70
+        "number": 70,
+        "price": 4000
     },
     {
         "move": "reversal",
-        "number": 71
+        "number": 71,
+        "price": 1000
     },
     {
         "move": "snore",
-        "number": 72
+        "number": 72,
+        "price": 3000
     },
     {
         "move": "bravebird",
-        "number": 73
+        "number": 73,
+        "price": 8000
     },
     {
         "move": "overheat",
-        "number": 74
+        "number": 74,
+        "price": 8000
     },
     {
         "move": "dragondance",
-        "number": 75
+        "number": 75,
+        "price": 5000
     },
     {
         "move": "terablast",
-        "number": 76
+        "number": 76,
+        "price": 2000
     },
     {
         "move": "allyswitch",
-        "number": 77
+        "number": 77,
+        "price": 2000
     },
     {
         "move": "auroraveil",
-        "number": 78
+        "number": 78,
+        "price": 2000
     },
     {
         "move": "psybeam",
-        "number": 79
+        "number": 79,
+        "price": 1000
     },
     {
         "move": "strength",
-        "number": 80
+        "number": 80,
+        "price": 1000
     },
     {
         "move": "grasspledge",
-        "number": 81
+        "number": 81,
+        "price": 1000
     },
     {
         "move": "hiddenpower",
-        "number": 82
+        "number": 82,
+        "price": -1
     },
     {
         "move": "naturepower",
-        "number": 83
+        "number": 83,
+        "price": 2000
     },
     {
         "move": "cut",
-        "number": 84
+        "number": 84,
+        "price": 1000
     },
     {
         "move": "agility",
-        "number": 85
+        "number": 85,
+        "price": 1000
     },
     {
         "move": "solarblade",
-        "number": 86
+        "number": 86,
+        "price": 6000
     },
     {
         "move": "speedswap",
-        "number": 87
+        "number": 87,
+        "price": 1000
     },
     {
         "move": "icespinner",
-        "number": 88
+        "number": 88,
+        "price": 4000
     },
     {
         "move": "pounce",
-        "number": 89
+        "number": 89,
+        "price": 3000
     },
     {
         "move": "fling",
-        "number": 90
+        "number": 90,
+        "price": 2000
     },
     {
         "move": "return",
-        "number": 91
+        "number": 91,
+        "price": 3000
     },
     {
         "move": "safeguard",
-        "number": 92
+        "number": 92,
+        "price": 2000
     },
     {
         "move": "telekinesis",
-        "number": 93
+        "number": 93,
+        "price": 1000
     },
     {
         "move": "venoshock",
-        "number": 94
+        "number": 94,
+        "price": 2000
     },
     {
         "move": "icywind",
-        "number": 95
+        "number": 95,
+        "price": 2000
     },
     {
         "move": "leechlife",
-        "number": 96
+        "number": 96,
+        "price": 4000
     },
     {
         "move": "lightscreen",
-        "number": 97
+        "number": 97,
+        "price": 4000
     },
     {
         "move": "snowscape",
-        "number": 98
+        "number": 98,
+        "price": 3000
     },
     {
         "move": "gunkshot",
-        "number": 99
+        "number": 99,
+        "price": 6000
     },
     {
         "move": "playrough",
-        "number": 100
+        "number": 100,
+        "price": 4000
     },
     {
         "move": "swagger",
-        "number": 101
+        "number": 101,
+        "price": 1000
     },
     {
         "move": "firefang",
-        "number": 102
+        "number": 102,
+        "price": 3000
     },
     {
         "move": "rockclimb",
-        "number": 103
+        "number": 103,
+        "price": 1000
     },
     {
         "move": "metronome",
-        "number": 104
+        "number": 104,
+        "price": 1000
     },
     {
         "move": "incinerate",
-        "number": 105
+        "number": 105,
+        "price": 1000
     },
     {
         "move": "icefang",
-        "number": 106
+        "number": 106,
+        "price": 3000
     },
     {
         "move": "dreameater",
-        "number": 107
+        "number": 107,
+        "price": 1000
     },
     {
         "move": "falseswipe",
-        "number": 108
+        "number": 108,
+        "price": 4000
     },
     {
         "move": "nightshade",
-        "number": 109
+        "number": 109,
+        "price": 1000
     },
     {
         "move": "electricterrain",
-        "number": 110
+        "number": 110,
+        "price": 2000
     },
     {
         "move": "mudslap",
-        "number": 111
+        "number": 111,
+        "price": 1000
     },
     {
         "move": "waterfall",
-        "number": 112
+        "number": 112,
+        "price": 3000
     },
     {
         "move": "chillingwater",
-        "number": 113
+        "number": 113,
+        "price": 2000
     },
     {
         "move": "weatherball",
-        "number": 114
+        "number": 114,
+        "price": 2000
     },
     {
         "move": "dazzlinggleam",
-        "number": 115
+        "number": 115,
+        "price": 4000
     },
     {
         "move": "bodyslam",
-        "number": 116
+        "number": 116,
+        "price": 3000
     },
     {
         "move": "imprison",
-        "number": 117
+        "number": 117,
+        "price": 1000
     },
     {
         "move": "doubleteam",
-        "number": 118
+        "number": 118,
+        "price": 1000
     },
     {
         "move": "electroball",
-        "number": 119
+        "number": 119,
+        "price": 2000
     },
     {
         "move": "quash",
-        "number": 120
+        "number": 120,
+        "price": 1000
     },
     {
         "move": "rest",
-        "number": 121
+        "number": 121,
+        "price": 2000
     },
     {
         "move": "payday",
-        "number": 122
+        "number": 122,
+        "price": 1000
     },
     {
         "move": "sludgebomb",
-        "number": 123
+        "number": 123,
+        "price": 4000
     },
     {
         "move": "stoneedge",
-        "number": 124
+        "number": 124,
+        "price": 6000
     },
     {
         "move": "solarbeam",
-        "number": 125
+        "number": 125,
+        "price": 8000
     },
     {
         "move": "reflect",
-        "number": 126
+        "number": 126,
+        "price": 4000
     },
     {
         "move": "closecombat",
-        "number": 127
+        "number": 127,
+        "price": 8000
     },
     {
         "move": "heavyslam",
-        "number": 128
+        "number": 128,
+        "price": 3000
     },
     {
         "move": "bodypress",
-        "number": 129
+        "number": 129,
+        "price": 4000
     },
     {
         "move": "psychicterrain",
-        "number": 130
+        "number": 130,
+        "price": 3000
     },
     {
         "move": "flashcannon",
-        "number": 131
+        "number": 131,
+        "price": 4000
     },
     {
         "move": "scaryface",
-        "number": 132
+        "number": 132,
+        "price": 1000
     },
     {
         "move": "powerwhip",
-        "number": 133
+        "number": 133,
+        "price": 6000
     },
     {
         "move": "captivate",
-        "number": 134
+        "number": 134,
+        "price": 1000
     },
     {
         "move": "uturn",
-        "number": 135
+        "number": 135,
+        "price": 6000
     },
     {
         "move": "focusblast",
-        "number": 136
+        "number": 136,
+        "price": 7000
     },
     {
         "move": "pluck",
-        "number": 137
+        "number": 137,
+        "price": 1000
     },
     {
         "move": "psyshock",
-        "number": 138
+        "number": 138,
+        "price": 4000
     },
     {
         "move": "taunt",
-        "number": 139
+        "number": 139,
+        "price": 2000
     },
     {
         "move": "confuseray",
-        "number": 140
+        "number": 140,
+        "price": 2000
     },
     {
         "move": "hypervoice",
-        "number": 141
+        "number": 141,
+        "price": 4000
     },
     {
         "move": "highhorsepower",
-        "number": 142
+        "number": 142,
+        "price": 4000
     },
     {
         "move": "scald",
-        "number": 143
+        "number": 143,
+        "price": 6000
     },
     {
         "move": "bounce",
-        "number": 144
+        "number": 144,
+        "price": 3000
     },
     {
         "move": "irontail",
-        "number": 145
+        "number": 145,
+        "price": 2000
     },
     {
         "move": "spikes",
-        "number": 146
+        "number": 146,
+        "price": 3000
     },
     {
         "move": "facade",
-        "number": 147
+        "number": 147,
+        "price": 2000
     },
     {
         "move": "dive",
-        "number": 148
+        "number": 148,
+        "price": 1000
     },
     {
         "move": "throatchop",
-        "number": 149
+        "number": 149,
+        "price": 3000
     },
     {
         "move": "thunderfang",
-        "number": 150
+        "number": 150,
+        "price": 2000
     },
     {
         "move": "bugbuzz",
-        "number": 151
+        "number": 151,
+        "price": 4000
     },
     {
         "move": "energyball",
-        "number": 152
+        "number": 152,
+        "price": 4000
     },
     {
         "move": "icepunch",
-        "number": 153
+        "number": 153,
+        "price": 3000
     },
     {
         "move": "brickbreak",
-        "number": 154
+        "number": 154,
+        "price": 3000
     },
     {
         "move": "poisonjab",
-        "number": 155
+        "number": 155,
+        "price": 3000
     },
     {
         "move": "smartstrike",
-        "number": 156
+        "number": 156,
+        "price": 2000
     },
     {
         "move": "trailblaze",
-        "number": 157
+        "number": 157,
+        "price": 2000
     },
     {
         "move": "beatup",
-        "number": 158
+        "number": 158,
+        "price": 2000
     },
     {
         "move": "blazekick",
-        "number": 159
+        "number": 159,
+        "price": 3000
     },
     {
         "move": "acidspray",
-        "number": 160
+        "number": 160,
+        "price": 1000
     },
     {
         "move": "leafblade",
-        "number": 161
+        "number": 161,
+        "price": 3000
     },
     {
         "move": "hydrocannon",
-        "number": 162
+        "number": 162,
+        "price": 10000
     },
     {
         "move": "confide",
-        "number": 163
+        "number": 163,
+        "price": 1000
     },
     {
         "move": "shadowball",
-        "number": 164
+        "number": 164,
+        "price": 4000
     },
     {
         "move": "thunderbolt",
-        "number": 165
+        "number": 165,
+        "price": 4000
     },
     {
         "move": "revenge",
-        "number": 166
+        "number": 166,
+        "price": 1000
     },
     {
         "move": "zenheadbutt",
-        "number": 167
+        "number": 167,
+        "price": 3000
     },
     {
         "move": "takedown",
-        "number": 168
+        "number": 168,
+        "price": 1000
     },
     {
         "move": "megahorn",
-        "number": 169
+        "number": 169,
+        "price": 6000
     },
     {
         "move": "psychocut",
-        "number": 170
+        "number": 170,
+        "price": 3000
     },
     {
         "move": "focuspunch",
-        "number": 171
+        "number": 171,
+        "price": 2000
     },
     {
         "move": "voltswitch",
-        "number": 172
+        "number": 172,
+        "price": 6000
     },
     {
         "move": "skydrop",
-        "number": 173
+        "number": 173,
+        "price": 1000
     },
     {
         "move": "avalanche",
-        "number": 174
+        "number": 174,
+        "price": 2000
     },
     {
         "move": "psychic",
-        "number": 175
+        "number": 175,
+        "price": 4000
     },
     {
         "move": "megapunch",
-        "number": 176
+        "number": 176,
+        "price": 2000
     },
     {
         "move": "psychup",
-        "number": 177
+        "number": 177,
+        "price": 1000
     },
     {
         "move": "charm",
-        "number": 178
+        "number": 178,
+        "price": 1000
     },
     {
         "move": "fly",
-        "number": 179
+        "number": 179,
+        "price": 1000
     },
     {
         "move": "infestation",
-        "number": 180
+        "number": 180,
+        "price": 2000
     },
     {
         "move": "bulletseed",
-        "number": 181
+        "number": 181,
+        "price": 2000
     },
     {
         "move": "trickroom",
-        "number": 182
+        "number": 182,
+        "price": 3000
     },
     {
         "move": "stealthrock",
-        "number": 183
+        "number": 183,
+        "price": 3000
     },
     {
         "move": "magicalleaf",
-        "number": 184
+        "number": 184,
+        "price": 1000
     },
     {
         "move": "surf",
-        "number": 185
+        "number": 185,
+        "price": 4000
     },
     {
         "move": "wonderroom",
-        "number": 186
+        "number": 186,
+        "price": 1000
     },
     {
         "move": "dragontail",
-        "number": 187
+        "number": 187,
+        "price": 3000
     },
     {
         "move": "darkpulse",
-        "number": 188
+        "number": 188,
+        "price": 4000
     },
     {
         "move": "batonpass",
-        "number": 189
+        "number": 189,
+        "price": 10000
     },
     {
         "move": "flash",
-        "number": 190
+        "number": 190,
+        "price": 2000
     },
     {
         "move": "magicroom",
-        "number": 191
+        "number": 191,
+        "price": 2000
     },
     {
         "move": "firespin",
-        "number": 192
+        "number": 192,
+        "price": 1000
     },
     {
         "move": "metalclaw",
-        "number": 193
+        "number": 193,
+        "price": 1000
     },
     {
         "move": "flamethrower",
-        "number": 194
+        "number": 194,
+        "price": 4000
     },
     {
         "move": "steelwing",
-        "number": 195
+        "number": 195,
+        "price": 1000
     },
     {
         "move": "blastburn",
-        "number": 196
+        "number": 196,
+        "price": 10000
     },
     {
         "move": "xscissor",
-        "number": 197
+        "number": 197,
+        "price": 3000
     },
     {
         "move": "aircutter",
-        "number": 198
+        "number": 198,
+        "price": 1000
     },
     {
         "move": "megakick",
-        "number": 199
+        "number": 199,
+        "price": 1000
     },
     {
         "move": "darkestlariat",
-        "number": 200
+        "number": 200,
+        "price": 2000
     },
     {
         "move": "futuresight",
-        "number": 201
+        "number": 201,
+        "price": 3000
     },
     {
         "move": "workup",
-        "number": 202
+        "number": 202,
+        "price": 2000
     },
     {
         "move": "lowkick",
-        "number": 203
+        "number": 203,
+        "price": 2000
     },
     {
         "move": "naturalgift",
-        "number": 204
+        "number": 204,
+        "price": 2000
     },
     {
         "move": "selfdestruct",
-        "number": 205
+        "number": 205,
+        "price": 1000
     },
     {
         "move": "endure",
-        "number": 206
+        "number": 206,
+        "price": 1000
     },
     {
         "move": "frustration",
-        "number": 207
+        "number": 207,
+        "price": 2000
     },
     {
         "move": "sandtomb",
-        "number": 208
+        "number": 208,
+        "price": 1000
     },
     {
         "move": "waterpledge",
-        "number": 209
+        "number": 209,
+        "price": 1000
     },
     {
         "move": "round",
-        "number": 210
+        "number": 210,
+        "price": 1000
     },
     {
         "move": "swift",
-        "number": 211
+        "number": 211,
+        "price": 1000
     },
     {
         "move": "heatcrash",
-        "number": 212
+        "number": 212,
+        "price": 3000
     },
     {
         "move": "powergem",
-        "number": 213
+        "number": 213,
+        "price": 4000
     },
     {
         "move": "earthpower",
-        "number": 214
+        "number": 214,
+        "price": 4000
     },
     {
         "move": "breakingswipe",
-        "number": 215
+        "number": 215,
+        "price": 1000
     },
     {
         "move": "substitute",
-        "number": 216
+        "number": 216,
+        "price": 6000
     },
     {
         "move": "rockblast",
-        "number": 217
+        "number": 217,
+        "price": 3000
     },
     {
         "move": "dracometeor",
-        "number": 218
+        "number": 218,
+        "price": 8000
     },
     {
         "move": "rockpolish",
-        "number": 219
+        "number": 219,
+        "price": 1000
     },
     {
         "move": "tailslap",
-        "number": 220
+        "number": 220,
+        "price": 2000
     },
     {
         "move": "rockslide",
-        "number": 221
+        "number": 221,
+        "price": 3000
     },
     {
         "move": "thunder",
-        "number": 222
+        "number": 222,
+        "price": 8000
     },
     {
         "move": "shockwave",
-        "number": 223
+        "number": 223,
+        "price": 1000
     },
     {
         "move": "heatwave",
-        "number": 224
+        "number": 224,
+        "price": 5000
     },
     {
         "move": "outrage",
-        "number": 225
+        "number": 225,
+        "price": 6000
     },
     {
         "move": "icebeam",
-        "number": 226
+        "number": 226,
+        "price": 4000
     },
     {
         "move": "phantomforce",
-        "number": 227
+        "number": 227,
+        "price": 2000
     },
     {
         "move": "crosspoison",
-        "number": 228
+        "number": 228,
+        "price": 3000
     },
     {
         "move": "sludgewave",
-        "number": 229
+        "number": 229,
+        "price": 4000
     },
     {
         "move": "retaliate",
-        "number": 230
+        "number": 230,
+        "price": 1000
     },
     {
         "move": "crunch",
-        "number": 231
+        "number": 231,
+        "price": 4000
     },
     {
         "move": "pinmissile",
-        "number": 232
+        "number": 232,
+        "price": 2000
     },
     {
         "move": "waterpulse",
-        "number": 233
+        "number": 233,
+        "price": 2000
     },
     {
         "move": "superpower",
-        "number": 234
+        "number": 234,
+        "price": 4000
     },
     {
         "move": "raindance",
-        "number": 235
+        "number": 235,
+        "price": 2000
     },
     {
         "move": "dragonpulse",
-        "number": 236
+        "number": 236,
+        "price": 4000
     },
     {
         "move": "bulkup",
-        "number": 237
+        "number": 237,
+        "price": 5000
     },
     {
         "move": "hyperbeam",
-        "number": 238
+        "number": 238,
+        "price": 10000
     },
     {
         "move": "explosion",
-        "number": 239
+        "number": 239,
+        "price": 2000
     },
     {
         "move": "dragonclaw",
-        "number": 240
+        "number": 240,
+        "price": 3000
     },
     {
         "move": "earthquake",
-        "number": 241
+        "number": 241,
+        "price": 5000
     },
     {
         "move": "nastyplot",
-        "number": 242
+        "number": 242,
+        "price": 6000
     },
     {
         "move": "hex",
-        "number": 243
+        "number": 243,
+        "price": 2000
     },
     {
         "move": "liquidation",
-        "number": 244
+        "number": 244,
+        "price": 4000
     },
     {
         "move": "headbutt",
-        "number": 245
+        "number": 245,
+        "price": 2000
     },
     {
         "move": "hurricane",
-        "number": 246
+        "number": 246,
+        "price": 8000
     },
     {
         "move": "mistyterrain",
-        "number": 247
+        "number": 247,
+        "price": 1000
     },
     {
         "move": "firepunch",
-        "number": 248
+        "number": 248,
+        "price": 3000
     },
     {
         "move": "triattack",
-        "number": 249
+        "number": 249,
+        "price": 4000
     },
     {
         "move": "honeclaws",
-        "number": 250
+        "number": 250,
+        "price": 2000
     },
     {
         "move": "sandstorm",
-        "number": 251
+        "number": 251,
+        "price": 3000
     },
     {
         "move": "ironhead",
-        "number": 252
+        "number": 252,
+        "price": 4000
     },
     {
         "move": "guardswap",
-        "number": 253
+        "number": 253,
+        "price": 2000
     },
     {
         "move": "hydropump",
-        "number": 254
+        "number": 254,
+        "price": 8000
     },
     {
         "move": "smackdown",
-        "number": 255
+        "number": 255,
+        "price": 2000
     },
     {
         "move": "frostbreath",
-        "number": 256
+        "number": 256,
+        "price": 2000
     },
     {
         "move": "protect",
-        "number": 257
+        "number": 257,
+        "price": 4000
     },
     {
         "move": "thunderwave",
-        "number": 258
+        "number": 258,
+        "price": 3000
     },
     {
         "move": "skillswap",
-        "number": 259
+        "number": 259,
+        "price": 1000
     },
     {
         "move": "venomdrench",
-        "number": 260
+        "number": 260,
+        "price": 1000
     },
     {
         "move": "helpinghand",
-        "number": 261
+        "number": 261,
+        "price": 2000
     },
     {
         "move": "sleeptalk",
-        "number": 262
+        "number": 262,
+        "price": 1000
     },
     {
         "move": "thunderpunch",
-        "number": 263
+        "number": 263,
+        "price": 3000
     },
     {
         "move": "hail",
-        "number": 264
+        "number": 264,
+        "price": 2000
     },
     {
         "move": "roar",
-        "number": 265
+        "number": 265,
+        "price": 1000
     },
     {
         "move": "sunnyday",
-        "number": 266
+        "number": 266,
+        "price": 2000
     },
     {
         "move": "assurance",
-        "number": 267
+        "number": 267,
+        "price": 1000
     },
     {
         "move": "aurasphere",
-        "number": 268
+        "number": 268,
+        "price": 4000
     },
     {
         "move": "aerialace",
-        "number": 269
+        "number": 269,
+        "price": 2000
     },
     {
         "move": "encore",
-        "number": 270
+        "number": 270,
+        "price": 1000
     },
     {
         "move": "powerswap",
-        "number": 271
+        "number": 271,
+        "price": 1000
     },
     {
         "move": "poisontail",
-        "number": 272
+        "number": 272,
+        "price": 1000
     },
     {
         "move": "psychicfangs",
-        "number": 273
+        "number": 273,
+        "price": 6000
     },
     {
         "move": "tailwind",
-        "number": 274
+        "number": 274,
+        "price": 2000
     },
     {
         "move": "flareblitz",
-        "number": 275
+        "number": 275,
+        "price": 8000
     }
 ]

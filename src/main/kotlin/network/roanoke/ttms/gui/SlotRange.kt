@@ -1,6 +1,6 @@
 package network.roanoke.ttms.gui
 
-class SlotRange(var start: Int, var end: Int) {
+class SlotRange(private var start: Int, private var end: Int) {
 
     fun getStart(): Int {
         return start

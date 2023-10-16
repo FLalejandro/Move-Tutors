@@ -6,8 +6,10 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.fabricmc.fabric.api.event.player.UseEntityCallback
 import net.minecraft.server.MinecraftServer
 import network.roanoke.ttms.commands.TTMsCommand
-import network.roanoke.ttms.events.UseEntityEvent
+import network.roanoke.ttms.events.UseNPCEvent
+import network.roanoke.ttms.events.UseTMEvent
 import network.roanoke.ttms.utils.TMsConfig
+import java.util.*
 
 class TTMs : ModInitializer {
 
@@ -16,6 +18,19 @@ class TTMs : ModInitializer {
 
         val serverInstance: MinecraftServer
             get() = _serverInstance
+
+        private val _npcModePlayers: MutableList<UUID> = mutableListOf()
+        val npcModePlayers: MutableList<UUID>
+            get() = _npcModePlayers
+
+        private val _npcs: MutableList<UUID> = mutableListOf()
+        val npcs: MutableList<UUID>
+            get() = _npcs
+
+        fun setNPCs(npcs: List<UUID>) {
+            _npcs.clear()
+            _npcs.addAll(npcs)
+        }
 
         private lateinit var _tmsConfig: TMsConfig
         val tmsConfig: TMsConfig
@@ -42,7 +57,8 @@ class TTMs : ModInitializer {
 
         TTMsCommand()
 
-        UseEntityCallback.EVENT.register(UseEntityEvent())
+        UseEntityCallback.EVENT.register(UseTMEvent())
+        UseEntityCallback.EVENT.register(UseNPCEvent())
 
         ServerTickEvents.START_SERVER_TICK.register {
             if (onCooldown) {

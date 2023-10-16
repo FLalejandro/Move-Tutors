@@ -4,6 +4,7 @@ import eu.pb4.sgui.api.elements.GuiElementBuilder
 import eu.pb4.sgui.api.gui.SimpleGui
 import net.minecraft.item.Items
 import net.minecraft.text.Text
+import kotlin.math.ceil
 
 class PaginatedSection(guiElements: List<GuiElementBuilder>) {
     var guiElements: List<GuiElementBuilder> = guiElements
@@ -47,8 +48,8 @@ class PaginatedSection(guiElements: List<GuiElementBuilder>) {
         }
     }
 
-    fun incremementPage() {
-        val totalPages = Math.ceil(guiElements.size.toDouble() / getItemsPerPage()).toInt()
+    fun incrementPage() {
+        val totalPages = ceil(guiElements.size.toDouble() / getItemsPerPage()).toInt()
         currentPage++
         if (currentPage > totalPages) {
             currentPage--
