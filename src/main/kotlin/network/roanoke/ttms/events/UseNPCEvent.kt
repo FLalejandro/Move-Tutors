@@ -60,7 +60,7 @@ class UseNPCEvent: UseEntityCallback {
                 if (TTMs.onCooldown)
                     return ActionResult.PASS
 
-                GUIs.getTMShop(Utils.getPlayerByUUID(player.uuid)!!).open()
+                GUIs.getShopStartGUI(Utils.getPlayerByUUID(player.uuid)!!).open()
                 TTMs.onCooldown = true
                 return ActionResult.FAIL
             }

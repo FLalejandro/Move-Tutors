@@ -78,11 +78,15 @@ class TTMsCommand() {
                 return@Command 1
             }
 
-            p?.inventory!!.insertStack(tm)
+            if (p?.inventory!!.emptySlot != -1) {
+                p.inventory!!.insertStack(tm)
+            } else {
+                p.dropItem(tm, false)
+            }
 
-            p.sendMessage(Text.literal("§aYou received TM $name"))
+            p.sendMessage(Text.literal("§aYou received ${tmortr.uppercase()} $name"))
             source.player?.sendMessage(
-                Text.literal("§7Gave $player TM $name")
+                Text.literal("§7Gave $player ${tmortr.uppercase()} $name")
             )
             1
         }

@@ -1,5 +1,8 @@
 package network.roanoke.ttms.gui
 
+import com.cobblemon.mod.common.api.moves.Moves
+import com.cobblemon.mod.common.api.types.ElementalType
+import com.cobblemon.mod.common.api.types.ElementalTypes
 import eu.pb4.sgui.api.elements.GuiElementBuilder
 import eu.pb4.sgui.api.gui.SimpleGui
 import net.impactdev.impactor.api.economy.EconomyService
@@ -70,6 +73,16 @@ class GUIs {
                         paginatedSection.applyToGui(gui)
                     })
 
+            gui.setSlot(40,
+                GuiElementBuilder(Items.PLAYER_HEAD).setSkullOwner(
+                    "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZWRmNWMyZjg5M2JkM2Y4OWNhNDA3MDNkZWQzZTQyZGQwZmJkYmE2ZjY3NjhjODc4OWFmZGZmMWZhNzhiZjYifX19",
+                    null,
+                    null
+                ).setName(Text.literal("§cBack"))
+                    .setCallback { _, _, _ ->
+                        getShopStartGUI(player).open()
+                    })
+
             fillGUI(gui)
 
             return gui
@@ -112,6 +125,188 @@ class GUIs {
                 ).setName(Text.literal("§4Cancel"))
                     .setCallback { _, _, _ ->
                         getTMShop(player).open()
+                    })
+
+            fillGUI(gui)
+
+            return gui
+        }
+
+        fun getShopStartGUI(player: ServerPlayerEntity): SimpleGui {
+            val gui = SimpleGui(ScreenHandlerType.GENERIC_9X5, player, false)
+            gui.title = Text.literal("TR Shop")
+
+            gui.setSlot(10, GuiElementBuilder.from(TMs.getTR("protect"))
+                .setName(Text.literal("§fNormal"))
+                .setCallback { _, _, _ ->
+                    getTypeStore(player, ElementalTypes.NORMAL).open()
+                })
+
+            gui.setSlot(11, GuiElementBuilder.from(TMs.getTR("flamethrower"))
+                .setName(Text.literal("§fFire"))
+                .setCallback { _, _, _ ->
+                    getTypeStore(player, ElementalTypes.FIRE).open()
+                })
+
+            gui.setSlot(12, GuiElementBuilder.from(TMs.getTR("brine"))
+                .setName(Text.literal("§fWater"))
+                .setCallback { _, _, _ ->
+                    getTypeStore(player, ElementalTypes.WATER).open()
+                })
+
+            gui.setSlot(19, GuiElementBuilder.from(TMs.getTR("gigadrain"))
+                .setName(Text.literal("§fGrass"))
+                .setCallback { _, _, _ ->
+                    getTypeStore(player, ElementalTypes.GRASS).open()
+                })
+
+            gui.setSlot(20, GuiElementBuilder.from(TMs.getTR("thunderbolt"))
+                .setName(Text.literal("§fElectric"))
+                .setCallback { _, _, _ ->
+                    getTypeStore(player, ElementalTypes.ELECTRIC).open()
+                })
+
+            gui.setSlot(21, GuiElementBuilder.from(TMs.getTR("icebeam"))
+                .setName(Text.literal("§fIce"))
+                .setCallback { _, _, _ ->
+                    getTypeStore(player, ElementalTypes.ICE).open()
+                })
+
+            gui.setSlot(28, GuiElementBuilder.from(TMs.getTR("closecombat"))
+                .setName(Text.literal("§fFighting"))
+                .setCallback { _, _, _ ->
+                    getTypeStore(player, ElementalTypes.FIGHTING).open()
+                })
+
+            gui.setSlot(29, GuiElementBuilder.from(TMs.getTR("sludgebomb"))
+                .setName(Text.literal("§fPoison"))
+                .setCallback { _, _, _ ->
+                    getTypeStore(player, ElementalTypes.POISON).open()
+                })
+
+            gui.setSlot(30, GuiElementBuilder.from(TMs.getTR("earthquake"))
+                .setName(Text.literal("§fGround"))
+                .setCallback { _, _, _ ->
+                    getTypeStore(player, ElementalTypes.GROUND).open()
+                })
+
+            gui.setSlot(14, GuiElementBuilder.from(TMs.getTR("acrobatics"))
+                .setName(Text.literal("§fFlying"))
+                .setCallback { _, _, _ ->
+                    getTypeStore(player, ElementalTypes.FLYING).open()
+                })
+
+            gui.setSlot(15, GuiElementBuilder.from(TMs.getTR("psychic"))
+                .setName(Text.literal("§fPsychic"))
+                .setCallback { _, _, _ ->
+                    getTypeStore(player, ElementalTypes.PSYCHIC).open()
+                })
+
+            gui.setSlot(16, GuiElementBuilder.from(TMs.getTR("strugglebug"))
+                .setName(Text.literal("§fBug"))
+                .setCallback { _, _, _ ->
+                    getTypeStore(player, ElementalTypes.BUG).open()
+                })
+
+            gui.setSlot(23, GuiElementBuilder.from(TMs.getTR("rocktomb"))
+                .setName(Text.literal("§fRock"))
+                .setCallback { _, _, _ ->
+                    getTypeStore(player, ElementalTypes.ROCK).open()
+                })
+
+            gui.setSlot(24, GuiElementBuilder.from(TMs.getTR("shadowclaw"))
+                .setName(Text.literal("§fGhost"))
+                .setCallback { _, _, _ ->
+                    getTypeStore(player, ElementalTypes.GHOST).open()
+                })
+
+            gui.setSlot(25, GuiElementBuilder.from(TMs.getTR("dragondance"))
+                .setName(Text.literal("§fDragon"))
+                .setCallback { _, _, _ ->
+                    getTypeStore(player, ElementalTypes.DRAGON).open()
+                })
+
+            gui.setSlot(32, GuiElementBuilder.from(TMs.getTR("thief"))
+                .setName(Text.literal("§fDark"))
+                .setCallback { _, _, _ ->
+                    getTypeStore(player, ElementalTypes.DARK).open()
+                })
+
+            gui.setSlot(33, GuiElementBuilder.from(TMs.getTR("flashcannon"))
+                .setName(Text.literal("§fSteel"))
+                .setCallback { _, _, _ ->
+                    getTypeStore(player, ElementalTypes.STEEL).open()
+                })
+
+            gui.setSlot(34, GuiElementBuilder.from(TMs.getTR("drainingkiss"))
+                .setName(Text.literal("§fFairy"))
+                .setCallback { _, _, _ ->
+                    getTypeStore(player, ElementalTypes.FAIRY).open()
+                })
+
+            gui.setSlot(22, GuiElementBuilder.from(TMs.getTR("protect"))
+                .setName(Text.literal("§fAll Types"))
+                .setCallback { _, _, _ ->
+                    getTMShop(player).open()
+                })
+
+            fillGUI(gui)
+
+            return gui
+        }
+
+        private fun getTypeStore(player: ServerPlayerEntity, type: ElementalType): SimpleGui {
+            val gui = SimpleGui(ScreenHandlerType.GENERIC_9X5, player, false)
+
+            val tmList: List<GuiElementBuilder> = TTMs.tmsConfig.moveData.filter { it.price != -1 && Moves.getByName(it.move)!!.elementalType == type }.map {
+                GuiElementBuilder.from(TMs.getTR(it.move))
+                    .addLoreLine(Text.literal("§6§lPrice: §r§f$${it.price}"))
+                    .setCallback { _, _, _ ->
+                        getConfirmationWindow(player, it).open()
+                    }
+            }
+            val paginatedSection = PaginatedSection(tmList).setSlotRanges(
+                listOf(
+                    SlotRange(10, 16), SlotRange(19, 25), SlotRange(29, 33)
+                )
+            )
+
+            paginatedSection.applyToGui(gui)
+
+            gui.title = Text.literal("TR Shop")
+
+            gui.setSlot(28,
+                GuiElementBuilder(Items.PLAYER_HEAD).setSkullOwner(
+                    "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzdhZWU5YTc1YmYwZGY3ODk3MTgzMDE1Y2NhMGIyYTdkNzU1YzYzMzg4ZmYwMTc1MmQ1ZjQ0MTlmYzY0NSJ9fX0=",
+                    null,
+                    null
+                )
+                    .setName(Text.literal("§fPrevious"))
+                    .setCallback { _, _, _ ->
+                        paginatedSection.decrementPage()
+                        paginatedSection.applyToGui(gui)
+                    })
+
+            gui.setSlot(34,
+                GuiElementBuilder(Items.PLAYER_HEAD).setSkullOwner(
+                    "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjgyYWQxYjljYjRkZDIxMjU5YzBkNzVhYTMxNWZmMzg5YzNjZWY3NTJiZTM5NDkzMzgxNjRiYWM4NGE5NmUifX19",
+                    null,
+                    null
+                )
+                    .setName(Text.literal("§fNext"))
+                    .setCallback { _, _, _ ->
+                        paginatedSection.incrementPage()
+                        paginatedSection.applyToGui(gui)
+                    })
+
+            gui.setSlot(40,
+                GuiElementBuilder(Items.PLAYER_HEAD).setSkullOwner(
+                    "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZWRmNWMyZjg5M2JkM2Y4OWNhNDA3MDNkZWQzZTQyZGQwZmJkYmE2ZjY3NjhjODc4OWFmZGZmMWZhNzhiZjYifX19",
+                    null,
+                    null
+                ).setName(Text.literal("§cBack"))
+                    .setCallback { _, _, _ ->
+                        getShopStartGUI(player).open()
                     })
 
             fillGUI(gui)
