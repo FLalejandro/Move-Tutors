@@ -44,11 +44,13 @@ class UseNPCEvent: UseEntityCallback {
                 return ActionResult.PASS
 
             if (TTMs.npcs.contains(entity.uuid)) {
+                TTMs.onCooldown = true
                 TTMs.npcs.remove(entity.uuid)
                 player.sendMessage(Text.literal("§cNPC removed"))
                 entity.isCustomNameVisible = false
                 entity.isInvulnerable = false
             } else {
+                TTMs.onCooldown = true
                 TTMs.npcs.add(entity.uuid)
                 player.sendMessage(Text.literal("§aNPC added"))
                 entity.isCustomNameVisible = true
