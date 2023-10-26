@@ -29,7 +29,7 @@ class GUIs {
             }
         }
 
-        fun getTMShop(player: ServerPlayerEntity): SimpleGui {
+        private fun getTMShop(player: ServerPlayerEntity): SimpleGui {
             val gui = SimpleGui(ScreenHandlerType.GENERIC_9X5, player, false)
 
             val tmList: List<GuiElementBuilder> = TTMs.tmsConfig.moveData.filter { it.price != -1 }.map {
@@ -110,11 +110,15 @@ class GUIs {
                         if (account.balanceAsync().get() < price) {
                             player.sendMessage(Text.literal("§cYou can't afford this TR."))
                         } else {
-                            account.withdrawAsync(price)
-                            player.sendMessage(Text.literal("§aYou have purchased ").append(tr.name).append("§a!"))
-                            player.inventory.insertStack(tr)
+                            if (player.inventory.emptySlot != -1) {
+                                account.withdrawAsync(price)
+                                player.sendMessage(Text.literal("§aYou have purchased ").append(tr.name).append("§a!"))
+                                player.inventory.insertStack(tr)
+                            } else {
+                                player.sendMessage(Text.literal("§cYou don't have enough space in your inventory."))
+                            }
                         }
-                        getTMShop(player).open()
+                        getShopStartGUI(player).open()
                     })
 
             gui.setSlot(32,
@@ -124,7 +128,7 @@ class GUIs {
                     null
                 ).setName(Text.literal("§4Cancel"))
                     .setCallback { _, _, _ ->
-                        getTMShop(player).open()
+                        getShopStartGUI(player).open()
                     })
 
             fillGUI(gui)
