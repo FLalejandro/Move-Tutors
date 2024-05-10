@@ -3,9 +3,9 @@ package network.roanoke.ttms.commands
 import com.mojang.brigadier.Command
 import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.context.CommandContext
-import com.mojang.brigadier.suggestion.SuggestionProvider
 import com.mojang.brigadier.suggestion.Suggestions
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
+import me.lucko.fabric.api.permissions.v0.Permissions
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
 import net.minecraft.command.CommandSource
 import net.minecraft.item.ItemStack
@@ -24,9 +24,27 @@ class TTMsCommand() {
         CommandRegistrationCallback.EVENT.register(CommandRegistrationCallback { dispatcher, _, _ ->
             dispatcher.register(
                 CommandManager.literal("ttms")
-                    .then(CommandManager.literal("reload").requires { it.hasPermissionLevel(2) }.executes(reloadConfig()))
-                    .then(CommandManager.literal("npc").requires { it.hasPermissionLevel(2) }.executes(toggleNpcMode()))
-                    .then(CommandManager.literal("give").requires { it.hasPermissionLevel(2) }
+                    .then(CommandManager.literal("reload").requires {
+                        it.hasPermissionLevel(2) || (TTMs.luckPerms != null && Permissions.check(
+                            it,
+                            "ttms.admin.reload"
+                        ))
+                    }.executes(reloadConfig()))
+                    .then(
+                        CommandManager.literal("npc").requires {
+                            it.hasPermissionLevel(2) || (TTMs.luckPerms != null && Permissions.check(
+                                it,
+                                "ttms.admin.npc"
+                            ))
+                        }.then(
+                            argument("trtm", StringArgumentType.string())
+                                .suggests(this::suggestItem)
+                                .executes(toggleNpcMode())
+                        )
+                    )
+                    .then(CommandManager.literal("give").requires {
+                        it.hasPermissionLevel(2) || (TTMs.luckPerms != null && Permissions.check(it, "ttms.admin.give"))
+                    }
                         .then(
                             argument("player", StringArgumentType.string())
                                 .suggests(this::suggestPlayers)
@@ -49,10 +67,10 @@ class TTMsCommand() {
         return Command {
             val source = it.source
 
-            TTMs.tmsConfig.loadTMs()
+            TTMs.tmsConfig.loadMoves()
             TTMs.tmsConfig.loadCustomModelData()
             TTMs.tmsConfig.loadedAllTypes()
-            source.sendFeedback({Text.literal("Reloaded TTMs Config")}, true)
+            source.sendFeedback({ Text.literal("Reloaded TTMs Config") }, true)
 
             1
         }
@@ -65,12 +83,18 @@ class TTMsCommand() {
             if (source.player == null)
                 return@Command 1
 
+            val trtm = StringArgumentType.getString(it, "trtm").lowercase()
+            if (trtm != "tr" && trtm != "tm") {
+                source.player!!.sendMessage(Text.literal("§cInvalid Type: $trtm"))
+                return@Command 1
+            }
+
             if (TTMs.npcModePlayers.contains(source.player?.uuid)) {
                 TTMs.npcModePlayers.remove(source.player?.uuid)
                 source.player!!.sendMessage(Text.literal("§cNPC Mode disabled"))
             } else {
-                TTMs.npcModePlayers.add(source.player?.uuid!!)
-                source.player!!.sendMessage(Text.literal("§aNPC Mode enabled"))
+                TTMs.npcModePlayers[source.player?.uuid!!] = trtm
+                source.player!!.sendMessage(Text.literal("§aNPC Mode enabled - ${trtm.uppercase()}"))
             }
 
             1
@@ -115,7 +139,7 @@ class TTMsCommand() {
         ctx: CommandContext<ServerCommandSource>,
         builder: SuggestionsBuilder
     ): CompletableFuture<Suggestions> {
-        TTMs.tmsConfig.moveData.forEach {
+        TTMs.tmsConfig.tmsMoveData.forEach {
             builder.suggest(it.move)
         }
         return builder.buildFuture()

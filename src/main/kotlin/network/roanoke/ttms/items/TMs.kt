@@ -18,7 +18,7 @@ class TMs {
             var id = -1
 
             val move = Moves.getByName(name)
-            TTMs.tmsConfig.moveData.forEach {
+            TTMs.tmsConfig.tmsMoveData.forEach {
                if (it.move == name) {
                    if (move != null) {
                        item.setCustomName(Text.literal("§fTM${it.number}: ").append(move.displayName))

@@ -29,17 +29,24 @@ class GUIs {
             }
         }
 
-        private fun getTMShop(player: ServerPlayerEntity): SimpleGui {
+        private fun getShop(player: ServerPlayerEntity, shopType: String): SimpleGui {
             val gui = SimpleGui(ScreenHandlerType.GENERIC_9X5, player, false)
 
-            val tmList: List<GuiElementBuilder> = TTMs.tmsConfig.moveData.filter { it.price != -1 }.map {
-                GuiElementBuilder.from(TMs.getTR(it.move))
+            val list: List<MoveData> = if (shopType == "TR") {
+                TTMs.tmsConfig.trsMoveData.filter { it.price != -1 }
+            } else {
+                TTMs.tmsConfig.tmsMoveData.filter { it.price != -1 }
+            }
+
+            val moveList: List<GuiElementBuilder> = list.map {
+                GuiElementBuilder.from(if (shopType == "TR") TMs.getTR(it.move) else TMs.getTM(it.move))
                     .addLoreLine(Text.literal("§6§lPrice: §r§f$${it.price}"))
                     .setCallback { _, _, _ ->
-                    getConfirmationWindow(player, it).open()
-                }
+                        getConfirmationWindow(player, it, shopType, gui).open()
+                    }
             }
-            val paginatedSection = PaginatedSection(tmList).setSlotRanges(
+
+            val paginatedSection = PaginatedSection(moveList).setSlotRanges(
                 listOf(
                     SlotRange(10, 16), SlotRange(19, 25), SlotRange(29, 33)
                 )
@@ -80,7 +87,7 @@ class GUIs {
                     null
                 ).setName(Text.literal("§cBack"))
                     .setCallback { _, _, _ ->
-                        getShopStartGUI(player).open()
+                        getShopStartGUI(player, shopType).open()
                     })
 
             fillGUI(gui)
@@ -88,13 +95,13 @@ class GUIs {
             return gui
         }
 
-        private fun getConfirmationWindow(player: ServerPlayerEntity, moveData: MoveData): SimpleGui {
+        private fun getConfirmationWindow(player: ServerPlayerEntity, moveData: MoveData, shopType: String, oldUi: SimpleGui): SimpleGui {
             val account = EconomyService.instance().account(player.uuid).get()
             val gui = SimpleGui(ScreenHandlerType.GENERIC_9X5, player, false)
 
             gui.title = Text.literal("Are you sure?")
 
-            gui.setSlot(13, GuiElementBuilder.from(TMs.getTR(moveData.move))
+            gui.setSlot(13, GuiElementBuilder.from(if (shopType == "TR") TMs.getTR(moveData.move) else TMs.getTM(moveData.move))
                 .addLoreLine(Text.literal("§6§lPrice: §r§f$${moveData.price}"))
                 .build())
 
@@ -105,20 +112,20 @@ class GUIs {
                     null
                 ).setName(Text.literal("§aConfirm"))
                     .setCallback { _, _, _ ->
-                        val tr = TMs.getTR(moveData.move)
+                        val move = if (shopType == "TR") TMs.getTR(moveData.move) else TMs.getTM(moveData.move)
                         val price: BigDecimal = moveData.price.toBigDecimal()
                         if (account.balanceAsync().get() < price) {
-                            player.sendMessage(Text.literal("§cYou can't afford this TR."))
+                            player.sendMessage(Text.literal("§cYou can't afford this $shopType."))
                         } else {
                             if (player.inventory.emptySlot != -1) {
                                 account.withdrawAsync(price)
-                                player.sendMessage(Text.literal("§aYou have purchased ").append(tr.name).append("§a!"))
-                                player.inventory.insertStack(tr)
+                                player.sendMessage(Text.literal("§aYou have purchased ").append(move.name).append("§a!"))
+                                player.inventory.insertStack(move)
                             } else {
                                 player.sendMessage(Text.literal("§cYou don't have enough space in your inventory."))
                             }
                         }
-                        getShopStartGUI(player).open()
+                        oldUi.open()
                     })
 
             gui.setSlot(32,
@@ -128,7 +135,7 @@ class GUIs {
                     null
                 ).setName(Text.literal("§4Cancel"))
                     .setCallback { _, _, _ ->
-                        getShopStartGUI(player).open()
+                        oldUi.open()
                     })
 
             fillGUI(gui)
@@ -136,122 +143,122 @@ class GUIs {
             return gui
         }
 
-        fun getShopStartGUI(player: ServerPlayerEntity): SimpleGui {
+        fun getShopStartGUI(player: ServerPlayerEntity, shopType: String): SimpleGui {
             val gui = SimpleGui(ScreenHandlerType.GENERIC_9X5, player, false)
-            gui.title = Text.literal("TR Shop")
+            gui.title = Text.literal("$shopType Shop")
 
             gui.setSlot(10, GuiElementBuilder.from(TMs.getTR("protect"))
                 .setName(Text.literal("§fNormal"))
                 .setCallback { _, _, _ ->
-                    getTypeStore(player, ElementalTypes.NORMAL).open()
+                    getTypeStore(player, ElementalTypes.NORMAL, shopType).open()
                 })
 
             gui.setSlot(11, GuiElementBuilder.from(TMs.getTR("flamethrower"))
                 .setName(Text.literal("§fFire"))
                 .setCallback { _, _, _ ->
-                    getTypeStore(player, ElementalTypes.FIRE).open()
+                    getTypeStore(player, ElementalTypes.FIRE, shopType).open()
                 })
 
             gui.setSlot(12, GuiElementBuilder.from(TMs.getTR("brine"))
                 .setName(Text.literal("§fWater"))
                 .setCallback { _, _, _ ->
-                    getTypeStore(player, ElementalTypes.WATER).open()
+                    getTypeStore(player, ElementalTypes.WATER, shopType).open()
                 })
 
             gui.setSlot(19, GuiElementBuilder.from(TMs.getTR("gigadrain"))
                 .setName(Text.literal("§fGrass"))
                 .setCallback { _, _, _ ->
-                    getTypeStore(player, ElementalTypes.GRASS).open()
+                    getTypeStore(player, ElementalTypes.GRASS, shopType).open()
                 })
 
             gui.setSlot(20, GuiElementBuilder.from(TMs.getTR("thunderbolt"))
                 .setName(Text.literal("§fElectric"))
                 .setCallback { _, _, _ ->
-                    getTypeStore(player, ElementalTypes.ELECTRIC).open()
+                    getTypeStore(player, ElementalTypes.ELECTRIC, shopType).open()
                 })
 
             gui.setSlot(21, GuiElementBuilder.from(TMs.getTR("icebeam"))
                 .setName(Text.literal("§fIce"))
                 .setCallback { _, _, _ ->
-                    getTypeStore(player, ElementalTypes.ICE).open()
+                    getTypeStore(player, ElementalTypes.ICE, shopType).open()
                 })
 
             gui.setSlot(28, GuiElementBuilder.from(TMs.getTR("closecombat"))
                 .setName(Text.literal("§fFighting"))
                 .setCallback { _, _, _ ->
-                    getTypeStore(player, ElementalTypes.FIGHTING).open()
+                    getTypeStore(player, ElementalTypes.FIGHTING, shopType).open()
                 })
 
             gui.setSlot(29, GuiElementBuilder.from(TMs.getTR("sludgebomb"))
                 .setName(Text.literal("§fPoison"))
                 .setCallback { _, _, _ ->
-                    getTypeStore(player, ElementalTypes.POISON).open()
+                    getTypeStore(player, ElementalTypes.POISON, shopType).open()
                 })
 
             gui.setSlot(30, GuiElementBuilder.from(TMs.getTR("earthquake"))
                 .setName(Text.literal("§fGround"))
                 .setCallback { _, _, _ ->
-                    getTypeStore(player, ElementalTypes.GROUND).open()
+                    getTypeStore(player, ElementalTypes.GROUND, shopType).open()
                 })
 
             gui.setSlot(14, GuiElementBuilder.from(TMs.getTR("acrobatics"))
                 .setName(Text.literal("§fFlying"))
                 .setCallback { _, _, _ ->
-                    getTypeStore(player, ElementalTypes.FLYING).open()
+                    getTypeStore(player, ElementalTypes.FLYING, shopType).open()
                 })
 
             gui.setSlot(15, GuiElementBuilder.from(TMs.getTR("psychic"))
                 .setName(Text.literal("§fPsychic"))
                 .setCallback { _, _, _ ->
-                    getTypeStore(player, ElementalTypes.PSYCHIC).open()
+                    getTypeStore(player, ElementalTypes.PSYCHIC, shopType).open()
                 })
 
             gui.setSlot(16, GuiElementBuilder.from(TMs.getTR("strugglebug"))
                 .setName(Text.literal("§fBug"))
                 .setCallback { _, _, _ ->
-                    getTypeStore(player, ElementalTypes.BUG).open()
+                    getTypeStore(player, ElementalTypes.BUG, shopType).open()
                 })
 
             gui.setSlot(23, GuiElementBuilder.from(TMs.getTR("rocktomb"))
                 .setName(Text.literal("§fRock"))
                 .setCallback { _, _, _ ->
-                    getTypeStore(player, ElementalTypes.ROCK).open()
+                    getTypeStore(player, ElementalTypes.ROCK, shopType).open()
                 })
 
             gui.setSlot(24, GuiElementBuilder.from(TMs.getTR("shadowclaw"))
                 .setName(Text.literal("§fGhost"))
                 .setCallback { _, _, _ ->
-                    getTypeStore(player, ElementalTypes.GHOST).open()
+                    getTypeStore(player, ElementalTypes.GHOST, shopType).open()
                 })
 
             gui.setSlot(25, GuiElementBuilder.from(TMs.getTR("dragondance"))
                 .setName(Text.literal("§fDragon"))
                 .setCallback { _, _, _ ->
-                    getTypeStore(player, ElementalTypes.DRAGON).open()
+                    getTypeStore(player, ElementalTypes.DRAGON, shopType).open()
                 })
 
             gui.setSlot(32, GuiElementBuilder.from(TMs.getTR("thief"))
                 .setName(Text.literal("§fDark"))
                 .setCallback { _, _, _ ->
-                    getTypeStore(player, ElementalTypes.DARK).open()
+                    getTypeStore(player, ElementalTypes.DARK, shopType).open()
                 })
 
             gui.setSlot(33, GuiElementBuilder.from(TMs.getTR("flashcannon"))
                 .setName(Text.literal("§fSteel"))
                 .setCallback { _, _, _ ->
-                    getTypeStore(player, ElementalTypes.STEEL).open()
+                    getTypeStore(player, ElementalTypes.STEEL, shopType).open()
                 })
 
             gui.setSlot(34, GuiElementBuilder.from(TMs.getTR("drainingkiss"))
                 .setName(Text.literal("§fFairy"))
                 .setCallback { _, _, _ ->
-                    getTypeStore(player, ElementalTypes.FAIRY).open()
+                    getTypeStore(player, ElementalTypes.FAIRY, shopType).open()
                 })
 
             gui.setSlot(22, GuiElementBuilder.from(TMs.getTR("protect"))
                 .setName(Text.literal("§fAll Types"))
                 .setCallback { _, _, _ ->
-                    getTMShop(player).open()
+                    getShop(player, shopType).open()
                 })
 
             fillGUI(gui)
@@ -259,17 +266,24 @@ class GUIs {
             return gui
         }
 
-        private fun getTypeStore(player: ServerPlayerEntity, type: ElementalType): SimpleGui {
+        private fun getTypeStore(player: ServerPlayerEntity, type: ElementalType, shopType: String): SimpleGui {
             val gui = SimpleGui(ScreenHandlerType.GENERIC_9X5, player, false)
 
-            val tmList: List<GuiElementBuilder> = TTMs.tmsConfig.moveData.filter { it.price != -1 && Moves.getByName(it.move)!!.elementalType == type }.map {
-                GuiElementBuilder.from(TMs.getTR(it.move))
+            val list: List<MoveData> = if (shopType == "TR") {
+                TTMs.tmsConfig.trsMoveData.filter { it.price != -1 && Moves.getByName(it.move)!!.elementalType == type }
+            } else {
+                TTMs.tmsConfig.tmsMoveData.filter { it.price != -1 && Moves.getByName(it.move)!!.elementalType == type }
+            }
+
+            val moveList: List<GuiElementBuilder> = list.map {
+                GuiElementBuilder.from(if (shopType == "TR") TMs.getTR(it.move) else TMs.getTM(it.move))
                     .addLoreLine(Text.literal("§6§lPrice: §r§f$${it.price}"))
                     .setCallback { _, _, _ ->
-                        getConfirmationWindow(player, it).open()
+                        getConfirmationWindow(player, it, shopType, gui).open()
                     }
             }
-            val paginatedSection = PaginatedSection(tmList).setSlotRanges(
+
+            val paginatedSection = PaginatedSection(moveList).setSlotRanges(
                 listOf(
                     SlotRange(10, 16), SlotRange(19, 25), SlotRange(29, 33)
                 )
@@ -277,7 +291,7 @@ class GUIs {
 
             paginatedSection.applyToGui(gui)
 
-            gui.title = Text.literal("TR Shop")
+            gui.title = Text.literal("$shopType Shop")
 
             gui.setSlot(28,
                 GuiElementBuilder(Items.PLAYER_HEAD).setSkullOwner(
@@ -310,7 +324,7 @@ class GUIs {
                     null
                 ).setName(Text.literal("§cBack"))
                     .setCallback { _, _, _ ->
-                        getShopStartGUI(player).open()
+                        getShopStartGUI(player, shopType).open()
                     })
 
             fillGUI(gui)

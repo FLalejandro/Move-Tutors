@@ -1,14 +1,9 @@
 package network.roanoke.ttms.events
 
-import com.cobblemon.mod.common.CobblemonSounds
-import com.cobblemon.mod.common.api.moves.BenchedMove
-import com.cobblemon.mod.common.api.moves.Moves
-import com.cobblemon.mod.common.entity.pokemon.PokemonEntity
 import net.fabricmc.fabric.api.event.player.UseEntityCallback
 import net.minecraft.entity.Entity
 import net.minecraft.entity.passive.VillagerEntity
 import net.minecraft.entity.player.PlayerEntity
-import net.minecraft.sound.SoundCategory
 import net.minecraft.text.Text
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Hand
@@ -43,26 +38,35 @@ class UseNPCEvent: UseEntityCallback {
             if (TTMs.onCooldown)
                 return ActionResult.PASS
 
-            if (TTMs.npcs.contains(entity.uuid)) {
+            val type = TTMs.npcModePlayers[player.uuid]!!
+
+            if (TTMs.trNpcs.contains(entity.uuid) || TTMs.tmNpcs.contains(entity.uuid)) {
                 TTMs.onCooldown = true
-                TTMs.npcs.remove(entity.uuid)
+                TTMs.trNpcs.remove(entity.uuid)
+                TTMs.tmNpcs.remove(entity.uuid)
                 player.sendMessage(Text.literal("§cNPC removed"))
                 entity.isCustomNameVisible = false
                 entity.isInvulnerable = false
             } else {
                 TTMs.onCooldown = true
-                TTMs.npcs.add(entity.uuid)
-                player.sendMessage(Text.literal("§aNPC added"))
+                if (type == "tr") {
+                    TTMs.trNpcs.add(entity.uuid)
+                } else {
+                    TTMs.tmNpcs.add(entity.uuid)
+                }
+                player.sendMessage(Text.literal("§aNPC added - ${type.uppercase()}"))
                 entity.isCustomNameVisible = true
                 entity.isInvulnerable = true
             }
             TTMs.tmsConfig.saveNPCs()
         } else {
-            if (TTMs.npcs.contains(entity.uuid)) {
+            if (TTMs.trNpcs.contains(entity.uuid) || TTMs.tmNpcs.contains(entity.uuid)) {
                 if (TTMs.onCooldown)
                     return ActionResult.PASS
 
-                GUIs.getShopStartGUI(Utils.getPlayerByUUID(player.uuid)!!).open()
+                val type = if (TTMs.trNpcs.contains(entity.uuid)) "TR" else "TM"
+
+                GUIs.getShopStartGUI(Utils.getPlayerByUUID(player.uuid)!!, type).open()
                 TTMs.onCooldown = true
                 return ActionResult.FAIL
             }

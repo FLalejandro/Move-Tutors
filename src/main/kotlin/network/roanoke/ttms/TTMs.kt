@@ -4,6 +4,8 @@ import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.fabricmc.fabric.api.event.player.UseEntityCallback
+import net.luckperms.api.LuckPerms
+import net.luckperms.api.LuckPermsProvider
 import net.minecraft.server.MinecraftServer
 import network.roanoke.ttms.commands.TTMsCommand
 import network.roanoke.ttms.events.UseNPCEvent
@@ -19,17 +21,28 @@ class TTMs : ModInitializer {
         val serverInstance: MinecraftServer
             get() = _serverInstance
 
-        private val _npcModePlayers: MutableList<UUID> = mutableListOf()
-        val npcModePlayers: MutableList<UUID>
+        var luckPerms: LuckPerms? = null
+
+        private val _npcModePlayers: MutableMap<UUID, String> = mutableMapOf()
+        val npcModePlayers: MutableMap<UUID, String>
             get() = _npcModePlayers
 
-        private val _npcs: MutableList<UUID> = mutableListOf()
-        val npcs: MutableList<UUID>
-            get() = _npcs
+        private val _trNpcs: MutableList<UUID> = mutableListOf()
+        val trNpcs: MutableList<UUID>
+            get() = _trNpcs
 
-        fun setNPCs(npcs: List<UUID>) {
-            _npcs.clear()
-            _npcs.addAll(npcs)
+        fun setTrNPCs(npcs: List<UUID>) {
+            _trNpcs.clear()
+            _trNpcs.addAll(npcs)
+        }
+
+        private val _tmNpcs: MutableList<UUID> = mutableListOf()
+        val tmNpcs: MutableList<UUID>
+            get() = _tmNpcs
+
+        fun setTmNPCs(npcs: List<UUID>) {
+            _tmNpcs.clear()
+            _tmNpcs.addAll(npcs)
         }
 
         private lateinit var _tmsConfig: TMsConfig
@@ -51,6 +64,12 @@ class TTMs : ModInitializer {
     override fun onInitialize() {
         ServerLifecycleEvents.SERVER_STARTED.register { server: MinecraftServer ->
             _serverInstance = server
+
+            try {
+                luckPerms = LuckPermsProvider.get()
+            } catch (e: Exception) {
+                println("LuckPerms not found.")
+            }
         }
 
         _tmsConfig = TMsConfig()

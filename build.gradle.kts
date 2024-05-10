@@ -13,7 +13,6 @@ repositories {
     maven("https://oss.sonatype.org/content/repositories/snapshots") // For snapshot builds
 
     maven(url = "https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/")
-    maven("https://maven.impactdev.net/repository/development/")
 
     maven(url = "https://maven.nucleoid.xyz/") { name = "Nucleoid" } // Server GUI
     maven { url= uri("https://maven.nucleoid.xyz") }
@@ -23,18 +22,21 @@ repositories {
 
 dependencies {
     minecraft("com.mojang:minecraft:${property("minecraft_version")}")
-
     mappings("net.fabricmc:yarn:${property("yarn_mappings")}")
+
     modImplementation("net.fabricmc:fabric-loader:${property("loader_version")}")
     modImplementation("net.fabricmc.fabric-api:fabric-api:${property("fabric_api_version")}")
-
-    modImplementation("com.cobblemon:fabric:1.4.0+1.20.1-SNAPSHOT")
+    modImplementation("com.cobblemon:fabric:${property("cobblemon_version")}")
 
     modImplementation("eu.pb4:sgui:1.2.2+1.20")
     include("eu.pb4:sgui:1.2.2+1.20")
 
     implementation("cloud.commandframework", "cloud-core", "1.8.4")
     implementation("net.impactdev.impactor.api:economy:5.1.1-SNAPSHOT")
+
+    // LuckPerms API
+    modImplementation ("me.lucko:fabric-permissions-api:0.3.1")
+    compileOnly ("net.luckperms:api:5.4")
 }
 
 tasks {
