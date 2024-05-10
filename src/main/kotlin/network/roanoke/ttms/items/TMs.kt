@@ -32,25 +32,25 @@ class TMs {
 
 
             val modelData = when (move!!.elementalType) {
-                ElementalTypes.NORMAL -> 2420
-                ElementalTypes.FIRE -> 2520
-                ElementalTypes.WATER -> 2620
-                ElementalTypes.GRASS -> 2720
-                ElementalTypes.ELECTRIC -> 2820
-                ElementalTypes.ICE -> 2920
-                ElementalTypes.FIGHTING -> 21020
-                ElementalTypes.POISON -> 21120
-                ElementalTypes.GROUND -> 21220
-                ElementalTypes.FLYING -> 21320
-                ElementalTypes.PSYCHIC -> 21420
-                ElementalTypes.BUG -> 21520
-                ElementalTypes.ROCK -> 21620
-                ElementalTypes.GHOST -> 21720
-                ElementalTypes.DRAGON -> 21820
-                ElementalTypes.DARK -> 21920
-                ElementalTypes.STEEL -> 22020
-                ElementalTypes.FAIRY -> 22120
-                else -> 2420
+                ElementalTypes.NORMAL -> TTMs.tmsConfig.customModelData["normal"] ?: 0
+                ElementalTypes.FIRE -> TTMs.tmsConfig.customModelData["fire"] ?: 0
+                ElementalTypes.WATER -> TTMs.tmsConfig.customModelData["water"] ?: 0
+                ElementalTypes.GRASS -> TTMs.tmsConfig.customModelData["grass"] ?: 0
+                ElementalTypes.ELECTRIC -> TTMs.tmsConfig.customModelData["electric"] ?: 0
+                ElementalTypes.ICE -> TTMs.tmsConfig.customModelData["ice"] ?: 0
+                ElementalTypes.FIGHTING -> TTMs.tmsConfig.customModelData["fighting"] ?: 0
+                ElementalTypes.POISON -> TTMs.tmsConfig.customModelData["poison"] ?: 0
+                ElementalTypes.GROUND -> TTMs.tmsConfig.customModelData["ground"] ?: 0
+                ElementalTypes.FLYING -> TTMs.tmsConfig.customModelData["flying"] ?: 0
+                ElementalTypes.PSYCHIC -> TTMs.tmsConfig.customModelData["psychic"] ?: 0
+                ElementalTypes.BUG -> TTMs.tmsConfig.customModelData["bug"] ?: 0
+                ElementalTypes.ROCK -> TTMs.tmsConfig.customModelData["rock"] ?: 0
+                ElementalTypes.GHOST -> TTMs.tmsConfig.customModelData["ghost"] ?: 0
+                ElementalTypes.DRAGON -> TTMs.tmsConfig.customModelData["dragon"] ?: 0
+                ElementalTypes.DARK -> TTMs.tmsConfig.customModelData["dark"] ?: 0
+                ElementalTypes.STEEL -> TTMs.tmsConfig.customModelData["steel"] ?: 0
+                ElementalTypes.FAIRY -> TTMs.tmsConfig.customModelData["fairy"] ?: 0
+                else -> TTMs.tmsConfig.customModelData["unknown"] ?: TTMs.tmsConfig.customModelData["normal"] ?: 0
             }
 
             nbt.putInt("tm_id", id)
@@ -63,7 +63,7 @@ class TMs {
         }
 
         fun getTR(name: String): ItemStack {
-            var tm = getTM(name)
+            val tm = getTM(name)
             if (tm == ItemStack.EMPTY) return ItemStack.EMPTY
 
             val move = Moves.getByName(name)

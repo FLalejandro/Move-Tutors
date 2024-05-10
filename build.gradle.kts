@@ -9,13 +9,6 @@ group = property("maven_group")!!
 version = property("mod_version")!!
 
 repositories {
-    maven {
-        url = uri("https://cursemaven.com")
-        content {
-            includeGroup("curse.maven")
-        }
-    }
-
     mavenCentral()
     maven("https://oss.sonatype.org/content/repositories/snapshots") // For snapshot builds
 

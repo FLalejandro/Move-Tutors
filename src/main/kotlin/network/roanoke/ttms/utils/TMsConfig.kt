@@ -1,5 +1,6 @@
 package network.roanoke.ttms.utils
 
+import com.cobblemon.mod.common.api.types.ElementalTypes
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonArray
@@ -11,14 +12,19 @@ import java.io.*
 import java.util.*
 
 class TMsConfig {
-    private val _moveData: List<MoveData>
+    private lateinit var _moveData: List<MoveData>
     val moveData: List<MoveData>
         get() = _moveData
 
+    private lateinit var _customModelData: MutableMap<String, Int>
+    val customModelData: MutableMap<String, Int>
+        get() = _customModelData
+
     init {
         createFolders()
-        _moveData = loadTMs() ?: emptyList()
-        println("Loaded ${_moveData.size} TMs")
+
+        loadTMs()
+        loadCustomModelData()
 
         if (npcFileExists())
             loadNPCs()
@@ -30,6 +36,56 @@ class TMsConfig {
         if (!folder.exists()) {
             folder.mkdir()
         }
+    }
+
+    private fun getCMDFile(): File {
+        val savePath = FabricLoader.getInstance().configDir.resolve("ttms/custom_model_data.json")
+        val saveFile = savePath.toFile()
+        if (!saveFile.exists()) {
+            if (saveFile.createNewFile()) {
+                loadStartingCMD().let { list ->
+                    FileWriter(saveFile).use {
+                        GsonBuilder().setPrettyPrinting().create().toJson(list, it)
+                    }
+                }
+            }
+        }
+        return saveFile
+    }
+
+    private fun loadStartingCMD(): JsonArray? {
+        val jsonStream: InputStream? = TTMs::class.java.getResourceAsStream("/custom_model_data.json")
+        return jsonStream?.use {
+            InputStreamReader(it).use { reader ->
+                JsonParser.parseReader(reader).asJsonArray
+            }
+        }
+    }
+
+    fun loadCustomModelData() {
+        val gson = Gson()
+        val file = getCMDFile()
+
+        try {
+            FileReader(file).use {
+                val typeToken = object : TypeToken<MutableMap<String, Int>>() {}.type
+                _customModelData = gson.fromJson(it, typeToken)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        println("Loaded ${_customModelData.size} Custom Model Data Numbers")
+        loadedAllTypes()
+    }
+
+    public fun loadedAllTypes(): Boolean {
+        ElementalTypes.all().forEach { type ->
+            if (!_customModelData.containsKey(type.name.lowercase())) {
+                println("Missing Custom Model Data for ${type.name}")
+                return false
+            }
+        }
+        return true
     }
 
     private fun getTMsFile(): File {
@@ -56,20 +112,19 @@ class TMsConfig {
         }
     }
 
-    private fun loadTMs(): List<MoveData>? {
+    fun loadTMs() {
         val gson = Gson()
         val file = getTMsFile()
 
         try {
             FileReader(file).use {
                 val typeToken = object : TypeToken<List<MoveData>>() {}.type
-                return gson.fromJson(it, typeToken)
+                _moveData = gson.fromJson(it, typeToken)
+                println("Loaded ${_moveData.size} TMs")
             }
         } catch (e: Exception) {
             e.printStackTrace()
         }
-
-        return null
     }
 
     private fun getNPCFile(): File {
