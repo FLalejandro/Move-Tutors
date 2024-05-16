@@ -9,12 +9,15 @@ import java.util.*
 class Utils {
 
     companion object {
-        fun broadcast(message: String) {
+        fun broadcast(message: Any) {
             val server = TTMs.serverInstance
 
             for (player in server.playerManager.playerList) {
                 if (player is ServerPlayerEntity) {
-                    player.sendMessage(Text.literal(message), false)
+                    if (message !is Text)
+                        player.sendMessage(Text.literal(message.toString()), false)
+                    else
+                        player.sendMessage(message, false)
                 }
             }
         }
