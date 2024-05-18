@@ -29,13 +29,19 @@ class GUIs {
             }
         }
 
-        private fun getShop(player: ServerPlayerEntity, shopType: String): SimpleGui {
+        private fun getShop(player: ServerPlayerEntity, shopType: String, nameSorting: Boolean): SimpleGui {
             val gui = SimpleGui(ScreenHandlerType.GENERIC_9X5, player, false)
 
-            val list: List<MoveData> = if (shopType == "TR") {
+            var list: List<MoveData> = if (shopType == "TR") {
                 TTMs.tmsConfig.trsMoveData.filter { it.price != -1 }
             } else {
                 TTMs.tmsConfig.tmsMoveData.filter { it.price != -1 }
+            }
+
+            list = if (nameSorting) {
+                list.sortedBy { it.move }
+            } else {
+                list.sortedBy { it.number }
             }
 
             val moveList: List<GuiElementBuilder> = list.map {
@@ -48,7 +54,7 @@ class GUIs {
 
             val paginatedSection = PaginatedSection(moveList).setSlotRanges(
                 listOf(
-                    SlotRange(10, 16), SlotRange(19, 25), SlotRange(29, 33)
+                    SlotRange(10, 16), SlotRange(19, 25), if (moveList.size > 21) SlotRange(29, 33) else SlotRange(28, 34)
                 )
             )
 
@@ -56,6 +62,7 @@ class GUIs {
 
             gui.title = Text.literal("TR Shop")
 
+            if (moveList.size > 21) {
             gui.setSlot(28,
                 GuiElementBuilder(Items.PLAYER_HEAD).setSkullOwner(
                     "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzdhZWU5YTc1YmYwZGY3ODk3MTgzMDE1Y2NhMGIyYTdkNzU1YzYzMzg4ZmYwMTc1MmQ1ZjQ0MTlmYzY0NSJ9fX0=",
@@ -79,6 +86,25 @@ class GUIs {
                         paginatedSection.incrementPage()
                         paginatedSection.applyToGui(gui)
                     })
+            }
+
+            var itemName = "§7Sort By Name"
+            var itemDescription = "§fCurrently sorting by Number"
+            if (nameSorting) {
+               itemName = "§7Sort By Number"
+                itemDescription = "§fCurrently sorting by Name"
+            }
+
+            gui.setSlot(4,
+                GuiElementBuilder(Items.PLAYER_HEAD).setSkullOwner(
+                    "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTRkNDliYWU5NWM3OTBjM2IxZmY1YjJmMDEwNTJhNzE0ZDYxODU0ODFkNWIxYzg1OTMwYjNmOTlkMjMyMTY3NCJ9fX0=",
+                    null,
+                    null
+                ).setName(Text.literal(itemName))
+                    .addLoreLine(Text.literal(itemDescription))
+                    .setCallback { _, _, _ ->
+                        getShop(player, shopType, !nameSorting).open()
+                    })
 
             gui.setSlot(40,
                 GuiElementBuilder(Items.PLAYER_HEAD).setSkullOwner(
@@ -87,7 +113,7 @@ class GUIs {
                     null
                 ).setName(Text.literal("§cBack"))
                     .setCallback { _, _, _ ->
-                        getShopStartGUI(player, shopType).open()
+                        getShopStartGUI(player, shopType, nameSorting).open()
                     })
 
             fillGUI(gui)
@@ -143,122 +169,122 @@ class GUIs {
             return gui
         }
 
-        fun getShopStartGUI(player: ServerPlayerEntity, shopType: String): SimpleGui {
+        fun getShopStartGUI(player: ServerPlayerEntity, shopType: String, nameSorting: Boolean): SimpleGui {
             val gui = SimpleGui(ScreenHandlerType.GENERIC_9X5, player, false)
             gui.title = Text.literal("$shopType Shop")
 
             gui.setSlot(10, GuiElementBuilder.from(TMs.getTR("protect"))
                 .setName(Text.literal("§fNormal"))
                 .setCallback { _, _, _ ->
-                    getTypeStore(player, ElementalTypes.NORMAL, shopType).open()
+                    getTypeStore(player, ElementalTypes.NORMAL, shopType, nameSorting).open()
                 })
 
             gui.setSlot(11, GuiElementBuilder.from(TMs.getTR("flamethrower"))
                 .setName(Text.literal("§fFire"))
                 .setCallback { _, _, _ ->
-                    getTypeStore(player, ElementalTypes.FIRE, shopType).open()
+                    getTypeStore(player, ElementalTypes.FIRE, shopType, nameSorting).open()
                 })
 
             gui.setSlot(12, GuiElementBuilder.from(TMs.getTR("brine"))
                 .setName(Text.literal("§fWater"))
                 .setCallback { _, _, _ ->
-                    getTypeStore(player, ElementalTypes.WATER, shopType).open()
+                    getTypeStore(player, ElementalTypes.WATER, shopType, nameSorting).open()
                 })
 
             gui.setSlot(19, GuiElementBuilder.from(TMs.getTR("gigadrain"))
                 .setName(Text.literal("§fGrass"))
                 .setCallback { _, _, _ ->
-                    getTypeStore(player, ElementalTypes.GRASS, shopType).open()
+                    getTypeStore(player, ElementalTypes.GRASS, shopType, nameSorting).open()
                 })
 
             gui.setSlot(20, GuiElementBuilder.from(TMs.getTR("thunderbolt"))
                 .setName(Text.literal("§fElectric"))
                 .setCallback { _, _, _ ->
-                    getTypeStore(player, ElementalTypes.ELECTRIC, shopType).open()
+                    getTypeStore(player, ElementalTypes.ELECTRIC, shopType, nameSorting).open()
                 })
 
             gui.setSlot(21, GuiElementBuilder.from(TMs.getTR("icebeam"))
                 .setName(Text.literal("§fIce"))
                 .setCallback { _, _, _ ->
-                    getTypeStore(player, ElementalTypes.ICE, shopType).open()
+                    getTypeStore(player, ElementalTypes.ICE, shopType, nameSorting).open()
                 })
 
             gui.setSlot(28, GuiElementBuilder.from(TMs.getTR("closecombat"))
                 .setName(Text.literal("§fFighting"))
                 .setCallback { _, _, _ ->
-                    getTypeStore(player, ElementalTypes.FIGHTING, shopType).open()
+                    getTypeStore(player, ElementalTypes.FIGHTING, shopType, nameSorting).open()
                 })
 
             gui.setSlot(29, GuiElementBuilder.from(TMs.getTR("sludgebomb"))
                 .setName(Text.literal("§fPoison"))
                 .setCallback { _, _, _ ->
-                    getTypeStore(player, ElementalTypes.POISON, shopType).open()
+                    getTypeStore(player, ElementalTypes.POISON, shopType, nameSorting).open()
                 })
 
             gui.setSlot(30, GuiElementBuilder.from(TMs.getTR("earthquake"))
                 .setName(Text.literal("§fGround"))
                 .setCallback { _, _, _ ->
-                    getTypeStore(player, ElementalTypes.GROUND, shopType).open()
+                    getTypeStore(player, ElementalTypes.GROUND, shopType, nameSorting).open()
                 })
 
             gui.setSlot(14, GuiElementBuilder.from(TMs.getTR("acrobatics"))
                 .setName(Text.literal("§fFlying"))
                 .setCallback { _, _, _ ->
-                    getTypeStore(player, ElementalTypes.FLYING, shopType).open()
+                    getTypeStore(player, ElementalTypes.FLYING, shopType, nameSorting).open()
                 })
 
             gui.setSlot(15, GuiElementBuilder.from(TMs.getTR("psychic"))
                 .setName(Text.literal("§fPsychic"))
                 .setCallback { _, _, _ ->
-                    getTypeStore(player, ElementalTypes.PSYCHIC, shopType).open()
+                    getTypeStore(player, ElementalTypes.PSYCHIC, shopType, nameSorting).open()
                 })
 
             gui.setSlot(16, GuiElementBuilder.from(TMs.getTR("strugglebug"))
                 .setName(Text.literal("§fBug"))
                 .setCallback { _, _, _ ->
-                    getTypeStore(player, ElementalTypes.BUG, shopType).open()
+                    getTypeStore(player, ElementalTypes.BUG, shopType, nameSorting).open()
                 })
 
             gui.setSlot(23, GuiElementBuilder.from(TMs.getTR("rocktomb"))
                 .setName(Text.literal("§fRock"))
                 .setCallback { _, _, _ ->
-                    getTypeStore(player, ElementalTypes.ROCK, shopType).open()
+                    getTypeStore(player, ElementalTypes.ROCK, shopType, nameSorting).open()
                 })
 
             gui.setSlot(24, GuiElementBuilder.from(TMs.getTR("shadowclaw"))
                 .setName(Text.literal("§fGhost"))
                 .setCallback { _, _, _ ->
-                    getTypeStore(player, ElementalTypes.GHOST, shopType).open()
+                    getTypeStore(player, ElementalTypes.GHOST, shopType, nameSorting).open()
                 })
 
             gui.setSlot(25, GuiElementBuilder.from(TMs.getTR("dragondance"))
                 .setName(Text.literal("§fDragon"))
                 .setCallback { _, _, _ ->
-                    getTypeStore(player, ElementalTypes.DRAGON, shopType).open()
+                    getTypeStore(player, ElementalTypes.DRAGON, shopType, nameSorting).open()
                 })
 
             gui.setSlot(32, GuiElementBuilder.from(TMs.getTR("thief"))
                 .setName(Text.literal("§fDark"))
                 .setCallback { _, _, _ ->
-                    getTypeStore(player, ElementalTypes.DARK, shopType).open()
+                    getTypeStore(player, ElementalTypes.DARK, shopType, nameSorting).open()
                 })
 
             gui.setSlot(33, GuiElementBuilder.from(TMs.getTR("flashcannon"))
                 .setName(Text.literal("§fSteel"))
                 .setCallback { _, _, _ ->
-                    getTypeStore(player, ElementalTypes.STEEL, shopType).open()
+                    getTypeStore(player, ElementalTypes.STEEL, shopType, nameSorting).open()
                 })
 
             gui.setSlot(34, GuiElementBuilder.from(TMs.getTR("drainingkiss"))
                 .setName(Text.literal("§fFairy"))
                 .setCallback { _, _, _ ->
-                    getTypeStore(player, ElementalTypes.FAIRY, shopType).open()
+                    getTypeStore(player, ElementalTypes.FAIRY, shopType, nameSorting).open()
                 })
 
             gui.setSlot(22, GuiElementBuilder.from(TMs.getTR("protect"))
                 .setName(Text.literal("§fAll Types"))
                 .setCallback { _, _, _ ->
-                    getShop(player, shopType).open()
+                    getShop(player, shopType, false).open()
                 })
 
             fillGUI(gui)
@@ -266,13 +292,19 @@ class GUIs {
             return gui
         }
 
-        private fun getTypeStore(player: ServerPlayerEntity, type: ElementalType, shopType: String): SimpleGui {
+        private fun getTypeStore(player: ServerPlayerEntity, type: ElementalType, shopType: String, nameSorting: Boolean): SimpleGui {
             val gui = SimpleGui(ScreenHandlerType.GENERIC_9X5, player, false)
 
-            val list: List<MoveData> = if (shopType == "TR") {
+            var list: List<MoveData> = if (shopType == "TR") {
                 TTMs.tmsConfig.trsMoveData.filter { it.price != -1 && Moves.getByName(it.move)!!.elementalType == type }
             } else {
                 TTMs.tmsConfig.tmsMoveData.filter { it.price != -1 && Moves.getByName(it.move)!!.elementalType == type }
+            }
+
+            list = if (nameSorting) {
+                list.sortedBy { it.move }
+            } else {
+                list.sortedBy { it.number }
             }
 
             val moveList: List<GuiElementBuilder> = list.map {
@@ -285,7 +317,7 @@ class GUIs {
 
             val paginatedSection = PaginatedSection(moveList).setSlotRanges(
                 listOf(
-                    SlotRange(10, 16), SlotRange(19, 25), SlotRange(29, 33)
+                    SlotRange(10, 16), SlotRange(19, 25), if (moveList.size > 21) SlotRange(29, 33) else SlotRange(28, 34)
                 )
             )
 
@@ -293,6 +325,7 @@ class GUIs {
 
             gui.title = Text.literal("$shopType Shop")
 
+            if (moveList.size > 21) {
             gui.setSlot(28,
                 GuiElementBuilder(Items.PLAYER_HEAD).setSkullOwner(
                     "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzdhZWU5YTc1YmYwZGY3ODk3MTgzMDE1Y2NhMGIyYTdkNzU1YzYzMzg4ZmYwMTc1MmQ1ZjQ0MTlmYzY0NSJ9fX0=",
@@ -316,6 +349,25 @@ class GUIs {
                         paginatedSection.incrementPage()
                         paginatedSection.applyToGui(gui)
                     })
+            }
+
+            var itemName = "§7Sort By Name"
+            var itemDescription = "§fCurrently sorting by Number"
+            if (nameSorting) {
+                itemName = "§7Sort By Number"
+                itemDescription = "§fCurrently sorting by Name"
+            }
+
+            gui.setSlot(4,
+                GuiElementBuilder(Items.PLAYER_HEAD).setSkullOwner(
+                    "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTRkNDliYWU5NWM3OTBjM2IxZmY1YjJmMDEwNTJhNzE0ZDYxODU0ODFkNWIxYzg1OTMwYjNmOTlkMjMyMTY3NCJ9fX0=",
+                    null,
+                    null
+                ).setName(Text.literal(itemName))
+                    .addLoreLine(Text.literal(itemDescription))
+                    .setCallback { _, _, _ ->
+                        getTypeStore(player, type, shopType, !nameSorting).open()
+                    })
 
             gui.setSlot(40,
                 GuiElementBuilder(Items.PLAYER_HEAD).setSkullOwner(
@@ -324,7 +376,7 @@ class GUIs {
                     null
                 ).setName(Text.literal("§cBack"))
                     .setCallback { _, _, _ ->
-                        getShopStartGUI(player, shopType).open()
+                        getShopStartGUI(player, shopType, nameSorting).open()
                     })
 
             fillGUI(gui)

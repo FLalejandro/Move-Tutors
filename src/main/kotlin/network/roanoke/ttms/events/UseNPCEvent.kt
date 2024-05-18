@@ -66,7 +66,7 @@ class UseNPCEvent: UseEntityCallback {
 
                 val type = if (TTMs.trNpcs.contains(entity.uuid)) "TR" else "TM"
 
-                GUIs.getShopStartGUI(Utils.getPlayerByUUID(player.uuid)!!, type).open()
+                GUIs.getShopStartGUI(Utils.getPlayerByUUID(player.uuid)!!, type, false).open()
                 TTMs.onCooldown = true
                 return ActionResult.FAIL
             }

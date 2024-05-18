@@ -72,7 +72,12 @@ class UseTMEvent: UseEntityCallback {
         }
 
         var canLearn = false
-        entity.pokemon.species.moves.tmMoves.forEach {
+//        entity.pokemon.species.moves.tmMoves.forEach {
+//            if (it.name.lowercase() == moveName)
+//                canLearn = true
+//        }
+
+        entity.pokemon.form.moves.tmMoves.forEach {
             if (it.name.lowercase() == moveName)
                 canLearn = true
         }
