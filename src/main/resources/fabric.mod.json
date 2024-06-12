@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "id": "ttms",
+  "id": "tutormoves",
   "version": "${version}",
-  "name": "TTMs",
-  "description": "Adds usable TMs to Cobblemon",
+  "name": "TutorMoves",
+  "description": "Adds Move Tutoring to Cobblemon",
   "authors": [
-    "GuitarXpress"
+    "Novoro"
   ],
   "contact": {
     "repo": ""
@@ -14,13 +14,13 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "network.roanoke.ttms.TTMs"
+      "TutorMoves.TutorMoves"
     ]
   },
   "depends": {
     "fabricloader": ">=0.14.22",
     "fabric": "*",
     "minecraft": "1.20.1",
-    "cobblemon": ">=1.4.1+1.20.1"
+    "cobblemon": ">=1.5.0+1.20.1"
   }
 }

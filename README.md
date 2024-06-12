@@ -1,2 +1,2 @@
-# TTMS
-Adds usable TMs to Cobblemon
+# Tutor Moves
+Adds Move Tutoring to Cobblemon!
