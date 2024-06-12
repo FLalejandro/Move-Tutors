@@ -11,6 +11,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
+
 public class MoveTeacher {
 
     public static void teachMove(ServerPlayerEntity player, int slot, MoveTemplate move) {
