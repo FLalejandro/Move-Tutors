@@ -3,22 +3,24 @@ package TutorMoves.util;
 import com.cobblemon.mod.common.api.moves.MoveTemplate;
 import com.cobblemon.mod.common.api.moves.Moves;
 import com.cobblemon.mod.common.api.types.ElementalType;
+import dev.roanoke.rib.utils.ItemBuilder;
+import dev.roanoke.rib.utils.LoreLike;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Identifier;
 import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
 import net.minecraft.text.TextColor;
-import net.minecraft.util.Formatting;
-import dev.roanoke.rib.utils.ItemBuilder;
-import dev.roanoke.rib.utils.LoreLike;
+import net.minecraft.util.Identifier;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class MoveUtil {
 
     private static final Map<String, String> TYPE_GEM_MAP = new HashMap<>();
     private static final Map<String, String> TYPE_COLOR_MAP = new HashMap<>();
+    private static final String LIGHT_BLUE = "#ADD8E6";
 
     static {
         TYPE_GEM_MAP.put("BUG", "cobblemon:bug_gem");
@@ -80,14 +82,21 @@ public class MoveUtil {
 
         // Collect all lore entries
         List<Text> lore = new ArrayList<>();
-        lore.add(Text.literal("Type: ").append(Text.literal(type).styled(style -> style.withColor(TextColor.parse(typeColor)))));
-        lore.add(Text.literal("Category: " + capitalize(move.getDamageCategory().getName())));
-        lore.add(Text.literal("Power: " + power));
-        lore.add(Text.literal("Accuracy: " + accuracy + "%"));
+        lore.add(Text.literal("Type: ").styled(style -> style.withColor(TextColor.parse(LIGHT_BLUE)))
+                .append(Text.literal(type).styled(style -> style.withColor(TextColor.parse(typeColor)))));
+        lore.add(Text.literal("Category: " + capitalize(move.getDamageCategory().getName())).styled(style -> style.withColor(TextColor.parse(LIGHT_BLUE))));
+        lore.add(Text.literal("Power: " + power).styled(style -> style.withColor(TextColor.parse(LIGHT_BLUE))));
+        lore.add(Text.literal("Accuracy: " + accuracy + "%").styled(style -> style.withColor(TextColor.parse(LIGHT_BLUE))));
 
         // Split description for better readability and add to lore
         List<String> descriptionLines = splitDescription(move.getDescription().getString(), 40);
         descriptionLines.forEach(line -> lore.add(Text.literal(line)));
+
+
+        // Add price information
+        lore.add(Text.literal(""));
+        lore.add(Text.literal(""));
+        lore.add(Text.literal("§6§lPrice: §r§f$100"));
 
         // Set the custom name and lore using ItemBuilder
         ItemBuilder itemBuilder = new ItemBuilder(itemStack)

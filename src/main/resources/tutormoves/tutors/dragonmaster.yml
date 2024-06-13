@@ -1,0 +1,16 @@
+# DON'T TOUCH Config-Version OR THINGS WILL BREAK
+# If you make more tutor files, you will want this in the event
+# the Tutor file format is updated.
+Config-Version: 1.0.0
+
+# GUI Title
+name: Dragon Master
+# Permission needed to open
+permission: tutormoves.open.dragonmaster
+# Size of GUI
+size: 3
+# List of Moves the Tutor Offers
+moves:
+  - dracometeor
+  - dragonclaw
+  - dragondance

@@ -2,3 +2,9 @@
 Config-Version: 1.0.0
 
 #
+TutorMoves:
+  # The currency which will be used to "purchase" tutor moves.
+  # Options: impactor, item, both
+  currency: impactor
+  # The Size of the Main Tutor GUI (2-6)
+  size: 6

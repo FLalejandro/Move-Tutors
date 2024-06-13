@@ -10,7 +10,6 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.loader.api.FabricLoader;
 import net.luckperms.api.LuckPermsProvider;
-import net.minecraft.server.MinecraftServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +23,6 @@ import java.nio.file.Paths;
 public class TutorMoves implements ModInitializer {
 
     public static final Logger LOGGER = LoggerFactory.getLogger("TutorMoves");
-    public static MinecraftServer server = null;
     public static PermissionHelper perms = null;
     private Configuration mainConfig;
     private Configuration langConfig;
@@ -65,6 +63,9 @@ public class TutorMoves implements ModInitializer {
         ConfigVersionUpdater updater = new ConfigVersionUpdater(mainConfig, langConfig, "1.0.0");
         updater.updateConfig();
         LangManager.loadConfig(langConfig);
+
+        // Ensure the tutors folder and default tutor file exist
+        ensureDefaultTutorFiles();
     }
 
     public File getOrCreateConfigurationFile(String fileName) throws IOException {
@@ -105,6 +106,29 @@ public class TutorMoves implements ModInitializer {
             YamlConfiguration.save(config, file);
         } catch(IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void ensureDefaultTutorFiles() {
+        File tutorsFolder = new File(getConfigFolder(), "tutors");
+        if (!tutorsFolder.exists()) {
+            tutorsFolder.mkdirs();
+        }
+        // Check if the tutors folder is empty
+        if (tutorsFolder.isDirectory() && tutorsFolder.list().length == 0) {
+            File defaultTutorFile = new File(tutorsFolder, "dragonmaster.yml");
+            if (!defaultTutorFile.exists()) {
+                try (FileOutputStream outputStream = new FileOutputStream(defaultTutorFile)) {
+                    Path path = Paths.get("tutormoves", "tutors", "dragonmaster.yml");
+                    InputStream in = getClass().getClassLoader().getResourceAsStream(path.toString().replace("\\", "/"));
+                    if (in == null) {
+                        throw new RuntimeException("dragonmaster.yml resource not found");
+                    }
+                    in.transferTo(outputStream);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 }

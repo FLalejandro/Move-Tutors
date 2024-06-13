@@ -1,5 +1,8 @@
 # DON'T TOUCH Config-Version OR THINGS WILL BREAK
 Config-Version: 1.0.0
+
 # We Support Legacy and MiniMessage Formatting!
 Successful-Tutor: "<aqua>Your <cyan>{pokemon} <aqua>was taught <cyan>{move}<aqua>!"
 Unsuccessful-Tutor: "<aqua>Your <cyan>{pokemon} <aqua>did not learn <cyan>{move}<aqua>."
+Insufficient-Funds: "<red>Failed to purchase the move. Ensure you have enough money."
+Error-No-Pokemon: "<red>No Pokemon found in slot {slot}."

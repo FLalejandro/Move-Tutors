@@ -11,7 +11,6 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
-
 public class MoveTeacher {
 
     public static void teachMove(ServerPlayerEntity player, int slot, MoveTemplate move) {
@@ -34,7 +33,18 @@ public class MoveTeacher {
             return;
         }
 
-        if (pokemon.getMoveSet().getMoves().stream().anyMatch(m -> m.getTemplate() == move) || pokemon.getBenchedMoves().iterator().hasNext() && pokemon.getBenchedMoves().iterator().next().getMoveTemplate() == move) {
+        boolean knowsMove = pokemon.getMoveSet().getMoves().stream().anyMatch(m -> m.getTemplate() == move);
+
+        if (!knowsMove) {
+            for (BenchedMove benchedMove : pokemon.getBenchedMoves()) {
+                if (benchedMove.getMoveTemplate() == move) {
+                    knowsMove = true;
+                    break;
+                }
+            }
+        }
+
+        if (knowsMove) {
             player.sendMessage(Text.literal(pokemon.getDisplayName().getString() + " already knows " + move.getDisplayName().getString()).formatted(Formatting.RED));
             return;
         }
