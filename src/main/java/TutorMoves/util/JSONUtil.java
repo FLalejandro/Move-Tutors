@@ -4,7 +4,6 @@ import com.cobblemon.mod.common.api.storage.NoPokemonStoreException;
 import com.cobblemon.mod.common.api.storage.party.PlayerPartyStore;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.cobblemon.mod.common.Cobblemon;
-import com.cobblemon.mod.common.api.pokemon.PokemonSpecies;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -31,9 +30,10 @@ public class JSONUtil {
      * @return The Pokémon in the specified slot.
      */
     private static Pokemon getPokemonInSlot(ServerPlayerEntity player, int slot) throws NoPokemonStoreException {
-        slot = slot-1;
+        slot = slot - 1;
         PlayerPartyStore partyStore = Cobblemon.INSTANCE.getStorage().getParty(player.getUuid());
-        return partyStore.get(slot);
+        Pokemon pokemon = partyStore.get(slot);
+        return pokemon;
     }
 
     /**
@@ -72,29 +72,45 @@ public class JSONUtil {
 
         if (pokemon != null) {
             String speciesName = pokemon.getSpecies().getName().toLowerCase();
+            String formName = pokemon.getForm().getName().toLowerCase();
 
             Path jsonFile = findSpeciesJsonFile(speciesName);
             if (jsonFile != null) {
                 try (InputStream inputStream = Files.newInputStream(jsonFile)) {
                     JsonObject jsonObject = JsonParser.parseReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8)).getAsJsonObject();
-                    JsonArray movesArray = jsonObject.getAsJsonArray("moves");
+                    JsonArray baseMovesArray = jsonObject.getAsJsonArray("moves");
 
-                    for (int i = 0; i < movesArray.size(); i++) {
-                        String move = movesArray.get(i).getAsString();
+                    // Add base moves
+                    for (int i = 0; i < baseMovesArray.size(); i++) {
+                        String move = baseMovesArray.get(i).getAsString();
                         if (move.startsWith("tutor:")) {
                             tutorMoves.add(move.substring(6));
+                        }
+                    }
+
+                    // Add form-specific moves
+                    if (jsonObject.has("forms")) {
+                        JsonArray formsArray = jsonObject.getAsJsonArray("forms");
+                        for (int i = 0; i < formsArray.size(); i++) {
+                            JsonObject formObject = formsArray.get(i).getAsJsonObject();
+                            if (formObject.get("name").getAsString().toLowerCase().equals(formName)) {
+                                JsonArray formMovesArray = formObject.getAsJsonArray("moves");
+                                tutorMoves.clear(); // Clear base moves if form-specific moves are found
+                                for (int j = 0; j < formMovesArray.size(); j++) {
+                                    String move = formMovesArray.get(j).getAsString();
+                                    if (move.startsWith("tutor:")) {
+                                        tutorMoves.add(move.substring(6));
+                                    }
+                                }
+                                break;
+                            }
                         }
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            } else {
-                System.err.println("JSON file for species " + speciesName + " not found.");
             }
-        } else {
-            System.err.println("No Pokémon found in slot " + slot);
         }
-
         return tutorMoves;
     }
 }

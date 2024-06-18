@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 
 public class AllTutorScreen {
 
+
     private enum SortOption {
         ALPHABETICAL,
         CATEGORY,
@@ -184,6 +185,7 @@ public class AllTutorScreen {
                         throw new RuntimeException(e);
                     }
                 }));
+
     }
 
     /**
