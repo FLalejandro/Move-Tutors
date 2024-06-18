@@ -1,8 +1,8 @@
 package TutorMoves.commands;
 
+import TutorMoves.TutorMoves;
 import TutorMoves.guis.AllTutorScreen;
 import TutorMoves.guis.SpecificTutorScreen;
-import TutorMoves.util.TutorYAMLReader;
 import com.cobblemon.mod.common.api.storage.NoPokemonStoreException;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
@@ -105,6 +105,7 @@ public class TutorCommands {
      * @return 1 if successful, 0 otherwise.
      */
     private static int reloadTutorMoves(CommandContext<ServerCommandSource> ctx) {
+        TutorMoves.reloadConfigurations();
         ctx.getSource().sendMessage(Text.literal("Tutor moves configuration reloaded."));
         return 1;
     }
@@ -119,8 +120,6 @@ public class TutorCommands {
     private static int tutorMove(CommandContext<ServerCommandSource> ctx, int slot) throws NoPokemonStoreException {
         ServerCommandSource source = ctx.getSource();
         ServerPlayerEntity player = source.getPlayer();
-
-        System.out.println("Executing /tutormoves tutor for player: " + (player != null ? player.getName().getString() : "null") + ", slot: " + slot);
 
         if (player == null) {
             System.out.println("Player is null. Exiting command.");
@@ -144,8 +143,6 @@ public class TutorCommands {
     private static int openSpecificTutor(CommandContext<ServerCommandSource> ctx, String specificTutor, int slot) {
         ServerCommandSource source = ctx.getSource();
         ServerPlayerEntity player = source.getPlayer();
-
-        System.out.println("Executing /tutormoves open for player: " + (player != null ? player.getName().getString() : "null") + ", specific tutor: " + specificTutor);
 
         if (player == null) {
             System.out.println("Player is null. Exiting command.");

@@ -1,5 +1,6 @@
 package TutorMoves.guis;
 
+import TutorMoves.helper.SortingHelper;
 import TutorMoves.util.EconUtil;
 import TutorMoves.util.MoveUtil;
 import TutorMoves.util.TutorYAMLReader;
@@ -14,18 +15,27 @@ import net.minecraft.item.Items;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 import dev.roanoke.rib.utils.GuiUtils;
 import dev.roanoke.rib.utils.PaginatedSection;
 import dev.roanoke.rib.utils.SlotRange;
 import com.cobblemon.mod.common.api.moves.Moves;
 import com.cobblemon.mod.common.api.moves.MoveTemplate;
+import net.minecraft.util.Formatting;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class SpecificTutorScreen {
+
+    private enum SortOption {
+        ALPHABETICAL,
+        CATEGORY,
+        TYPE
+    }
+
+    private static SortOption currentSortOption = SortOption.ALPHABETICAL;
 
     /**
      * Opens the specific tutor move GUI for the player.
@@ -82,15 +92,34 @@ public class SpecificTutorScreen {
         Moves moves = Moves.INSTANCE;
         MoveUtil moveUtil = new MoveUtil(moves);
 
+        // Fetch the price from the configuration
+        BigDecimal price = new BigDecimal(tutorConfig.getCost());
+
+        // Create MoveTemplate list and apply sorting
+        List<MoveTemplate> moveTemplates = tutorConfig.getMoves();
+
+        switch (currentSortOption) {
+            case CATEGORY:
+                moveTemplates = SortingHelper.sortByCategory(moveTemplates);
+                break;
+            case TYPE:
+                moveTemplates = SortingHelper.sortByType(moveTemplates);
+                break;
+            case ALPHABETICAL:
+            default:
+                moveTemplates = SortingHelper.sortAlphabetically(moveTemplates);
+                break;
+        }
+
         // Create GuiElementBuilder for each tutor move
-        List<GuiElementBuilder> elements = tutorConfig.getMoves().stream()
+        List<GuiElementBuilder> elements = moveTemplates.stream()
                 .map(moveTemplate -> {
                     if (moveTemplate == null || moveTemplate.equals(MoveTemplate.Companion.dummy(moveTemplate.getName()))) {
                         return null;
                     }
-                    ItemStack itemStack = moveUtil.getGemForMove(moveTemplate);
+                    ItemStack itemStack = moveUtil.getGemForMove(moveTemplate, price);
                     return GuiElementBuilder.from(itemStack).setCallback((x, y, z) -> {
-                        EconUtil.openConfirmationWindow(player, moveTemplate, slot - 1, gui).open();
+                        EconUtil.openConfirmationWindow(player, moveTemplate, slot - 1, gui, price).open();
                     });
                 })
                 .filter(element -> element != null)
@@ -106,6 +135,9 @@ public class SpecificTutorScreen {
 
         // Apply the initial page to the GUI
         paginatedSection.applyToGui(gui);
+
+        // Add sorting buttons
+        applySortingButtons(gui, rows, slot, tutorFileName);
 
         gui.open();
     }
@@ -137,6 +169,38 @@ public class SpecificTutorScreen {
 
         GuiUtils.fillGUI(gui); // Fill the rest of the GUI with placeholder items
         System.out.println("GUI filled with placeholder items");
+    }
+
+    /**
+     * Applies sorting buttons to the GUI.
+     *
+     * @param gui The GUI to apply the sorting buttons to.
+     * @param rows The number of rows in the GUI.
+     * @param slot The slot of the Pokémon (1-based index).
+     * @param tutorFileName The name of the specific tutor file.
+     */
+    private static void applySortingButtons(SimpleGui gui, int rows, int slot, String tutorFileName) {
+        int sortSlotAlpha = (rows - 1) * 9 + 3;
+        int sortSlotCategory = (rows - 1) * 9 + 4;
+        int sortSlotType = (rows - 1) * 9 + 5;
+
+        gui.setSlot(sortSlotAlpha, GuiElementBuilder.from(Items.PAPER.getDefaultStack().setCustomName(Text.literal("Alphabetical")))
+                .setCallback((x, y, z) -> {
+                    currentSortOption = SortOption.ALPHABETICAL;
+                    open(gui.getPlayer(), slot, tutorFileName);
+                }));
+
+        gui.setSlot(sortSlotCategory, GuiElementBuilder.from(Items.NAME_TAG.getDefaultStack().setCustomName(Text.literal("Category")))
+                .setCallback((x, y, z) -> {
+                    currentSortOption = SortOption.CATEGORY;
+                    open(gui.getPlayer(), slot, tutorFileName);
+                }));
+
+        gui.setSlot(sortSlotType, GuiElementBuilder.from(Items.GOLD_INGOT.getDefaultStack().setCustomName(Text.literal("Type")))
+                .setCallback((x, y, z) -> {
+                    currentSortOption = SortOption.TYPE;
+                    open(gui.getPlayer(), slot, tutorFileName);
+                }));
     }
 
     /**

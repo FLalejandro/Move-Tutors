@@ -1,6 +1,6 @@
 package TutorMoves.util;
 
-import TutorMoves.helper.MoveTeacher;
+import com.cobblemon.mod.common.Cobblemon;
 import com.cobblemon.mod.common.api.moves.BenchedMove;
 import com.cobblemon.mod.common.api.moves.MoveTemplate;
 import com.cobblemon.mod.common.api.moves.Moves;
@@ -8,19 +8,19 @@ import com.cobblemon.mod.common.api.pokemon.moves.LearnsetQuery;
 import com.cobblemon.mod.common.api.storage.NoPokemonStoreException;
 import com.cobblemon.mod.common.api.storage.party.PlayerPartyStore;
 import com.cobblemon.mod.common.pokemon.Pokemon;
-import com.cobblemon.mod.common.Cobblemon;
+import dev.roanoke.rib.utils.GuiUtils;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import net.impactdev.impactor.api.economy.EconomyService;
+import net.kyori.adventure.audience.Audience;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import dev.roanoke.rib.utils.GuiUtils;
 
 import java.math.BigDecimal;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 public class EconUtil {
@@ -31,10 +31,10 @@ public class EconUtil {
      * @param player The player purchasing the move.
      * @param move The move being purchased.
      * @param slot The slot of the Pokémon.
+     * @param price The price of the move.
      * @return True if the purchase was successful, false otherwise.
      */
-    public static boolean purchaseMove(ServerPlayerEntity player, MoveTemplate move, int slot) {
-        BigDecimal price = new BigDecimal("100"); // Example price
+    public static boolean purchaseMove(ServerPlayerEntity player, MoveTemplate move, int slot, BigDecimal price) {
         try {
             var account = EconomyService.instance().account(player.getUuid()).get();
 
@@ -42,12 +42,12 @@ public class EconUtil {
             Pokemon pokemon = partyStore.get(slot);
 
             if (pokemon == null) {
-                player.sendMessage(Text.literal("No Pokémon found in slot " + (slot + 1)).formatted(Formatting.RED));
+                LangManager.send((Audience) player, "Error-No-Pokemon", Map.of("{slot}", String.valueOf(slot + 1)));
                 return false;
             }
 
             if (!LearnsetQuery.Companion.getANY().canLearn(move, pokemon.getForm().getMoves())) {
-                player.sendMessage(Text.literal(pokemon.getDisplayName().getString() + " can't learn " + move.getDisplayName().getString()).formatted(Formatting.RED));
+                LangManager.send((Audience) player, "Error-Cant-Learn", Map.of("{pokemon}", pokemon.getDisplayName().getString(), "{move}", move.getDisplayName().getString()));
                 return false;
             }
 
@@ -63,7 +63,7 @@ public class EconUtil {
             }
 
             if (knowsMove) {
-                player.sendMessage(Text.literal(pokemon.getDisplayName().getString() + " already knows " + move.getDisplayName().getString()).formatted(Formatting.RED));
+                LangManager.send((Audience) player, "Error-Already-Knows", Map.of("{pokemon}", pokemon.getDisplayName().getString(), "{move}", move.getDisplayName().getString()));
                 return false;
             }
 
@@ -74,10 +74,10 @@ public class EconUtil {
                 } else {
                     pokemon.getBenchedMoves().add(new BenchedMove(move, 0));
                 }
-                player.sendMessage(Text.literal(pokemon.getDisplayName().getString() + " learned " + move.getDisplayName().getString()).formatted(Formatting.GREEN));
+                LangManager.send((Audience) player, "Success-Learned", Map.of("{pokemon}", pokemon.getDisplayName().getString(), "{move}", move.getDisplayName().getString()));
                 return true;
             } else {
-                player.sendMessage(Text.literal("§cYou can't afford this move.").formatted(Formatting.RED));
+                LangManager.send((Audience) player, "Insufficient-Funds");
             }
 
         } catch (ExecutionException | InterruptedException | NoPokemonStoreException e) {
@@ -93,24 +93,24 @@ public class EconUtil {
      * @param moveTemplate The move template to purchase.
      * @param slot The slot of the Pokémon.
      * @param oldGui The previous GUI.
+     * @param price The price of the move.
      * @return The confirmation GUI.
      */
-    public static SimpleGui openConfirmationWindow(ServerPlayerEntity player, MoveTemplate moveTemplate, int slot, SimpleGui oldGui) {
+    public static SimpleGui openConfirmationWindow(ServerPlayerEntity player, MoveTemplate moveTemplate, int slot, SimpleGui oldGui, BigDecimal price) {
         SimpleGui gui = new SimpleGui(ScreenHandlerType.GENERIC_9X3, player, false);
 
         gui.setTitle(Text.literal("Confirm Purchase"));
 
         MoveUtil moveUtil = new MoveUtil(Moves.INSTANCE);
-        ItemStack itemStack = moveUtil.getGemForMove(moveTemplate);
+        ItemStack itemStack = moveUtil.getGemForMove(moveTemplate, price);
 
-        gui.setSlot(13, GuiElementBuilder.from(itemStack)
-                .build());
+        gui.setSlot(13, GuiElementBuilder.from(itemStack).build());
 
         gui.setSlot(11, GuiElementBuilder.from(Items.GREEN_WOOL.getDefaultStack())
                 .setName(Text.literal("§aConfirm"))
                 .setCallback((x, y, z) -> {
-                    if (purchaseMove(player, moveTemplate, slot)) {
-                        player.sendMessage(Text.literal("§aSuccessfully purchased " + moveTemplate.getDisplayName().getString() + " for your Pokémon!"));
+                    if (purchaseMove(player, moveTemplate, slot, price)) {
+                        LangManager.send((Audience) player, "Successful-Tutor", Map.of("{cost}", price.toString(), "{pokemon}", moveTemplate.getDisplayName().getString()));
                     }
                     oldGui.open();
                 }));

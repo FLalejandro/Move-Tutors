@@ -1,10 +1,10 @@
 # DON'T TOUCH Config-Version OR THINGS WILL BREAK
 Config-Version: 1.0.0
-
-#
 TutorMoves:
   # The currency which will be used to "purchase" tutor moves.
-  # Options: impactor, item, both
-  currency: impactor
+  # Options: impactor:{currency}, items, both.
+  currencyKey: impactor:dollars
   # The Size of the Main Tutor GUI (2-6)
   size: 6
+  # The cost of teaching moves
+  cost: 5000

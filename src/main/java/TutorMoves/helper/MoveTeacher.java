@@ -1,5 +1,6 @@
 package TutorMoves.helper;
 
+import TutorMoves.util.LangManager;
 import com.cobblemon.mod.common.api.moves.BenchedMove;
 import com.cobblemon.mod.common.api.moves.MoveTemplate;
 import com.cobblemon.mod.common.api.pokemon.moves.LearnsetQuery;
@@ -7,9 +8,10 @@ import com.cobblemon.mod.common.api.storage.NoPokemonStoreException;
 import com.cobblemon.mod.common.api.storage.party.PlayerPartyStore;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.cobblemon.mod.common.Cobblemon;
+import net.kyori.adventure.audience.Audience;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+
+import java.util.Map;
 
 public class MoveTeacher {
 
@@ -18,18 +20,18 @@ public class MoveTeacher {
         try {
             partyStore = Cobblemon.INSTANCE.getStorage().getParty(player.getUuid());
         } catch (NoPokemonStoreException e) {
-            player.sendMessage(Text.literal("No Pokémon found in slot " + (slot + 1)).formatted(Formatting.RED));
+            LangManager.send((Audience) player, "Error-No-Pokemon", Map.of("{slot}", String.valueOf(slot + 1)));
             return;
         }
         Pokemon pokemon = partyStore.get(slot);
 
         if (pokemon == null) {
-            player.sendMessage(Text.literal("No Pokémon found in slot " + (slot + 1)).formatted(Formatting.RED));
+            LangManager.send((Audience) player, "Error-No-Pokemon", Map.of("{slot}", String.valueOf(slot + 1)));
             return;
         }
 
         if (!LearnsetQuery.Companion.getANY().canLearn(move, pokemon.getForm().getMoves())) {
-            player.sendMessage(Text.literal(pokemon.getDisplayName().getString() + " can't learn " + move.getDisplayName().getString()).formatted(Formatting.RED));
+            LangManager.send((Audience) player, "Error-Cant-Learn", Map.of("{pokemon}", pokemon.getDisplayName().getString(), "{move}", move.getDisplayName().getString()));
             return;
         }
 
@@ -45,7 +47,7 @@ public class MoveTeacher {
         }
 
         if (knowsMove) {
-            player.sendMessage(Text.literal(pokemon.getDisplayName().getString() + " already knows " + move.getDisplayName().getString()).formatted(Formatting.RED));
+            LangManager.send((Audience) player, "Error-Already-Knows", Map.of("{pokemon}", pokemon.getDisplayName().getString(), "{move}", move.getDisplayName().getString()));
             return;
         }
 
@@ -55,6 +57,6 @@ public class MoveTeacher {
             pokemon.getBenchedMoves().add(new BenchedMove(move, 0));
         }
 
-        player.sendMessage(Text.literal(pokemon.getDisplayName().getString() + " learned " + move.getDisplayName().getString()).formatted(Formatting.GREEN));
+        LangManager.send((Audience) player, "Success-Learned", Map.of("{pokemon}", pokemon.getDisplayName().getString(), "{move}", move.getDisplayName().getString()));
     }
 }

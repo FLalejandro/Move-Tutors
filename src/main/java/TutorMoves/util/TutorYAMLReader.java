@@ -21,12 +21,14 @@ public class TutorYAMLReader {
         private final String name;
         private final String permission;
         private final int size;
+        private final int cost;  // Added cost parameter
         private final List<MoveTemplate> moves;
 
-        public TutorConfig(String name, String permission, int size, List<MoveTemplate> moves) {
+        public TutorConfig(String name, String permission, int size, int cost, List<MoveTemplate> moves) {
             this.name = name;
             this.permission = permission;
             this.size = size;
+            this.cost = cost;
             this.moves = moves;
         }
 
@@ -40,6 +42,10 @@ public class TutorYAMLReader {
 
         public int getSize() {
             return size;
+        }
+
+        public int getCost() {
+            return cost;  // Getter for cost
         }
 
         public List<MoveTemplate> getMoves() {
@@ -60,6 +66,7 @@ public class TutorYAMLReader {
             String name = (String) obj.get("name");
             String permission = (String) obj.get("permission");
             int size = (int) obj.get("size");
+            int cost = (int) obj.get("cost");  // Read cost from YAML
             List<String> moveNames = (List<String>) obj.get("moves");
 
             List<MoveTemplate> moves = new ArrayList<>();
@@ -72,7 +79,7 @@ public class TutorYAMLReader {
                 }
             }
 
-            return new TutorConfig(name, permission, size, moves);
+            return new TutorConfig(name, permission, size, cost, moves);  // Pass cost to TutorConfig
         }
     }
 

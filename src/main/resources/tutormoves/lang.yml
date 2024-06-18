@@ -2,7 +2,9 @@
 Config-Version: 1.0.0
 
 # We Support Legacy and MiniMessage Formatting!
-Successful-Tutor: "<aqua>Your <cyan>{pokemon} <aqua>was taught <cyan>{move}<aqua>!"
-Unsuccessful-Tutor: "<aqua>Your <cyan>{pokemon} <aqua>did not learn <cyan>{move}<aqua>."
-Insufficient-Funds: "<red>Failed to purchase the move. Ensure you have enough money."
+Success-Learned: "<green>{pokemon} learned {move}."
+Successful-Tutor: "<green>You spent <dark_green>{cost} to tutor {pokemon}."
+Insufficient-Funds: "<red>You do not have enough money to purchase this move."
 Error-No-Pokemon: "<red>No Pokemon found in slot {slot}."
+Error-Cant-Learn: "<red>{pokemon} can't learn {move}."
+Error-Already-Knows: "<red>{pokemon} already knows {move}."

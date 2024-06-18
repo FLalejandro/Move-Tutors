@@ -7,8 +7,10 @@ Config-Version: 1.0.0
 name: Dragon Master
 # Permission needed to open
 permission: tutormoves.open.dragonmaster
-# Size of GUI
+# Size of GUI (2-6)
 size: 3
+# The cost of teaching moves
+cost: 7500
 # List of Moves the Tutor Offers
 moves:
   - dracometeor

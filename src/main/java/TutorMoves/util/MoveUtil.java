@@ -11,6 +11,7 @@ import net.minecraft.text.Text;
 import net.minecraft.text.TextColor;
 import net.minecraft.util.Identifier;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -68,7 +69,7 @@ public class MoveUtil {
         this.moves = moves;
     }
 
-    public ItemStack getGemForMove(MoveTemplate move) {
+    public ItemStack getGemForMove(MoveTemplate move, BigDecimal price) {
         String gemId = TYPE_GEM_MAP.getOrDefault(move.getElementalType().getName().toUpperCase(), "cobblemon:normal_gem");
         ItemStack itemStack = new ItemStack(Registries.ITEM.get(new Identifier(gemId)));
 
@@ -92,11 +93,10 @@ public class MoveUtil {
         List<String> descriptionLines = splitDescription(move.getDescription().getString(), 40);
         descriptionLines.forEach(line -> lore.add(Text.literal(line)));
 
-
         // Add price information
         lore.add(Text.literal(""));
         lore.add(Text.literal(""));
-        lore.add(Text.literal("§6§lPrice: §r§f$100"));
+        lore.add(Text.literal("§6§lPrice: §r§f$" + price));
 
         // Set the custom name and lore using ItemBuilder
         ItemBuilder itemBuilder = new ItemBuilder(itemStack)
