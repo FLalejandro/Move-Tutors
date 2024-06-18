@@ -152,17 +152,14 @@ public class SpecificTutorScreen {
                     paginatedSection.decrementPage();
                     paginatedSection.applyToGui(gui);
                 }));
-        System.out.println("Previous page control set");
 
         gui.setSlot(controlSlotNext, GuiElementBuilder.from(Items.ARROW.getDefaultStack().setCustomName(Text.literal("Next Page")))
                 .setCallback((x, y, z) -> {
                     paginatedSection.incremementPage();
                     paginatedSection.applyToGui(gui);
                 }));
-        System.out.println("Next page control set");
 
         GuiUtils.fillGUI(gui);
-        System.out.println("GUI filled with placeholder items");
     }
 
     private static void applySortingButtons(SimpleGui gui, int rows, int slot, String tutorFileName) {

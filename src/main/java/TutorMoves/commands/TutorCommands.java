@@ -2,6 +2,7 @@ package TutorMoves.commands;
 
 import TutorMoves.TutorMoves;
 import TutorMoves.guis.AllTutorScreen;
+import TutorMoves.guis.SelectionScreen;
 import TutorMoves.guis.SpecificTutorScreen;
 import com.cobblemon.mod.common.api.storage.NoPokemonStoreException;
 import com.mojang.brigadier.CommandDispatcher;
@@ -28,6 +29,7 @@ public class TutorCommands {
     public static final String RELOAD_PERMISSION_NODE = "tutormoves.reload";
     public static final String TUTOR_PERMISSION_NODE = "tutormoves.tutor";
     public static final String OPEN_PERMISSION_NODE = "tutormoves.open";
+    public static final String MENU_PERMISSION_NODE = "tutormoves.menu";
 
     /**
      * Registers the tutor commands.
@@ -63,6 +65,10 @@ public class TutorCommands {
                                                 .executes(ctx -> openSpecificTutor(ctx, StringArgumentType.getString(ctx, "specific_tutor"), IntegerArgumentType.getInteger(ctx, "slot")))
                                         )
                                 )
+                        )
+                        .then(literal("menu")
+                                .requires(Permissions.require(MENU_PERMISSION_NODE, 2))
+                                .executes(TutorCommands::openSelectionMenu)
                         )
         );
     }
@@ -151,6 +157,27 @@ public class TutorCommands {
 
         // Open the specific tutor GUI
         SpecificTutorScreen.open(player, slot, specificTutor);
+
+        return 1;
+    }
+
+    /**
+     * Opens the selection menu GUI for the player.
+     *
+     * @param ctx The command context.
+     * @return 1 if successful, 0 otherwise.
+     */
+    private static int openSelectionMenu(CommandContext<ServerCommandSource> ctx) {
+        ServerCommandSource source = ctx.getSource();
+        ServerPlayerEntity player = source.getPlayer();
+
+        if (player == null) {
+            System.out.println("Player is null. Exiting command.");
+            return 0;
+        }
+
+        // Open the selection menu GUI
+        SelectionScreen.open(player);
 
         return 1;
     }

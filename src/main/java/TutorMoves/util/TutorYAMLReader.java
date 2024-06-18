@@ -86,8 +86,6 @@ public class TutorYAMLReader {
                 MoveTemplate moveTemplate = Moves.INSTANCE.getByNameOrDummy(moveName);
                 if (!moveTemplate.equals(MoveTemplate.Companion.dummy(moveName))) {
                     moves.add(moveTemplate);
-                } else {
-                    System.err.println("Move " + moveName + " not found.");
                 }
             }
 

@@ -110,11 +110,7 @@ public class JSONUtil {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            } else {
-                System.err.println("JSON file for species " + speciesName + " not found.");
             }
-        } else {
-            System.err.println("No Pokémon found in slot " + slot);
         }
         return tutorMoves;
     }
