@@ -11,9 +11,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class TutorYAMLReader {
 
@@ -21,15 +19,17 @@ public class TutorYAMLReader {
         private final String name;
         private final String permission;
         private final int size;
-        private final int cost;  // Added cost parameter
+        private final int cost;
         private final List<MoveTemplate> moves;
+        private final Set<String> blacklistedPokemon;
 
-        public TutorConfig(String name, String permission, int size, int cost, List<MoveTemplate> moves) {
+        public TutorConfig(String name, String permission, int size, int cost, List<MoveTemplate> moves, Set<String> blacklistedPokemon) {
             this.name = name;
             this.permission = permission;
             this.size = size;
             this.cost = cost;
             this.moves = moves;
+            this.blacklistedPokemon = blacklistedPokemon;
         }
 
         public String getName() {
@@ -45,11 +45,15 @@ public class TutorYAMLReader {
         }
 
         public int getCost() {
-            return cost;  // Getter for cost
+            return cost;
         }
 
         public List<MoveTemplate> getMoves() {
             return moves;
+        }
+
+        public Set<String> getBlacklistedPokemon() {
+            return blacklistedPokemon;
         }
     }
 
@@ -62,12 +66,20 @@ public class TutorYAMLReader {
         Yaml yaml = new Yaml();
         try (InputStream inputStream = new FileInputStream(file)) {
             Map<String, Object> obj = yaml.load(inputStream);
+            Map<String, Object> specificTutor = (Map<String, Object>) obj.get("SpecificTutor");
 
-            String name = (String) obj.get("name");
-            String permission = (String) obj.get("permission");
-            int size = (int) obj.get("size");
-            int cost = (int) obj.get("cost");  // Read cost from YAML
-            List<String> moveNames = (List<String>) obj.get("moves");
+            if (specificTutor == null) {
+                throw new IllegalArgumentException("SpecificTutor section not found in file " + tutorFileName + ".yml");
+            }
+
+            String name = (String) specificTutor.get("name");
+            String permission = (String) specificTutor.get("permission");
+            int size = (int) specificTutor.get("size");
+            int cost = (int) specificTutor.get("cost");
+            List<String> moveNames = (List<String>) specificTutor.get("moves");
+            List<String> blacklistedPokemonList = (List<String>) specificTutor.get("Blacklisted-Pokemon");
+
+            Set<String> blacklistedPokemon = new HashSet<>(blacklistedPokemonList);
 
             List<MoveTemplate> moves = new ArrayList<>();
             for (String moveName : moveNames) {
@@ -79,7 +91,7 @@ public class TutorYAMLReader {
                 }
             }
 
-            return new TutorConfig(name, permission, size, cost, moves);  // Pass cost to TutorConfig
+            return new TutorConfig(name, permission, size, cost, moves, blacklistedPokemon);
         }
     }
 

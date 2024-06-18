@@ -8,3 +8,9 @@ TutorMoves:
   size: 6
   # The cost of teaching moves
   cost: 5000
+  # Moves that should not appear in the General Tutor
+  Blacklisted-Moves:
+    - wish
+  # Pokemon that should not be able to use the General Tutor
+  Blacklisted-Pokemon:
+    - pikachu

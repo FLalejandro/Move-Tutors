@@ -96,9 +96,10 @@ public class EconUtil {
      * @param price The price of the move.
      * @return The confirmation GUI.
      */
-    public static SimpleGui openConfirmationWindow(ServerPlayerEntity player, MoveTemplate moveTemplate, int slot, SimpleGui oldGui, BigDecimal price) {
+    public static SimpleGui openConfirmationWindow(ServerPlayerEntity player, MoveTemplate moveTemplate, int slot, SimpleGui oldGui, BigDecimal price) throws NoPokemonStoreException {
         SimpleGui gui = new SimpleGui(ScreenHandlerType.GENERIC_9X3, player, false);
-
+        PlayerPartyStore partyStore = Cobblemon.INSTANCE.getStorage().getParty(player.getUuid());
+        Pokemon pokemon = partyStore.get(slot);
         gui.setTitle(Text.literal("Confirm Purchase"));
 
         MoveUtil moveUtil = new MoveUtil(Moves.INSTANCE);
@@ -110,7 +111,8 @@ public class EconUtil {
                 .setName(Text.literal("§aConfirm"))
                 .setCallback((x, y, z) -> {
                     if (purchaseMove(player, moveTemplate, slot, price)) {
-                        LangManager.send((Audience) player, "Successful-Tutor", Map.of("{cost}", price.toString(), "{pokemon}", moveTemplate.getDisplayName().getString()));
+                        LangManager.send((Audience) player, "Successful-Tutor", Map.of("{cost}", price.toString(), "{pokemon}", pokemon.getDisplayName().getString(),
+                                "{move}", moveTemplate.getDisplayName().getString()));
                     }
                     oldGui.open();
                 }));

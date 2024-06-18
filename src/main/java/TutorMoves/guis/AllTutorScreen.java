@@ -9,6 +9,7 @@ import TutorMoves.util.MoveUtil;
 import com.cobblemon.mod.common.api.moves.MoveTemplate;
 import com.cobblemon.mod.common.api.moves.Moves;
 import com.cobblemon.mod.common.api.storage.NoPokemonStoreException;
+import com.cobblemon.mod.common.pokemon.Pokemon;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import net.kyori.adventure.audience.Audience;
@@ -27,7 +28,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class AllTutorScreen {
-
 
     private enum SortOption {
         ALPHABETICAL,
@@ -50,6 +50,16 @@ public class AllTutorScreen {
 
         if (tutorMoves.isEmpty()) {
             LangManager.send((Audience) player, "Error-No-Pokemon", Map.of("{slot}", String.valueOf(slot)));
+            return;
+        }
+
+        // Fetch the Pokémon in the specified slot
+        Pokemon pokemon = JSONUtil.getPokemonInSlot(player, slot);
+
+        // Check for blacklisted Pokémon
+        List<String> blacklistedPokemon = TutorMoves.getMainConfig().getStringList("TutorMoves.Blacklisted-Pokemon");
+        if (blacklistedPokemon.contains(pokemon.getSpecies().getName().toLowerCase())) {
+            LangManager.send((Audience) player, "Blacklisted-Pokemon", Map.of("{pokemon}", pokemon.getSpecies().getName()));
             return;
         }
 
@@ -95,7 +105,11 @@ public class AllTutorScreen {
                     ItemStack itemStack = moveUtil.getGemForMove(moveTemplate, price);
                     return GuiElementBuilder.from(itemStack)
                             .setCallback((x, y, z) -> {
-                                EconUtil.openConfirmationWindow(player, moveTemplate, slot - 1, gui, price).open();
+                                try {
+                                    EconUtil.openConfirmationWindow(player, moveTemplate, slot - 1, gui, price).open();
+                                } catch (NoPokemonStoreException e) {
+                                    throw new RuntimeException(e);
+                                }
                             });
                 })
                 .filter(element -> element != null)
@@ -185,7 +199,6 @@ public class AllTutorScreen {
                         throw new RuntimeException(e);
                     }
                 }));
-
     }
 
     /**

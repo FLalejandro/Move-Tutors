@@ -2,6 +2,7 @@ package TutorMoves.guis;
 
 import TutorMoves.helper.SortingHelper;
 import TutorMoves.util.EconUtil;
+import TutorMoves.util.LangManager;
 import TutorMoves.util.MoveUtil;
 import TutorMoves.util.TutorYAMLReader;
 import com.cobblemon.mod.common.Cobblemon;
@@ -10,6 +11,7 @@ import com.cobblemon.mod.common.api.storage.party.PlayerPartyStore;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
+import net.kyori.adventure.audience.Audience;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.screen.ScreenHandlerType;
@@ -24,6 +26,7 @@ import net.minecraft.util.Formatting;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -70,7 +73,12 @@ public class SpecificTutorScreen {
             return;
         }
 
-        // Notify if any moves are not found
+        // Check for blacklisted Pokémon
+        if (tutorConfig.getBlacklistedPokemon().contains(pokemon.getSpecies().getName().toLowerCase())) {
+            LangManager.send((Audience) player, "Blacklisted-Pokemon", Map.of("{pokemon}", pokemon.getSpecies().getName()));
+            return;
+        }
+
         List<String> missingMoves = tutorConfig.getMoves().stream()
                 .filter(moveTemplate -> Objects.equals(moveTemplate, MoveTemplate.Companion.dummy(moveTemplate.getName())))
                 .map(MoveTemplate::getName)
@@ -80,7 +88,6 @@ public class SpecificTutorScreen {
             TutorYAMLReader.sendFeedback(player, "Moves not found: " + String.join(", ", missingMoves));
         }
 
-        // Calculate the GUI size based on the number of rows
         int rows = tutorConfig.getSize();
         int guiSize = rows * 9;
         ScreenHandlerType<?> screenHandlerType = getScreenHandlerType(rows);
@@ -88,14 +95,11 @@ public class SpecificTutorScreen {
 
         gui.setTitle(Text.literal(tutorConfig.getName()));
 
-        // Create an instance of Moves and MoveUtil
         Moves moves = Moves.INSTANCE;
         MoveUtil moveUtil = new MoveUtil(moves);
 
-        // Fetch the price from the configuration
         BigDecimal price = new BigDecimal(tutorConfig.getCost());
 
-        // Create MoveTemplate list and apply sorting
         List<MoveTemplate> moveTemplates = tutorConfig.getMoves();
 
         switch (currentSortOption) {
@@ -111,7 +115,6 @@ public class SpecificTutorScreen {
                 break;
         }
 
-        // Create GuiElementBuilder for each tutor move
         List<GuiElementBuilder> elements = moveTemplates.stream()
                 .map(moveTemplate -> {
                     if (moveTemplate == null || moveTemplate.equals(MoveTemplate.Companion.dummy(moveTemplate.getName()))) {
@@ -119,36 +122,27 @@ public class SpecificTutorScreen {
                     }
                     ItemStack itemStack = moveUtil.getGemForMove(moveTemplate, price);
                     return GuiElementBuilder.from(itemStack).setCallback((x, y, z) -> {
-                        EconUtil.openConfirmationWindow(player, moveTemplate, slot - 1, gui, price).open();
+                        try {
+                            EconUtil.openConfirmationWindow(player, moveTemplate, slot - 1, gui, price).open();
+                        } catch (NoPokemonStoreException e) {
+                            throw new RuntimeException(e);
+                        }
                     });
                 })
                 .filter(element -> element != null)
                 .collect(Collectors.toList());
 
-        // Create PaginatedSection
         PaginatedSection paginatedSection = new PaginatedSection(elements)
-                .setSlotRanges(List.of(new SlotRange(0, guiSize - 10)))  // Adjusted to fill available slots
+                .setSlotRanges(List.of(new SlotRange(0, guiSize - 10)))
                 .setFillItem(GuiElementBuilder.from(Items.GRAY_STAINED_GLASS_PANE.getDefaultStack().setCustomName(Text.literal(""))));
 
-        // Fill the GUI and add pagination controls
         applyPaginationControls(gui, paginatedSection, rows);
-
-        // Apply the initial page to the GUI
         paginatedSection.applyToGui(gui);
-
-        // Add sorting buttons
         applySortingButtons(gui, rows, slot, tutorFileName);
 
         gui.open();
     }
 
-    /**
-     * Applies pagination controls to the GUI.
-     *
-     * @param gui The GUI to apply the controls to.
-     * @param paginatedSection The paginated section handling the tutor moves.
-     * @param rows The number of rows in the GUI.
-     */
     private static void applyPaginationControls(SimpleGui gui, PaginatedSection paginatedSection, int rows) {
         int controlSlotPrevious = (rows - 1) * 9;
         int controlSlotNext = controlSlotPrevious + 8;
@@ -167,18 +161,10 @@ public class SpecificTutorScreen {
                 }));
         System.out.println("Next page control set");
 
-        GuiUtils.fillGUI(gui); // Fill the rest of the GUI with placeholder items
+        GuiUtils.fillGUI(gui);
         System.out.println("GUI filled with placeholder items");
     }
 
-    /**
-     * Applies sorting buttons to the GUI.
-     *
-     * @param gui The GUI to apply the sorting buttons to.
-     * @param rows The number of rows in the GUI.
-     * @param slot The slot of the Pokémon (1-based index).
-     * @param tutorFileName The name of the specific tutor file.
-     */
     private static void applySortingButtons(SimpleGui gui, int rows, int slot, String tutorFileName) {
         int sortSlotAlpha = (rows - 1) * 9 + 3;
         int sortSlotCategory = (rows - 1) * 9 + 4;
@@ -203,12 +189,6 @@ public class SpecificTutorScreen {
                 }));
     }
 
-    /**
-     * Returns the appropriate ScreenHandlerType based on the number of rows.
-     *
-     * @param rows The number of rows in the GUI.
-     * @return The ScreenHandlerType corresponding to the number of rows.
-     */
     private static ScreenHandlerType<?> getScreenHandlerType(int rows) {
         switch (rows) {
             case 2:

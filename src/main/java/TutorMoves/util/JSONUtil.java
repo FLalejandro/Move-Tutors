@@ -1,9 +1,10 @@
 package TutorMoves.util;
 
+import TutorMoves.TutorMoves;
+import com.cobblemon.mod.common.Cobblemon;
 import com.cobblemon.mod.common.api.storage.NoPokemonStoreException;
 import com.cobblemon.mod.common.api.storage.party.PlayerPartyStore;
 import com.cobblemon.mod.common.pokemon.Pokemon;
-import com.cobblemon.mod.common.Cobblemon;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -17,6 +18,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class JSONUtil {
 
@@ -29,11 +31,10 @@ public class JSONUtil {
      * @param slot   The slot number.
      * @return The Pokémon in the specified slot.
      */
-    private static Pokemon getPokemonInSlot(ServerPlayerEntity player, int slot) throws NoPokemonStoreException {
+    public static Pokemon getPokemonInSlot(ServerPlayerEntity player, int slot) throws NoPokemonStoreException {
         slot = slot - 1;
         PlayerPartyStore partyStore = Cobblemon.INSTANCE.getStorage().getParty(player.getUuid());
-        Pokemon pokemon = partyStore.get(slot);
-        return pokemon;
+        return partyStore.get(slot);
     }
 
     /**
@@ -83,7 +84,7 @@ public class JSONUtil {
                     // Add base moves
                     for (int i = 0; i < baseMovesArray.size(); i++) {
                         String move = baseMovesArray.get(i).getAsString();
-                        if (move.startsWith("tutor:")) {
+                        if (move.startsWith("tutor:") && !isMoveBlacklisted(move.substring(6).toLowerCase())) {
                             tutorMoves.add(move.substring(6));
                         }
                     }
@@ -98,7 +99,7 @@ public class JSONUtil {
                                 tutorMoves.clear(); // Clear base moves if form-specific moves are found
                                 for (int j = 0; j < formMovesArray.size(); j++) {
                                     String move = formMovesArray.get(j).getAsString();
-                                    if (move.startsWith("tutor:")) {
+                                    if (move.startsWith("tutor:") && !isMoveBlacklisted(move.substring(6).toLowerCase())) {
                                         tutorMoves.add(move.substring(6));
                                     }
                                 }
@@ -109,8 +110,26 @@ public class JSONUtil {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+            } else {
+                System.err.println("JSON file for species " + speciesName + " not found.");
             }
+        } else {
+            System.err.println("No Pokémon found in slot " + slot);
         }
         return tutorMoves;
+    }
+
+    /**
+     * Checks if a move is blacklisted in the configuration.
+     *
+     * @param move The name of the move.
+     * @return True if the move is blacklisted, false otherwise.
+     */
+    private static boolean isMoveBlacklisted(String move) {
+        List<String> blacklistedMoves = TutorMoves.getMainConfig().getStringList("TutorMoves.Blacklisted-Moves").stream()
+                .map(String::toLowerCase)
+                .collect(Collectors.toList());
+        boolean isBlacklisted = blacklistedMoves.contains(move);
+        return isBlacklisted;
     }
 }
