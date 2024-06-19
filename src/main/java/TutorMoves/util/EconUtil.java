@@ -46,8 +46,8 @@ public class EconUtil {
                 return false;
             }
 
-            if (!LearnsetQuery.Companion.getANY().canLearn(move, pokemon.getForm().getMoves())) {
-                LangManager.send((Audience) player, "Error-Cant-Learn", Map.of("{pokemon}", pokemon.getDisplayName().getString(), "{move}", move.getDisplayName().getString()));
+            if (!JSONUtil.isTutorMoveForPokemon(pokemon, move.getName())) {
+                LangManager.send((Audience) player, "Error-Not-Tutor", Map.of("{pokemon}", pokemon.getDisplayName().getString(), "{move}", move.getDisplayName().getString()));
                 return false;
             }
 

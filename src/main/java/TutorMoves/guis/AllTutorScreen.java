@@ -48,13 +48,14 @@ public class AllTutorScreen {
         // Fetch tutor moves for the Pokémon in the specified slot
         List<String> tutorMoves = JSONUtil.getTutorMovesForSlot(player, slot);
 
-        if (tutorMoves.isEmpty()) {
-            LangManager.send((Audience) player, "Error-No-Pokemon", Map.of("{slot}", String.valueOf(slot)));
-            return;
-        }
 
         // Fetch the Pokémon in the specified slot
         Pokemon pokemon = JSONUtil.getPokemonInSlot(player, slot);
+
+        if (tutorMoves.isEmpty()) {
+            LangManager.send((Audience) player, "Error-No-Tutor-Moves", Map.of("{pokemon}", pokemon.getSpecies().getName()));
+            return;
+        }
 
         // Check for blacklisted Pokémon
         List<String> blacklistedPokemon = TutorMoves.getMainConfig().getStringList("TutorMoves.Blacklisted-Pokemon");

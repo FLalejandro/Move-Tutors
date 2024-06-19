@@ -4,6 +4,7 @@ import TutorMoves.TutorMoves;
 import TutorMoves.guis.AllTutorScreen;
 import TutorMoves.guis.SelectionScreen;
 import TutorMoves.guis.SpecificTutorScreen;
+import TutorMoves.util.TutorYAMLReader;
 import com.cobblemon.mod.common.api.storage.NoPokemonStoreException;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
@@ -152,6 +153,22 @@ public class TutorCommands {
 
         if (player == null) {
             System.out.println("Player is null. Exiting command.");
+            return 0;
+        }
+
+        // Fetch the tutor configuration from the YAML file
+        TutorYAMLReader.TutorConfig tutorConfig;
+        try {
+            tutorConfig = TutorYAMLReader.readTutorFile(specificTutor);
+        } catch (Exception e) {
+            TutorYAMLReader.sendFeedback(player, "Error reading tutor file: " + specificTutor);
+            return 0;
+        }
+
+        // Check if the player has the required permission
+        String permission = tutorConfig.getPermission();
+        if (!Permissions.check(player, permission)) {
+            TutorYAMLReader.sendFeedback(player, "You do not have permission to open this tutor.");
             return 0;
         }
 

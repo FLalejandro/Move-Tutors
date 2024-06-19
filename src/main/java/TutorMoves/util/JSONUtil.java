@@ -128,4 +128,55 @@ public class JSONUtil {
         boolean isBlacklisted = blacklistedMoves.contains(move);
         return isBlacklisted;
     }
+
+
+    /**
+     * Checks if a move is a tutor move for X pokemon.
+     *
+     * @param move The name of the move.
+     * @return True if the move is blacklisted, false otherwise.
+     */
+    public static boolean isTutorMoveForPokemon(Pokemon pokemon, String move) {
+        try {
+            String speciesName = pokemon.getSpecies().getName().toLowerCase();
+            String formName = pokemon.getForm().getName().toLowerCase();
+            Path jsonFile = findSpeciesJsonFile(speciesName);
+
+            if (jsonFile != null) {
+                try (InputStream inputStream = Files.newInputStream(jsonFile)) {
+                    JsonObject jsonObject = JsonParser.parseReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8)).getAsJsonObject();
+                    JsonArray baseMovesArray = jsonObject.getAsJsonArray("moves");
+
+                    for (int i = 0; i < baseMovesArray.size(); i++) {
+                        String moveName = baseMovesArray.get(i).getAsString();
+                        if (moveName.startsWith("tutor:") && moveName.substring(6).equalsIgnoreCase(move) && !isMoveBlacklisted(move)) {
+                            return true;
+                        }
+                    }
+
+                    if (jsonObject.has("forms")) {
+                        JsonArray formsArray = jsonObject.getAsJsonArray("forms");
+                        for (int i = 0; i < formsArray.size(); i++) {
+                            JsonObject formObject = formsArray.get(i).getAsJsonObject();
+                            if (formObject.get("name").getAsString().toLowerCase().equals(formName)) {
+                                JsonArray formMovesArray = formObject.getAsJsonArray("moves");
+                                for (int j = 0; j < formMovesArray.size(); j++) {
+                                    String moveName = formMovesArray.get(j).getAsString();
+                                    if (moveName.startsWith("tutor:") && moveName.substring(6).equalsIgnoreCase(move) && !isMoveBlacklisted(move)) {
+                                        return true;
+                                    }
+                                }
+                                break;
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }
