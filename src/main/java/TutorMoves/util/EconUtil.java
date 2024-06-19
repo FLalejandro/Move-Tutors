@@ -1,17 +1,16 @@
 package TutorMoves.util;
 
+import TutorMoves.TutorMoves;
 import com.cobblemon.mod.common.Cobblemon;
 import com.cobblemon.mod.common.api.moves.BenchedMove;
 import com.cobblemon.mod.common.api.moves.MoveTemplate;
 import com.cobblemon.mod.common.api.moves.Moves;
-import com.cobblemon.mod.common.api.pokemon.moves.LearnsetQuery;
 import com.cobblemon.mod.common.api.storage.NoPokemonStoreException;
 import com.cobblemon.mod.common.api.storage.party.PlayerPartyStore;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import dev.roanoke.rib.utils.GuiUtils;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
-import net.impactdev.impactor.api.economy.EconomyService;
 import net.kyori.adventure.audience.Audience;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -21,7 +20,6 @@ import net.minecraft.text.Text;
 
 import java.math.BigDecimal;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 public class EconUtil {
 
@@ -36,7 +34,8 @@ public class EconUtil {
      */
     public static boolean purchaseMove(ServerPlayerEntity player, MoveTemplate move, int slot, BigDecimal price) {
         try {
-            var account = EconomyService.instance().account(player.getUuid()).get();
+            // Get the currencyKey from the main config
+            String currencyKey = TutorMoves.getMainConfig().getString("TutorMoves.currencyKey");
 
             PlayerPartyStore partyStore = Cobblemon.INSTANCE.getStorage().getParty(player.getUuid());
             Pokemon pokemon = partyStore.get(slot);
@@ -67,20 +66,21 @@ public class EconUtil {
                 return false;
             }
 
-            if (account.balanceAsync().get().compareTo(price) >= 0) {
-                account.withdrawAsync(price).get();
-                if (pokemon.getMoveSet().hasSpace()) {
-                    pokemon.getMoveSet().add(move.create());
-                } else {
-                    pokemon.getBenchedMoves().add(new BenchedMove(move, 0));
+            if (ImpactorUtil.getBalance(player, currencyKey) >= price.doubleValue()) {
+                if (ImpactorUtil.withdraw(player, price.doubleValue(), currencyKey)) {
+                    if (pokemon.getMoveSet().hasSpace()) {
+                        pokemon.getMoveSet().add(move.create());
+                    } else {
+                        pokemon.getBenchedMoves().add(new BenchedMove(move, 0));
+                    }
+                    LangManager.send((Audience) player, "Success-Learned", Map.of("{pokemon}", pokemon.getDisplayName().getString(), "{move}", move.getDisplayName().getString()));
+                    return true;
                 }
-                LangManager.send((Audience) player, "Success-Learned", Map.of("{pokemon}", pokemon.getDisplayName().getString(), "{move}", move.getDisplayName().getString()));
-                return true;
             } else {
                 LangManager.send((Audience) player, "Insufficient-Funds");
             }
 
-        } catch (ExecutionException | InterruptedException | NoPokemonStoreException e) {
+        } catch (NoPokemonStoreException e) {
             e.printStackTrace();
         }
         return false;
