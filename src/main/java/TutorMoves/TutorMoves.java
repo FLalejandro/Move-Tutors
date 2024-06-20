@@ -4,11 +4,14 @@ import TutorMoves.commands.TutorCommands;
 import TutorMoves.config.ConfigVersionUpdater;
 import TutorMoves.config.Configuration;
 import TutorMoves.config.YamlConfiguration;
+import TutorMoves.events.EntityInteractEvent;
 import TutorMoves.util.LangManager;
+import TutorMoves.util.NPCUtil;
 import TutorMoves.util.PermissionHelper;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.loader.api.FabricLoader;
 import net.luckperms.api.LuckPermsProvider;
 import org.slf4j.Logger;
@@ -20,6 +23,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class TutorMoves implements ModInitializer {
 
@@ -27,6 +33,9 @@ public class TutorMoves implements ModInitializer {
     public static PermissionHelper perms = null;
     private static Configuration mainConfig;
     private static Configuration langConfig;
+
+    public static Map<UUID, String> npcModePlayers = new HashMap<>();
+    public static Map<UUID, String> npcEntities = new HashMap<>();
 
     @Override
     public void onInitialize() {
@@ -41,6 +50,8 @@ public class TutorMoves implements ModInitializer {
 
         // Execute tasks and listeners that should run when the server starts. (For LuckPerms)
         registerServerStartListeners();
+
+        UseEntityCallback.EVENT.register(new EntityInteractEvent());
     }
 
     public static Configuration getMainConfig() {
@@ -81,6 +92,7 @@ public class TutorMoves implements ModInitializer {
     private void registerServerStartListeners() {
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
             setupPermissions();
+            NPCUtil.loadNPCEntities();
         });
     }
 
@@ -112,7 +124,7 @@ public class TutorMoves implements ModInitializer {
         return configFile;
     }
 
-    public File getConfigFolder() {
+    public static File getConfigFolder() {
         File configFolder = FabricLoader.getInstance().getConfigDir().resolve("TutorMoves").toFile();
         if (!configFolder.exists()) configFolder.mkdirs();
         return configFolder;
@@ -141,7 +153,6 @@ public class TutorMoves implements ModInitializer {
         if (!tutorsFolder.exists()) {
             tutorsFolder.mkdirs();
         }
-        // Check if the tutors folder is empty
         if (tutorsFolder.isDirectory() && tutorsFolder.list().length == 0) {
             File defaultTutorFile = new File(tutorsFolder, "dragonmaster.yml");
             if (!defaultTutorFile.exists()) {
@@ -187,5 +198,9 @@ public class TutorMoves implements ModInitializer {
         LOGGER.info("  | || | | | __/ _ \\| '__| |\\/| |/ _ \\ \\ / / _ \\/ __|");
         LOGGER.info("  | || |_| | || (_) | |  | |  | | (_) \\ V /  __/\\__ \\");
         LOGGER.info("  |_| \\__,_|\\__\\___/|_|  |_|  |_|\\___/ \\_/ \\___||___/");
+    }
+
+    public static void saveNPCEntities() {
+        NPCUtil.saveNPCEntities();
     }
 }

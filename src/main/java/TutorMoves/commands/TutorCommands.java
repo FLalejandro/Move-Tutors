@@ -71,6 +71,20 @@ public class TutorCommands {
                                 .requires(Permissions.require(MENU_PERMISSION_NODE, 2))
                                 .executes(TutorCommands::openSelectionMenu)
                         )
+                        .then(literal("npc")
+                                .requires(Permissions.require(TUTOR_PERMISSION_NODE, 2))
+                                .then(argument("tutor_name", StringArgumentType.string())
+                                        .suggests(TutorCommands::suggestTutors)
+                                        .executes(ctx -> {
+                                            ServerPlayerEntity player = ctx.getSource().getPlayer();
+                                            if (player != null) {
+                                                TutorMoves.npcModePlayers.put(player.getUuid(), StringArgumentType.getString(ctx, "tutor_name"));
+                                                player.sendMessage(Text.literal("Right-click on an entity to set it as an NPC for this tutor."));
+                                            }
+                                            return 1;
+                                        })
+                                )
+                        )
         );
     }
 
@@ -102,6 +116,7 @@ public class TutorCommands {
                 }
             }
         }
+        builder.suggest("general");
         return builder.buildFuture();
     }
 
@@ -147,10 +162,14 @@ public class TutorCommands {
      * @param slot The slot of the Pokémon.
      * @return 1 if successful, 0 otherwise.
      */
-    private static int openSpecificTutor(CommandContext<ServerCommandSource> ctx, String specificTutor, int slot) {
+    public static int openSpecificTutor(CommandContext<ServerCommandSource> ctx, String specificTutor, int slot) {
         ServerCommandSource source = ctx.getSource();
         ServerPlayerEntity player = source.getPlayer();
 
+        return openSpecificTutor(player, specificTutor, slot);
+    }
+
+    public static int openSpecificTutor(ServerPlayerEntity player, String specificTutor, int slot) {
         if (player == null) {
             System.out.println("Player is null. Exiting command.");
             return 0;
@@ -184,8 +203,14 @@ public class TutorCommands {
      * @param ctx The command context.
      * @return 1 if successful, 0 otherwise.
      */
-    private static int openSelectionMenu(CommandContext<ServerCommandSource> ctx) {
+    public static int openSelectionMenu(CommandContext<ServerCommandSource> ctx) {
         ServerCommandSource source = ctx.getSource();
+        ServerPlayerEntity player = source.getPlayer();
+
+        return openSelectionMenu(source);
+    }
+
+    public static int openSelectionMenu(ServerCommandSource source) {
         ServerPlayerEntity player = source.getPlayer();
 
         if (player == null) {
