@@ -31,6 +31,7 @@ public class TutorCommands {
     public static final String TUTOR_PERMISSION_NODE = "tutormoves.tutor";
     public static final String OPEN_PERMISSION_NODE = "tutormoves.open";
     public static final String MENU_PERMISSION_NODE = "tutormoves.menu";
+    public static final String NPC_PERMISSION_NODE = "tutormoves.npc"; // New permission node for NPC commands
 
     /**
      * Registers the tutor commands.
@@ -72,7 +73,7 @@ public class TutorCommands {
                                 .executes(TutorCommands::openSelectionMenu)
                         )
                         .then(literal("npc")
-                                .requires(Permissions.require(TUTOR_PERMISSION_NODE, 2))
+                                .requires(Permissions.require(NPC_PERMISSION_NODE, 2)) // Apply the new permission node
                                 .then(argument("tutor_name", StringArgumentType.string())
                                         .suggests(TutorCommands::suggestTutors)
                                         .executes(ctx -> {
@@ -80,6 +81,20 @@ public class TutorCommands {
                                             if (player != null) {
                                                 TutorMoves.npcModePlayers.put(player.getUuid(), StringArgumentType.getString(ctx, "tutor_name"));
                                                 player.sendMessage(Text.literal("Right-click on an entity to set it as an NPC for this tutor."));
+                                            }
+                                            return 1;
+                                        })
+                                )
+                                .then(literal("off")
+                                        .executes(ctx -> {
+                                            ServerPlayerEntity player = ctx.getSource().getPlayer();
+                                            if (player != null) {
+                                                if (TutorMoves.npcModePlayers.containsKey(player.getUuid())) {
+                                                    TutorMoves.npcModePlayers.remove(player.getUuid());
+                                                    player.sendMessage(Text.literal("NPC mode has been turned off."));
+                                                } else {
+                                                    player.sendMessage(Text.literal("You are not in NPC mode."));
+                                                }
                                             }
                                             return 1;
                                         })

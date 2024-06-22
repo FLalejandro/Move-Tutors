@@ -1,10 +1,14 @@
 package TutorMoves.config;
 
+import TutorMoves.TutorMoves;
 import com.google.common.base.Charsets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class ConfigVersionUpdater {
 
@@ -19,54 +23,58 @@ public class ConfigVersionUpdater {
         this.currentVersion = currentVersion;
     }
 
-    public void updateConfig() {}
+    public void updateConfig() {
+        updateConfigFile(mainConfig, "config.yml");
+        updateConfigFile(langConfig, "lang.yml");
+        updateTutorConfigs();
+    }
 
-    private void mergeConfigs(Configuration target, Configuration source) {
-        for (String key : source.getKeys()) {
-            if (source.get(key) instanceof Configuration) {
-                if (!(target.get(key) instanceof Configuration)) {
-                    target.set(key, new Configuration());
-                }
-                mergeConfigs(target.getSection(key), source.getSection(key));
-            } else {
-                if (!target.contains(key)) {
-                    target.set(key, source.get(key));
+    private void updateConfigFile(Configuration config, String fileName) {
+        String configVersion = config.getString("Config-Version", "1.0.0");
+
+        if (!configVersion.equals(currentVersion)) {
+            LOGGER.info("Updating " + fileName + " from version " + configVersion + " to " + currentVersion);
+            config.set("Config-Version", currentVersion);
+            saveConfigPreservingComments(new File(TutorMoves.getConfigFolder(), fileName), currentVersion);
+        }
+    }
+
+    private void updateTutorConfigs() {
+        File tutorsFolder = new File(TutorMoves.getConfigFolder(), "tutors");
+        if (tutorsFolder.exists() && tutorsFolder.isDirectory()) {
+            File[] tutorFiles = tutorsFolder.listFiles((dir, name) -> name.endsWith(".yml"));
+            if (tutorFiles != null) {
+                for (File tutorFile : tutorFiles) {
+                    try {
+                        Configuration tutorConfig = YamlConfiguration.loadConfiguration(tutorFile);
+                        String tutorVersion = tutorConfig.getString("Config-Version", "1.0.0");
+
+                        if (!tutorVersion.equals(currentVersion)) {
+                            LOGGER.info("Updating " + tutorFile.getName() + " from version " + tutorVersion + " to " + currentVersion);
+                            tutorConfig.set("Config-Version", currentVersion);
+                            saveConfigPreservingComments(tutorFile, currentVersion);
+                        }
+                    } catch (IOException e) {
+                        LOGGER.error("Failed to update tutor config: " + tutorFile.getName(), e);
+                    }
                 }
             }
         }
     }
 
-    private boolean isOlderVersion(String currentVersion, String targetVersion) {
-        int[] currentParts = parseVersion(currentVersion);
-        int[] targetParts = parseVersion(targetVersion);
+    private void saveConfigPreservingComments(File file, String newVersion) {
+        try {
+            // Read the original content
+            Path filePath = file.toPath();
+            String originalContent = Files.readString(filePath, StandardCharsets.UTF_8);
 
-        for (int i = 0; i < currentParts.length; i++) {
-            if (currentParts[i] < targetParts[i]) {
-                return true;
-            } else if (currentParts[i] > targetParts[i]) {
-                return false;
-            }
-        }
-        return false;
-    }
+            // Update the version manually in the original content
+            String updatedContent = originalContent.replaceFirst("Config-Version: \\d+\\.\\d+\\.\\d+", "Config-Version: " + newVersion);
 
-    private int[] parseVersion(String version) {
-        String[] parts = version.split("\\.");
-        int[] numbers = new int[parts.length];
-        for (int i = 0; i < parts.length; i++) {
-            numbers[i] = Integer.parseInt(parts[i]);
-        }
-        return numbers;
-    }
-
-    private void saveConfigWithComments(Configuration config, String resourcePath, File file) throws IOException {
-        // Load the default configuration from the resource file
-        InputStream resourceStream = getClass().getClassLoader().getResourceAsStream(resourcePath);
-        String defaultConfigContent = new String(resourceStream.readAllBytes(), Charsets.UTF_8);
-
-        // Save the configuration to the file
-        try (Writer writer = new OutputStreamWriter(new FileOutputStream(file), Charsets.UTF_8)) {
-            writer.write(defaultConfigContent);
+            // Save the updated content back to the file
+            Files.writeString(filePath, updatedContent, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            LOGGER.error("Failed to preserve comments while saving config: " + file.getName(), e);
         }
     }
 }

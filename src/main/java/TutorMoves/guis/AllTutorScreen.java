@@ -130,6 +130,9 @@ public class AllTutorScreen {
         // Add sorting buttons
         applySortingButtons(gui, rows, slot);
 
+        // Add back button
+        applyBackButton(gui, rows);
+
         gui.open();
     }
 
@@ -199,6 +202,21 @@ public class AllTutorScreen {
                     } catch (NoPokemonStoreException e) {
                         throw new RuntimeException(e);
                     }
+                }));
+    }
+
+    /**
+     * Applies a back button to the GUI.
+     *
+     * @param gui The GUI to apply the back button to.
+     * @param rows The number of rows in the GUI.
+     */
+    private static void applyBackButton(SimpleGui gui, int rows) {
+        int backButtonSlot = (rows - 1) * 9 + 1;
+
+        gui.setSlot(backButtonSlot, GuiElementBuilder.from(Items.BARRIER.getDefaultStack().setCustomName(Text.literal("Back")))
+                .setCallback((x, y, z) -> {
+                    SelectionScreen.open(gui.getPlayer());
                 }));
     }
 
