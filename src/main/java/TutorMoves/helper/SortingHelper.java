@@ -51,4 +51,29 @@ public class SortingHelper {
                         .thenComparing(move -> move.getDisplayName().getString()))
                 .collect(Collectors.toList());
     }
+
+    /**
+     * Sorts a list of MoveTemplate objects based on the provided sort option.
+     *
+     * @param moves The list of MoveTemplate objects to sort.
+     * @param sortOption The sort option to use for sorting.
+     * @return A sorted list of MoveTemplate objects.
+     */
+    public static List<MoveTemplate> sortByOption(List<MoveTemplate> moves, SortOption sortOption) {
+        switch (sortOption) {
+            case CATEGORY:
+                return sortByCategory(moves);
+            case TYPE:
+                return sortByType(moves);
+            case ALPHABETICAL:
+            default:
+                return sortAlphabetically(moves);
+        }
+    }
+
+    public enum SortOption {
+        ALPHABETICAL,
+        CATEGORY,
+        TYPE
+    }
 }

@@ -2,6 +2,7 @@ package TutorMoves.guis;
 
 import TutorMoves.helper.SortingHelper;
 import TutorMoves.util.EconUtil;
+import TutorMoves.util.GuiUtil;
 import TutorMoves.util.LangManager;
 import TutorMoves.util.MoveUtil;
 import TutorMoves.util.TutorYAMLReader;
@@ -14,10 +15,8 @@ import eu.pb4.sgui.api.gui.SimpleGui;
 import net.kyori.adventure.audience.Audience;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
-import dev.roanoke.rib.utils.GuiUtils;
 import dev.roanoke.rib.utils.PaginatedSection;
 import dev.roanoke.rib.utils.SlotRange;
 import com.cobblemon.mod.common.api.moves.Moves;
@@ -32,13 +31,7 @@ import java.util.stream.Collectors;
 
 public class SpecificTutorScreen {
 
-    private enum SortOption {
-        ALPHABETICAL,
-        CATEGORY,
-        TYPE
-    }
-
-    private static SortOption currentSortOption = SortOption.ALPHABETICAL;
+    private static SortingHelper.SortOption currentSortOption = SortingHelper.SortOption.ALPHABETICAL;
 
     /**
      * Opens the specific tutor move GUI for the player.
@@ -89,11 +82,9 @@ public class SpecificTutorScreen {
         }
 
         int rows = tutorConfig.getSize();
-        int guiSize = rows * 9;
-        ScreenHandlerType<?> screenHandlerType = getScreenHandlerType(rows);
-        SimpleGui gui = new SimpleGui(screenHandlerType, player, false);
 
-        gui.setTitle(Text.literal(tutorConfig.getName()));
+        // Create the GUI
+        SimpleGui gui = GuiUtil.createGui(player, rows, tutorConfig.getName());
 
         Moves moves = Moves.INSTANCE;
         MoveUtil moveUtil = new MoveUtil(moves);
@@ -102,18 +93,7 @@ public class SpecificTutorScreen {
 
         List<MoveTemplate> moveTemplates = tutorConfig.getMoves();
 
-        switch (currentSortOption) {
-            case CATEGORY:
-                moveTemplates = SortingHelper.sortByCategory(moveTemplates);
-                break;
-            case TYPE:
-                moveTemplates = SortingHelper.sortByType(moveTemplates);
-                break;
-            case ALPHABETICAL:
-            default:
-                moveTemplates = SortingHelper.sortAlphabetically(moveTemplates);
-                break;
-        }
+        moveTemplates = SortingHelper.sortByOption(moveTemplates, currentSortOption);
 
         List<GuiElementBuilder> elements = moveTemplates.stream()
                 .map(moveTemplate -> {
@@ -133,73 +113,27 @@ public class SpecificTutorScreen {
                 .collect(Collectors.toList());
 
         PaginatedSection paginatedSection = new PaginatedSection(elements)
-                .setSlotRanges(List.of(new SlotRange(0, guiSize - 10)))
+                .setSlotRanges(List.of(new SlotRange(0, rows * 9 - 10)))
                 .setFillItem(GuiElementBuilder.from(Items.GRAY_STAINED_GLASS_PANE.getDefaultStack().setCustomName(Text.literal(""))));
 
-        applyPaginationControls(gui, paginatedSection, rows);
+        GuiUtil.applyPaginationControls(gui, paginatedSection, rows);
         paginatedSection.applyToGui(gui);
-        applySortingButtons(gui, rows, slot, tutorFileName);
+
+        GuiUtil.applySortingButtons(gui, rows,
+                () -> {
+                    currentSortOption = SortingHelper.SortOption.ALPHABETICAL;
+                    open(player, slot, tutorFileName);
+                },
+                () -> {
+                    currentSortOption = SortingHelper.SortOption.CATEGORY;
+                    open(player, slot, tutorFileName);
+                },
+                () -> {
+                    currentSortOption = SortingHelper.SortOption.TYPE;
+                    open(player, slot, tutorFileName);
+                }
+        );
 
         gui.open();
-    }
-
-    private static void applyPaginationControls(SimpleGui gui, PaginatedSection paginatedSection, int rows) {
-        int controlSlotPrevious = (rows - 1) * 9;
-        int controlSlotNext = controlSlotPrevious + 8;
-
-        gui.setSlot(controlSlotPrevious, GuiElementBuilder.from(Items.ARROW.getDefaultStack().setCustomName(Text.literal("Previous Page")))
-                .setCallback((x, y, z) -> {
-                    paginatedSection.decrementPage();
-                    paginatedSection.applyToGui(gui);
-                }));
-
-        gui.setSlot(controlSlotNext, GuiElementBuilder.from(Items.ARROW.getDefaultStack().setCustomName(Text.literal("Next Page")))
-                .setCallback((x, y, z) -> {
-                    paginatedSection.incremementPage();
-                    paginatedSection.applyToGui(gui);
-                }));
-
-        GuiUtils.fillGUI(gui);
-    }
-
-    private static void applySortingButtons(SimpleGui gui, int rows, int slot, String tutorFileName) {
-        int sortSlotAlpha = (rows - 1) * 9 + 3;
-        int sortSlotCategory = (rows - 1) * 9 + 4;
-        int sortSlotType = (rows - 1) * 9 + 5;
-
-        gui.setSlot(sortSlotAlpha, GuiElementBuilder.from(Items.PAPER.getDefaultStack().setCustomName(Text.literal("Alphabetical")))
-                .setCallback((x, y, z) -> {
-                    currentSortOption = SortOption.ALPHABETICAL;
-                    open(gui.getPlayer(), slot, tutorFileName);
-                }));
-
-        gui.setSlot(sortSlotCategory, GuiElementBuilder.from(Items.NAME_TAG.getDefaultStack().setCustomName(Text.literal("Category")))
-                .setCallback((x, y, z) -> {
-                    currentSortOption = SortOption.CATEGORY;
-                    open(gui.getPlayer(), slot, tutorFileName);
-                }));
-
-        gui.setSlot(sortSlotType, GuiElementBuilder.from(Items.GOLD_INGOT.getDefaultStack().setCustomName(Text.literal("Type")))
-                .setCallback((x, y, z) -> {
-                    currentSortOption = SortOption.TYPE;
-                    open(gui.getPlayer(), slot, tutorFileName);
-                }));
-    }
-
-    private static ScreenHandlerType<?> getScreenHandlerType(int rows) {
-        switch (rows) {
-            case 2:
-                return ScreenHandlerType.GENERIC_9X2;
-            case 3:
-                return ScreenHandlerType.GENERIC_9X3;
-            case 4:
-                return ScreenHandlerType.GENERIC_9X4;
-            case 5:
-                return ScreenHandlerType.GENERIC_9X5;
-            case 6:
-                return ScreenHandlerType.GENERIC_9X6;
-            default:
-                throw new IllegalArgumentException("Invalid number of rows: " + rows);
-        }
     }
 }
