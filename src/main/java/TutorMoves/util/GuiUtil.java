@@ -6,13 +6,20 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
+import net.minecraft.text.TextColor;
+import net.minecraft.text.TextColor;
 import dev.roanoke.rib.utils.PaginatedSection;
 import dev.roanoke.rib.utils.SlotRange;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 public class GuiUtil {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(GuiUtil.class);
 
     /**
      * Creates a SimpleGui with the given number of rows and title.
@@ -23,10 +30,31 @@ public class GuiUtil {
      * @return The created SimpleGui.
      */
     public static SimpleGui createGui(ServerPlayerEntity player, int rows, String title) {
+        LOGGER.info("Creating GUI with title: {}", title);
         ScreenHandlerType<?> screenHandlerType = getScreenHandlerType(rows);
         SimpleGui gui = new SimpleGui(screenHandlerType, player, false);
-        gui.setTitle(Text.literal(title));
+
+        // Parse the title string to apply colors and styles
+        MutableText parsedTitle = parseFormattedTitle(title);
+        LOGGER.info("Parsed component: {}", parsedTitle);
+
+        gui.setTitle(parsedTitle);
+        LOGGER.info("GUI title set to: {}", gui.getTitle().getString());
+
         return gui;
+    }
+
+    private static MutableText parseFormattedTitle(String title) {
+        // Convert the custom formatting to Minecraft's Text formatting
+        // Assuming title contains formats like "<red><bold>General Tutor"
+        // Replace custom format tags with Minecraft Text formatting
+        title = title.replace("<red>", "§c")
+                .replace("<blue>", "§9")
+                .replace("<bold>", "§l")
+                .replace("<reset>", "§r");
+
+        // Convert the formatted string to Text using Legacy formatting for simplicity
+        return Text.literal(title);
     }
 
     /**

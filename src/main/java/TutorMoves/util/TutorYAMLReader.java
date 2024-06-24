@@ -22,14 +22,16 @@ public class TutorYAMLReader {
         private final int cost;
         private final List<MoveTemplate> moves;
         private final Set<String> blacklistedPokemon;
+        private final String fillerItem;
 
-        public TutorConfig(String name, String permission, int size, int cost, List<MoveTemplate> moves, Set<String> blacklistedPokemon) {
+        public TutorConfig(String name, String permission, int size, int cost, List<MoveTemplate> moves, Set<String> blacklistedPokemon, String fillerItem) {
             this.name = name;
             this.permission = permission;
             this.size = size;
             this.cost = cost;
             this.moves = moves;
             this.blacklistedPokemon = blacklistedPokemon;
+            this.fillerItem = fillerItem;
         }
 
         public String getName() {
@@ -55,6 +57,10 @@ public class TutorYAMLReader {
         public Set<String> getBlacklistedPokemon() {
             return blacklistedPokemon;
         }
+
+        public String getFillerItem() {
+            return fillerItem;
+        }
     }
 
     public static TutorConfig readTutorFile(String tutorFileName) throws Exception {
@@ -67,17 +73,19 @@ public class TutorYAMLReader {
         try (InputStream inputStream = new FileInputStream(file)) {
             Map<String, Object> obj = yaml.load(inputStream);
             Map<String, Object> specificTutor = (Map<String, Object>) obj.get("SpecificTutor");
+            Map<String, Object> gui = (Map<String, Object>) obj.get("GUI");
 
-            if (specificTutor == null) {
-                throw new IllegalArgumentException("SpecificTutor section not found in file " + tutorFileName + ".yml");
+            if (specificTutor == null || gui == null) {
+                throw new IllegalArgumentException("SpecificTutor or GUI section not found in file " + tutorFileName + ".yml");
             }
 
-            String name = (String) specificTutor.get("name");
+            String name = (String) gui.get("title");
             String permission = (String) specificTutor.get("permission");
-            int size = (int) specificTutor.get("size");
+            int size = (int) gui.get("size");
             int cost = (int) specificTutor.get("cost");
             List<String> moveNames = (List<String>) specificTutor.get("moves");
             List<String> blacklistedPokemonList = (List<String>) specificTutor.get("Blacklisted-Pokemon");
+            String fillerItem = (String) gui.get("filler-item");
 
             Set<String> blacklistedPokemon = new HashSet<>(blacklistedPokemonList);
 
@@ -89,7 +97,7 @@ public class TutorYAMLReader {
                 }
             }
 
-            return new TutorConfig(name, permission, size, cost, moves, blacklistedPokemon);
+            return new TutorConfig(name, permission, size, cost, moves, blacklistedPokemon, fillerItem);
         }
     }
 

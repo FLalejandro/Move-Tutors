@@ -1,14 +1,9 @@
 # DON'T TOUCH Config-Version OR THINGS WILL BREAK
-# If you make more tutor files, you will want this in the event
-# the Tutor file format is updated.
-Config-Version: 1.0.0
+Config-Version: 1.2.0
+# Specific Tutor Settings
 SpecificTutor:
-  # GUI Title
-  name: Dragon Master
   # Permission needed to open
   permission: tutormoves.open.dragonmaster
-  # Size of GUI (2-6)
-  size: 3
   # The cost of teaching moves
   cost: 7500
   # List of Moves the Tutor Offers
@@ -19,3 +14,10 @@ SpecificTutor:
   # Pokemon that should not be able to use this tutor
   Blacklisted-Pokemon:
     - jirachi
+GUI:
+  # The GUI Title
+  title: "<blue><bold>Dragon Master"
+  # The Size of the Main Tutor GUI (2-6)
+  size: 6
+  # GUI Elements
+  filler-item: "minecraft:gray_stained_glass_pane"

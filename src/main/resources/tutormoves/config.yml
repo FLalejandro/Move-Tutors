@@ -1,11 +1,10 @@
 # DON'T TOUCH Config-Version OR THINGS WILL BREAK
-Config-Version: 1.0.0
+Config-Version: 1.2.0
+# General Tutor Settings
 TutorMoves:
   # The currency which will be used to "purchase" tutor moves.
-  # Options: impactor:{currency}, items, both.
+  # Options: impactor:{currency}, ITEMS.
   currencyKey: impactor:dollars
-  # The Size of the Main Tutor GUI (2-6)
-  size: 6
   # The cost of teaching moves
   cost: 5000
   # Moves that should not appear in the General Tutor
@@ -14,3 +13,12 @@ TutorMoves:
   # Pokemon that should not be able to use the General Tutor
   Blacklisted-Pokemon:
     - pikachu
+GUI:
+  # The GUI Title
+  title: "<red><bold>General Tutor"
+  # The Size of the Main Tutor GUI (2-6)
+  size: 6
+  # GUI Elements
+  filler-item: "minecraft:gray_stained_glass_pane"
+
+

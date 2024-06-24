@@ -1,5 +1,5 @@
 # DON'T TOUCH Config-Version OR THINGS WILL BREAK
-Config-Version: 1.0.0
+Config-Version: 1.2.0
 # We Support Legacy and MiniMessage Formatting!
 Success-Learned: "<dark_aqua>{pokemon} <aqua>learned <dark_aqua>{move}."
 Successful-Tutor: "<aqua>You spent <dark_aqua>{cost}<aqua> to teach {pokemon} <aqua>the move <dark_aqua>{move}."

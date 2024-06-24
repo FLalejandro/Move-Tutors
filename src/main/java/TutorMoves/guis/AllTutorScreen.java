@@ -7,6 +7,7 @@ import TutorMoves.util.GuiUtil;
 import TutorMoves.util.JSONUtil;
 import TutorMoves.util.LangManager;
 import TutorMoves.util.MoveUtil;
+import TutorMoves.util.ColorUtil;
 import com.cobblemon.mod.common.api.moves.MoveTemplate;
 import com.cobblemon.mod.common.api.moves.Moves;
 import com.cobblemon.mod.common.api.storage.NoPokemonStoreException;
@@ -14,12 +15,15 @@ import com.cobblemon.mod.common.pokemon.Pokemon;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import net.kyori.adventure.audience.Audience;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import dev.roanoke.rib.utils.PaginatedSection;
 import dev.roanoke.rib.utils.SlotRange;
+import net.minecraft.util.Identifier;
+import net.minecraft.registry.Registries;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -56,12 +60,17 @@ public class AllTutorScreen {
             return;
         }
 
-        // Fetch the size and price from the configuration
-        int rows = TutorMoves.getMainConfig().getInt("TutorMoves.size");
+        // Fetch GUI settings from the configuration
+        int rows = TutorMoves.getMainConfig().getInt("GUI.size");
+        if (rows < 2 || rows > 6) {
+            rows = 6; // Default value if configuration is invalid
+        }
         BigDecimal price = new BigDecimal(TutorMoves.getMainConfig().getInt("TutorMoves.cost"));
+        String guiTitle = TutorMoves.getMainConfig().getString("GUI.title");
+        String fillerItem = TutorMoves.getMainConfig().getString("GUI.filler-item");
 
         // Create the GUI
-        SimpleGui gui = GuiUtil.createGui(player, rows, "Tutor Moves");
+        SimpleGui gui = GuiUtil.createGui(player, rows, guiTitle);
 
         // Create an instance of Moves and MoveUtil
         Moves moves = Moves.INSTANCE;
@@ -93,10 +102,17 @@ public class AllTutorScreen {
                 .filter(element -> element != null)
                 .collect(Collectors.toList());
 
-        // Create PaginatedSection
+        // Get filler item from the configuration
+        Item fillerItemInstance = Registries.ITEM.get(new Identifier(fillerItem));
+        if (fillerItemInstance == Items.AIR) {
+            fillerItemInstance = Items.GRAY_STAINED_GLASS_PANE; // Default fallback item
+        }
+        ItemStack fillerStack = new ItemStack(fillerItemInstance);
+
+        // Create PaginatedSection with configurable filler item
         PaginatedSection paginatedSection = new PaginatedSection(elements)
                 .setSlotRanges(List.of(new SlotRange(0, rows * 9 - 10)))
-                .setFillItem(GuiElementBuilder.from(Items.GRAY_STAINED_GLASS_PANE.getDefaultStack().setCustomName(Text.literal(""))));
+                .setFillItem(GuiElementBuilder.from(fillerStack.setCustomName(Text.literal(""))));
 
         // Fill the GUI and add pagination controls
         GuiUtil.applyPaginationControls(gui, paginatedSection, rows);

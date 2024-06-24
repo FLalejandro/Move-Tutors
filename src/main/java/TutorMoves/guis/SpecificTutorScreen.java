@@ -6,6 +6,7 @@ import TutorMoves.util.GuiUtil;
 import TutorMoves.util.LangManager;
 import TutorMoves.util.MoveUtil;
 import TutorMoves.util.TutorYAMLReader;
+import TutorMoves.util.ColorUtil;
 import com.cobblemon.mod.common.Cobblemon;
 import com.cobblemon.mod.common.api.storage.NoPokemonStoreException;
 import com.cobblemon.mod.common.api.storage.party.PlayerPartyStore;
@@ -13,6 +14,7 @@ import com.cobblemon.mod.common.pokemon.Pokemon;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import net.kyori.adventure.audience.Audience;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -21,7 +23,9 @@ import dev.roanoke.rib.utils.PaginatedSection;
 import dev.roanoke.rib.utils.SlotRange;
 import com.cobblemon.mod.common.api.moves.Moves;
 import com.cobblemon.mod.common.api.moves.MoveTemplate;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.Formatting;
+import net.minecraft.registry.Registries;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -83,6 +87,10 @@ public class SpecificTutorScreen {
 
         int rows = tutorConfig.getSize();
 
+        // Fetch GUI settings from the configuration
+        String guiTitle = tutorConfig.getName();
+        String fillerItem = tutorConfig.getFillerItem();
+
         // Create the GUI
         SimpleGui gui = GuiUtil.createGui(player, rows, tutorConfig.getName());
 
@@ -112,9 +120,17 @@ public class SpecificTutorScreen {
                 .filter(element -> element != null)
                 .collect(Collectors.toList());
 
+        // Get filler item from the configuration
+        Item fillerItemInstance = Registries.ITEM.get(new Identifier(fillerItem));
+        if (fillerItemInstance == Items.AIR) {
+            fillerItemInstance = Items.GRAY_STAINED_GLASS_PANE; // Default fallback item
+        }
+        ItemStack fillerStack = new ItemStack(fillerItemInstance);
+
+        // Create PaginatedSection with configurable filler item
         PaginatedSection paginatedSection = new PaginatedSection(elements)
                 .setSlotRanges(List.of(new SlotRange(0, rows * 9 - 10)))
-                .setFillItem(GuiElementBuilder.from(Items.GRAY_STAINED_GLASS_PANE.getDefaultStack().setCustomName(Text.literal(""))));
+                .setFillItem(GuiElementBuilder.from(fillerStack.setCustomName(Text.literal(""))));
 
         GuiUtil.applyPaginationControls(gui, paginatedSection, rows);
         paginatedSection.applyToGui(gui);
