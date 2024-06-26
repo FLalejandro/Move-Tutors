@@ -1,13 +1,9 @@
 package TutorMoves.util;
 
-import TutorMoves.TutorMoves;
-import com.cobblemon.mod.common.Cobblemon;
-import com.cobblemon.mod.common.api.moves.BenchedMove;
+import TutorMoves.helper.MoveTeacher;
 import com.cobblemon.mod.common.api.moves.MoveTemplate;
 import com.cobblemon.mod.common.api.moves.Moves;
 import com.cobblemon.mod.common.api.storage.NoPokemonStoreException;
-import com.cobblemon.mod.common.api.storage.party.PlayerPartyStore;
-import com.cobblemon.mod.common.pokemon.Pokemon;
 import dev.roanoke.rib.utils.GuiUtils;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
@@ -24,94 +20,51 @@ import java.util.Map;
 public class EconUtil {
 
     /**
-     * Processes the purchase of a move.
+     * Processes the purchase of a move using currency.
      *
      * @param player The player purchasing the move.
      * @param move The move being purchased.
      * @param slot The slot of the Pokémon.
      * @param price The price of the move.
+     * @param currencyKey The currency key used for the transaction.
      * @return True if the purchase was successful, false otherwise.
      */
-    public static boolean purchaseMove(ServerPlayerEntity player, MoveTemplate move, int slot, BigDecimal price) {
-        try {
-            // Get the currencyKey from the main config
-            String currencyKey = TutorMoves.getMainConfig().getString("TutorMoves.currencyKey");
-
-            PlayerPartyStore partyStore = Cobblemon.INSTANCE.getStorage().getParty(player.getUuid());
-            Pokemon pokemon = partyStore.get(slot);
-
-            if (pokemon == null) {
-                LangManager.send((Audience) player, "Error-No-Pokemon", Map.of("{slot}", String.valueOf(slot + 1)));
-                return false;
+    public static boolean purchaseMove(ServerPlayerEntity player, MoveTemplate move, int slot, BigDecimal price, String currencyKey) {
+        if (ImpactorUtil.getBalance(player, currencyKey) >= price.doubleValue()) {
+            if (ImpactorUtil.withdraw(player, price.doubleValue(), currencyKey)) {
+                return MoveTeacher.teachMove(player, slot, move);
             }
-
-            if (!JSONUtil.isTutorMoveForPokemon(pokemon, move.getName())) {
-                LangManager.send((Audience) player, "Error-Not-Tutor", Map.of("{pokemon}", pokemon.getDisplayName().getString(), "{move}", move.getDisplayName().getString()));
-                return false;
-            }
-
-            boolean knowsMove = pokemon.getMoveSet().getMoves().stream().anyMatch(m -> m.getTemplate() == move);
-
-            if (!knowsMove) {
-                for (BenchedMove benchedMove : pokemon.getBenchedMoves()) {
-                    if (benchedMove.getMoveTemplate() == move) {
-                        knowsMove = true;
-                        break;
-                    }
-                }
-            }
-
-            if (knowsMove) {
-                LangManager.send((Audience) player, "Error-Already-Knows", Map.of("{pokemon}", pokemon.getDisplayName().getString(), "{move}", move.getDisplayName().getString()));
-                return false;
-            }
-
-            if (ImpactorUtil.getBalance(player, currencyKey) >= price.doubleValue()) {
-                if (ImpactorUtil.withdraw(player, price.doubleValue(), currencyKey)) {
-                    if (pokemon.getMoveSet().hasSpace()) {
-                        pokemon.getMoveSet().add(move.create());
-                    } else {
-                        pokemon.getBenchedMoves().add(new BenchedMove(move, 0));
-                    }
-                    LangManager.send((Audience) player, "Success-Learned", Map.of("{pokemon}", pokemon.getDisplayName().getString(), "{move}", move.getDisplayName().getString()));
-                    return true;
-                }
-            } else {
-                LangManager.send((Audience) player, "Insufficient-Funds");
-            }
-
-        } catch (NoPokemonStoreException e) {
-            e.printStackTrace();
+        } else {
+            LangManager.send((Audience) player, "Insufficient-Funds");
         }
         return false;
     }
 
     /**
-     * Opens a confirmation window to handle the purchase of a move.
+     * Opens a confirmation window to handle the purchase of a move using currency.
      *
      * @param player The player who initiated the purchase.
      * @param moveTemplate The move template to purchase.
      * @param slot The slot of the Pokémon.
      * @param oldGui The previous GUI.
      * @param price The price of the move.
+     * @param currencyKey The currency key used for the transaction.
      * @return The confirmation GUI.
      */
-    public static SimpleGui openConfirmationWindow(ServerPlayerEntity player, MoveTemplate moveTemplate, int slot, SimpleGui oldGui, BigDecimal price) throws NoPokemonStoreException {
+    public static SimpleGui openConfirmationWindow(ServerPlayerEntity player, MoveTemplate moveTemplate, int slot, SimpleGui oldGui, BigDecimal price, String currencyKey) throws NoPokemonStoreException {
         SimpleGui gui = new SimpleGui(ScreenHandlerType.GENERIC_9X3, player, false);
-        PlayerPartyStore partyStore = Cobblemon.INSTANCE.getStorage().getParty(player.getUuid());
-        Pokemon pokemon = partyStore.get(slot);
         gui.setTitle(Text.literal("Confirm Purchase"));
 
         MoveUtil moveUtil = new MoveUtil(Moves.INSTANCE);
-        ItemStack itemStack = moveUtil.getGemForMove(moveTemplate, price);
+        ItemStack itemStack = moveUtil.getGemForMove(moveTemplate, price, currencyKey);
 
         gui.setSlot(13, GuiElementBuilder.from(itemStack).build());
 
         gui.setSlot(11, GuiElementBuilder.from(Items.GREEN_WOOL.getDefaultStack())
                 .setName(Text.literal("§aConfirm"))
                 .setCallback((x, y, z) -> {
-                    if (purchaseMove(player, moveTemplate, slot, price)) {
-                        LangManager.send((Audience) player, "Successful-Tutor", Map.of("{cost}", price.toString(), "{pokemon}", pokemon.getDisplayName().getString(),
+                    if (purchaseMove(player, moveTemplate, slot, price, currencyKey)) {
+                        LangManager.send((Audience) player, "Successful-Tutor", Map.of("{pokemon}", player.getName().getString(),
                                 "{move}", moveTemplate.getDisplayName().getString()));
                     }
                     oldGui.open();

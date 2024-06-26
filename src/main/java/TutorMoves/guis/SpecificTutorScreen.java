@@ -6,7 +6,7 @@ import TutorMoves.util.GuiUtil;
 import TutorMoves.util.LangManager;
 import TutorMoves.util.MoveUtil;
 import TutorMoves.util.TutorYAMLReader;
-import TutorMoves.util.ColorUtil;
+import TutorMoves.util.ItemEconUtil;
 import com.cobblemon.mod.common.Cobblemon;
 import com.cobblemon.mod.common.api.storage.NoPokemonStoreException;
 import com.cobblemon.mod.common.api.storage.party.PlayerPartyStore;
@@ -70,6 +70,7 @@ public class SpecificTutorScreen {
             return;
         }
 
+
         // Check for blacklisted Pokémon
         if (tutorConfig.getBlacklistedPokemon().contains(pokemon.getSpecies().getName().toLowerCase())) {
             LangManager.send((Audience) player, "Blacklisted-Pokemon", Map.of("{pokemon}", pokemon.getSpecies().getName()));
@@ -92,12 +93,13 @@ public class SpecificTutorScreen {
         String fillerItem = tutorConfig.getFillerItem();
 
         // Create the GUI
-        SimpleGui gui = GuiUtil.createGui(player, rows, tutorConfig.getName());
+        SimpleGui gui = GuiUtil.createGui(player, rows, guiTitle);
 
         Moves moves = Moves.INSTANCE;
         MoveUtil moveUtil = new MoveUtil(moves);
 
         BigDecimal price = new BigDecimal(tutorConfig.getCost());
+        String currencyKey = tutorConfig.getCurrencyKey();
 
         List<MoveTemplate> moveTemplates = tutorConfig.getMoves();
 
@@ -108,10 +110,15 @@ public class SpecificTutorScreen {
                     if (moveTemplate == null || moveTemplate.equals(MoveTemplate.Companion.dummy(moveTemplate.getName()))) {
                         return null;
                     }
-                    ItemStack itemStack = moveUtil.getGemForMove(moveTemplate, price);
+                    ItemStack itemStack = moveUtil.getGemForMove(moveTemplate, price, currencyKey);
                     return GuiElementBuilder.from(itemStack).setCallback((x, y, z) -> {
                         try {
-                            EconUtil.openConfirmationWindow(player, moveTemplate, slot - 1, gui, price).open();
+                            if (currencyKey.startsWith("ITEMS:")) {
+                                List<ItemStack> requiredItems = ItemEconUtil.getRequiredItemsFromConfig(currencyKey, tutorConfig.getCost());
+                                ItemEconUtil.openConfirmationWindow(player, moveTemplate, slot - 1, gui, requiredItems).open();
+                            } else {
+                                EconUtil.openConfirmationWindow(player, moveTemplate, slot - 1, gui, price, currencyKey).open();
+                            }
                         } catch (NoPokemonStoreException e) {
                             throw new RuntimeException(e);
                         }
@@ -120,14 +127,12 @@ public class SpecificTutorScreen {
                 .filter(element -> element != null)
                 .collect(Collectors.toList());
 
-        // Get filler item from the configuration
         Item fillerItemInstance = Registries.ITEM.get(new Identifier(fillerItem));
         if (fillerItemInstance == Items.AIR) {
-            fillerItemInstance = Items.GRAY_STAINED_GLASS_PANE; // Default fallback item
+            fillerItemInstance = Items.GRAY_STAINED_GLASS_PANE;
         }
         ItemStack fillerStack = new ItemStack(fillerItemInstance);
 
-        // Create PaginatedSection with configurable filler item
         PaginatedSection paginatedSection = new PaginatedSection(elements)
                 .setSlotRanges(List.of(new SlotRange(0, rows * 9 - 10)))
                 .setFillItem(GuiElementBuilder.from(fillerStack.setCustomName(Text.literal(""))));
@@ -152,4 +157,5 @@ public class SpecificTutorScreen {
 
         gui.open();
     }
+
 }

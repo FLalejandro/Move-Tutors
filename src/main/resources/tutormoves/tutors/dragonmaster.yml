@@ -4,8 +4,10 @@ Config-Version: 1.2.0
 SpecificTutor:
   # Permission needed to open
   permission: tutormoves.open.dragonmaster
+  # Options: impactor:{currency}, ITEMS:{item id}
+  currencyKey: ITEMS:minecraft:diamond
   # The cost of teaching moves
-  cost: 7500
+  cost: 3
   # List of Moves the Tutor Offers
   moves:
     - dracometeor

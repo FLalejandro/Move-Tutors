@@ -69,7 +69,7 @@ public class MoveUtil {
         this.moves = moves;
     }
 
-    public ItemStack getGemForMove(MoveTemplate move, BigDecimal price) {
+    public ItemStack getGemForMove(MoveTemplate move, BigDecimal price, String currencyKey) {
         String gemId = TYPE_GEM_MAP.getOrDefault(move.getElementalType().getName().toUpperCase(), "cobblemon:normal_gem");
         ItemStack itemStack = new ItemStack(Registries.ITEM.get(new Identifier(gemId)));
 
@@ -93,10 +93,17 @@ public class MoveUtil {
         List<String> descriptionLines = splitDescription(move.getDescription().getString(), 40);
         descriptionLines.forEach(line -> lore.add(Text.literal(line)));
 
-        // Add price information
+        // Add price information based on currency type
         lore.add(Text.literal(""));
         lore.add(Text.literal(""));
-        lore.add(Text.literal("§6§lPrice: §r§f$" + price));
+        if (currencyKey.startsWith("ITEMS:")) {
+            String itemId = currencyKey.substring("ITEMS:".length());
+            String itemName = Registries.ITEM.get(new Identifier(itemId)).getName().getString();
+            String displayName = capitalize(itemName.replace("_", " "));
+            lore.add(Text.literal("§6§lPrice: §r§f" + price.intValue() + " " + displayName));
+        } else {
+            lore.add(Text.literal("§6§lPrice: §r§f$" + price));
+        }
 
         // Set the custom name and lore using ItemBuilder
         ItemBuilder itemBuilder = new ItemBuilder(itemStack)
@@ -127,8 +134,4 @@ public class MoveUtil {
         return lines;
     }
 
-    public ElementalType getMoveType(String moveName) {
-        MoveTemplate template = moves.getByNameOrDummy(moveName);
-        return template.getElementalType();
-    }
 }

@@ -5,6 +5,8 @@ import com.cobblemon.mod.common.api.moves.Moves;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
@@ -15,18 +17,22 @@ import java.util.*;
 
 public class TutorYAMLReader {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(TutorYAMLReader.class);
+
     public static class TutorConfig {
         private final String name;
         private final String permission;
+        private final String currencyKey;
         private final int size;
         private final int cost;
         private final List<MoveTemplate> moves;
         private final Set<String> blacklistedPokemon;
         private final String fillerItem;
 
-        public TutorConfig(String name, String permission, int size, int cost, List<MoveTemplate> moves, Set<String> blacklistedPokemon, String fillerItem) {
+        public TutorConfig(String name, String permission, String currencyKey, int size, int cost, List<MoveTemplate> moves, Set<String> blacklistedPokemon, String fillerItem) {
             this.name = name;
             this.permission = permission;
+            this.currencyKey = currencyKey;
             this.size = size;
             this.cost = cost;
             this.moves = moves;
@@ -40,6 +46,10 @@ public class TutorYAMLReader {
 
         public String getPermission() {
             return permission;
+        }
+
+        public String getCurrencyKey() {
+            return currencyKey;
         }
 
         public int getSize() {
@@ -81,6 +91,7 @@ public class TutorYAMLReader {
 
             String name = (String) gui.get("title");
             String permission = (String) specificTutor.get("permission");
+            String currencyKey = (String) specificTutor.get("currencyKey");
             int size = (int) gui.get("size");
             int cost = (int) specificTutor.get("cost");
             List<String> moveNames = (List<String>) specificTutor.get("moves");
@@ -97,7 +108,10 @@ public class TutorYAMLReader {
                 }
             }
 
-            return new TutorConfig(name, permission, size, cost, moves, blacklistedPokemon, fillerItem);
+            LOGGER.info("Loaded tutor config: name={}, permission={}, currencyKey={}, size={}, cost={}, moves={}, blacklistedPokemon={}, fillerItem={}",
+                    name, permission, currencyKey, size, cost, moves, blacklistedPokemon, fillerItem);
+
+            return new TutorConfig(name, permission, currencyKey, size, cost, moves, blacklistedPokemon, fillerItem);
         }
     }
 

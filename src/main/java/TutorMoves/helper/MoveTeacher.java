@@ -1,6 +1,7 @@
 package TutorMoves.helper;
 
 import TutorMoves.util.LangManager;
+import TutorMoves.util.JSONUtil;
 import com.cobblemon.mod.common.api.moves.BenchedMove;
 import com.cobblemon.mod.common.api.moves.MoveTemplate;
 import com.cobblemon.mod.common.api.pokemon.moves.LearnsetQuery;
@@ -15,24 +16,31 @@ import java.util.Map;
 
 public class MoveTeacher {
 
-    public static void teachMove(ServerPlayerEntity player, int slot, MoveTemplate move) {
+    public static boolean teachMove(ServerPlayerEntity player, int slot, MoveTemplate move) {
         PlayerPartyStore partyStore;
         try {
             partyStore = Cobblemon.INSTANCE.getStorage().getParty(player.getUuid());
         } catch (NoPokemonStoreException e) {
             LangManager.send((Audience) player, "Error-No-Pokemon", Map.of("{slot}", String.valueOf(slot + 1)));
-            return;
+            return false;
         }
         Pokemon pokemon = partyStore.get(slot);
 
         if (pokemon == null) {
             LangManager.send((Audience) player, "Error-No-Pokemon", Map.of("{slot}", String.valueOf(slot + 1)));
-            return;
+            return false;
         }
 
+        // Check if the move is a valid tutor move for the Pokémon
+        if (!JSONUtil.isTutorMoveForPokemon(pokemon, move.getName())) {
+            LangManager.send((Audience) player, "Error-Not-Tutor", Map.of("{pokemon}", pokemon.getDisplayName().getString(), "{move}", move.getDisplayName().getString()));
+            return false;
+        }
+
+        // Ensure the move can be learned by the Pokémon
         if (!LearnsetQuery.Companion.getANY().canLearn(move, pokemon.getForm().getMoves())) {
             LangManager.send((Audience) player, "Error-Cant-Learn", Map.of("{pokemon}", pokemon.getDisplayName().getString(), "{move}", move.getDisplayName().getString()));
-            return;
+            return false;
         }
 
         boolean knowsMove = pokemon.getMoveSet().getMoves().stream().anyMatch(m -> m.getTemplate() == move);
@@ -48,7 +56,7 @@ public class MoveTeacher {
 
         if (knowsMove) {
             LangManager.send((Audience) player, "Error-Already-Knows", Map.of("{pokemon}", pokemon.getDisplayName().getString(), "{move}", move.getDisplayName().getString()));
-            return;
+            return false;
         }
 
         if (pokemon.getMoveSet().hasSpace()) {
@@ -58,5 +66,6 @@ public class MoveTeacher {
         }
 
         LangManager.send((Audience) player, "Success-Learned", Map.of("{pokemon}", pokemon.getDisplayName().getString(), "{move}", move.getDisplayName().getString()));
+        return true;
     }
 }

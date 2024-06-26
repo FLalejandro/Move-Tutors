@@ -1,25 +1,17 @@
 package TutorMoves.util;
 
+import dev.roanoke.rib.utils.PaginatedSection;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
-import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
-import net.minecraft.text.TextColor;
-import net.minecraft.text.TextColor;
-import dev.roanoke.rib.utils.PaginatedSection;
-import dev.roanoke.rib.utils.SlotRange;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.List;
+import java.util.Locale;
 
 public class GuiUtil {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(GuiUtil.class);
 
     /**
      * Creates a SimpleGui with the given number of rows and title.
@@ -30,31 +22,50 @@ public class GuiUtil {
      * @return The created SimpleGui.
      */
     public static SimpleGui createGui(ServerPlayerEntity player, int rows, String title) {
-        LOGGER.info("Creating GUI with title: {}", title);
         ScreenHandlerType<?> screenHandlerType = getScreenHandlerType(rows);
         SimpleGui gui = new SimpleGui(screenHandlerType, player, false);
 
         // Parse the title string to apply colors and styles
         MutableText parsedTitle = parseFormattedTitle(title);
-        LOGGER.info("Parsed component: {}", parsedTitle);
-
         gui.setTitle(parsedTitle);
-        LOGGER.info("GUI title set to: {}", gui.getTitle().getString());
-
         return gui;
     }
 
     private static MutableText parseFormattedTitle(String title) {
-        // Convert the custom formatting to Minecraft's Text formatting
-        // Assuming title contains formats like "<red><bold>General Tutor"
-        // Replace custom format tags with Minecraft Text formatting
-        title = title.replace("<red>", "§c")
-                .replace("<blue>", "§9")
-                .replace("<bold>", "§l")
-                .replace("<reset>", "§r");
-
-        // Convert the formatted string to Text using Legacy formatting for simplicity
+        for (char c : "0123456789AaBbCcDdEeFfKkLlMmNnOoRr".toCharArray()) {
+            String legacyCode = "§" + c;
+            String replacement = getLegacyReplacement(String.valueOf(c));
+            title = title.replace(legacyCode, replacement);
+        }
         return Text.literal(title);
+    }
+
+    private static String getLegacyReplacement(String input) {
+        return switch (input.toUpperCase(Locale.ENGLISH)) {
+            case "0" -> "<reset><c:#000000>";
+            case "1" -> "<reset><c:#0000AA>";
+            case "2" -> "<reset><c:#00AA00>";
+            case "3" -> "<reset><c:#00AAAA>";
+            case "4" -> "<reset><c:#AA0000>";
+            case "5" -> "<reset><c:#AA00AA>";
+            case "6" -> "<reset><c:#FFAA00>";
+            case "7" -> "<reset><c:#AAAAAA>";
+            case "8" -> "<reset><c:#555555>";
+            case "9" -> "<reset><c:#5555FF>";
+            case "A" -> "<reset><c:#55FF55>";
+            case "B" -> "<reset><c:#55FFFF>";
+            case "C" -> "<reset><c:#FF5555>";
+            case "D" -> "<reset><c:#FF55FF>";
+            case "E" -> "<reset><c:#FFFF55>";
+            case "F" -> "<reset><c:#FFFFFF>";
+            case "K" -> "<obf>";
+            case "L" -> "<b>";
+            case "M" -> "<st>";
+            case "N" -> "<u>";
+            case "O" -> "<i>";
+            case "R" -> "<reset>";
+            default -> input;
+        };
     }
 
     /**

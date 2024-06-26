@@ -8,6 +8,7 @@ import TutorMoves.util.JSONUtil;
 import TutorMoves.util.LangManager;
 import TutorMoves.util.MoveUtil;
 import TutorMoves.util.ColorUtil;
+import TutorMoves.util.ItemEconUtil;
 import com.cobblemon.mod.common.api.moves.MoveTemplate;
 import com.cobblemon.mod.common.api.moves.Moves;
 import com.cobblemon.mod.common.api.storage.NoPokemonStoreException;
@@ -65,6 +66,7 @@ public class AllTutorScreen {
         if (rows < 2 || rows > 6) {
             rows = 6; // Default value if configuration is invalid
         }
+        String currencyKey = TutorMoves.getMainConfig().getString("TutorMoves.currencyKey");
         BigDecimal price = new BigDecimal(TutorMoves.getMainConfig().getInt("TutorMoves.cost"));
         String guiTitle = TutorMoves.getMainConfig().getString("GUI.title");
         String fillerItem = TutorMoves.getMainConfig().getString("GUI.filler-item");
@@ -89,11 +91,16 @@ public class AllTutorScreen {
                     if (moveTemplate == null) {
                         return null;
                     }
-                    ItemStack itemStack = moveUtil.getGemForMove(moveTemplate, price);
+                    ItemStack itemStack = moveUtil.getGemForMove(moveTemplate, price, currencyKey);
                     return GuiElementBuilder.from(itemStack)
                             .setCallback((x, y, z) -> {
                                 try {
-                                    EconUtil.openConfirmationWindow(player, moveTemplate, slot - 1, gui, price).open();
+                                    if (currencyKey.startsWith("ITEMS:")) {
+                                        List<ItemStack> requiredItems = ItemEconUtil.getRequiredItemsFromConfig(currencyKey, TutorMoves.getMainConfig().getInt("TutorMoves.cost"));
+                                        ItemEconUtil.openConfirmationWindow(player, moveTemplate, slot - 1, gui, requiredItems).open();
+                                    } else {
+                                        EconUtil.openConfirmationWindow(player, moveTemplate, slot - 1, gui, price, currencyKey).open();
+                                    }
                                 } catch (NoPokemonStoreException e) {
                                     throw new RuntimeException(e);
                                 }

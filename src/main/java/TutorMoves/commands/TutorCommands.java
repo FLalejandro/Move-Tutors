@@ -31,7 +31,7 @@ public class TutorCommands {
     public static final String TUTOR_PERMISSION_NODE = "tutormoves.tutor";
     public static final String OPEN_PERMISSION_NODE = "tutormoves.open";
     public static final String MENU_PERMISSION_NODE = "tutormoves.menu";
-    public static final String NPC_PERMISSION_NODE = "tutormoves.npc"; // New permission node for NPC commands
+    public static final String NPC_PERMISSION_NODE = "tutormoves.npc";
 
     /**
      * Registers the tutor commands.
@@ -73,7 +73,7 @@ public class TutorCommands {
                                 .executes(TutorCommands::openSelectionMenu)
                         )
                         .then(literal("npc")
-                                .requires(Permissions.require(NPC_PERMISSION_NODE, 2)) // Apply the new permission node
+                                .requires(Permissions.require(NPC_PERMISSION_NODE, 2))
                                 .then(argument("tutor_name", StringArgumentType.string())
                                         .suggests(TutorCommands::suggestTutors)
                                         .executes(ctx -> {

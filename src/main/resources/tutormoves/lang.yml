@@ -1,10 +1,10 @@
 # DON'T TOUCH Config-Version OR THINGS WILL BREAK
 Config-Version: 1.2.0
 # We Support Legacy and MiniMessage Formatting!
-Success-Learned: "<dark_aqua>{pokemon} <aqua>learned <dark_aqua>{move}."
-Successful-Tutor: "<aqua>You spent <dark_aqua>{cost}<aqua> to teach {pokemon} <aqua>the move <dark_aqua>{move}."
+Success-Learned: "<dark_aqua>{pokemon} <aqua>was taught <dark_aqua>{move}!"
 Insufficient-Funds: "<red>You do not have enough money to purchase this move."
-Error-No-Pokemon: "<red>No Pokemon found in slot <dark_red>{slot}<."
+Insufficient-Items: "<red>You must have <dark_red>{itemcost} <red>to purchase this move. "
+Error-No-Pokemon: "<red>No Pokemon found in slot <dark_red>{slot}."
 Error-Not-Tutor: "<dark_red>{move} <red>is not a tutor move for <dark_red>{pokemon}!"
 Error-No-Tutor-Moves: "<dark_red>{pokemon} <red>does not learn any tutor moves."
 Error-Already-Knows: "<dark_red>{pokemon} <red>already knows <dark_red>{move}."
