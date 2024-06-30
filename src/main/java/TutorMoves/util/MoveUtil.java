@@ -2,7 +2,6 @@ package TutorMoves.util;
 
 import com.cobblemon.mod.common.api.moves.MoveTemplate;
 import com.cobblemon.mod.common.api.moves.Moves;
-import com.cobblemon.mod.common.api.types.ElementalType;
 import dev.roanoke.rib.utils.ItemBuilder;
 import dev.roanoke.rib.utils.LoreLike;
 import net.minecraft.item.ItemStack;

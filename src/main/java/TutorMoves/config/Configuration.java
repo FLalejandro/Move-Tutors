@@ -328,4 +328,3 @@ public class Configuration {
         return (val != null) ? val : def;
     }
 }
-

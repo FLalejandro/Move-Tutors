@@ -154,13 +154,13 @@ public class TutorMoves implements ModInitializer {
             tutorsFolder.mkdirs();
         }
         if (tutorsFolder.isDirectory() && tutorsFolder.list().length == 0) {
-            File defaultTutorFile = new File(tutorsFolder, "dragonmaster.yml");
+            File defaultTutorFile = new File(tutorsFolder, "specifictutor.yml");
             if (!defaultTutorFile.exists()) {
                 try (FileOutputStream outputStream = new FileOutputStream(defaultTutorFile)) {
-                    Path path = Paths.get("tutormoves", "tutors", "dragonmaster.yml");
+                    Path path = Paths.get("tutormoves", "tutors", "specifictutor.yml");
                     InputStream in = getClass().getClassLoader().getResourceAsStream(path.toString().replace("\\", "/"));
                     if (in == null) {
-                        throw new RuntimeException("dragonmaster.yml resource not found");
+                        throw new RuntimeException("specifictutor.yml resource not found");
                     }
                     in.transferTo(outputStream);
                 } catch (IOException e) {

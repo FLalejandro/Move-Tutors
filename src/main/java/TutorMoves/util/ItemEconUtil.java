@@ -153,7 +153,7 @@ public class ItemEconUtil {
                     .append(itemStack.getCount() > 1 ? "s" : "")
                     .append(", ");
         }
-        return sb.length() > 0 ? sb.substring(0, sb.length() - 2) : sb.toString();  // Remove the trailing comma and space
+        return sb.length() > 0 ? sb.substring(0, sb.length() - 2) : sb.toString();
     }
 
     /**

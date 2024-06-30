@@ -4,6 +4,7 @@ import TutorMoves.TutorMoves;
 import TutorMoves.guis.AllTutorScreen;
 import TutorMoves.guis.SelectionScreen;
 import TutorMoves.guis.SpecificTutorScreen;
+import TutorMoves.util.NPCUtil;
 import TutorMoves.util.TutorYAMLReader;
 import com.cobblemon.mod.common.api.storage.NoPokemonStoreException;
 import com.mojang.brigadier.CommandDispatcher;
@@ -18,6 +19,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 
 import java.io.File;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.IntStream;
 
@@ -79,8 +81,13 @@ public class TutorCommands {
                                         .executes(ctx -> {
                                             ServerPlayerEntity player = ctx.getSource().getPlayer();
                                             if (player != null) {
-                                                TutorMoves.npcModePlayers.put(player.getUuid(), StringArgumentType.getString(ctx, "tutor_name"));
-                                                player.sendMessage(Text.literal("Right-click on an entity to set it as an NPC for this tutor."));
+                                                UUID playerId = player.getUuid();
+                                                String tutorName = StringArgumentType.getString(ctx, "tutor_name");
+                                                if (NPCUtil.addNPCEntity(playerId, tutorName)) {
+                                                    player.sendMessage(Text.literal("Right-click on an entity to set it as an NPC for this tutor."));
+                                                } else {
+                                                    player.sendMessage(Text.literal("This NPC is already assigned to a tutor."));
+                                                }
                                             }
                                             return 1;
                                         })
