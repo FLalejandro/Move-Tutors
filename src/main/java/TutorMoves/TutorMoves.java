@@ -6,7 +6,7 @@ import TutorMoves.config.Configuration;
 import TutorMoves.config.YamlConfiguration;
 import TutorMoves.events.EntityInteractEvent;
 import TutorMoves.util.LangManager;
-import TutorMoves.util.NPCUtil;
+import TutorMoves.npc.NPCUtil;
 import TutorMoves.util.PermissionHelper;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -33,6 +33,7 @@ public class TutorMoves implements ModInitializer {
     public static PermissionHelper perms = null;
     private static Configuration mainConfig;
     private static Configuration langConfig;
+    private boolean isImpactorAvailable;
 
     public static Map<UUID, String> npcModePlayers = new HashMap<>();
     public static Map<UUID, String> npcEntities = new HashMap<>();
@@ -44,6 +45,9 @@ public class TutorMoves implements ModInitializer {
 
         // Initialize configuration
         this.configManager();
+
+        // Check if Impactor API is available
+        checkImpactorDependency();
 
         // Register all the commands available in the mod.
         registerCommands();
@@ -198,6 +202,15 @@ public class TutorMoves implements ModInitializer {
         LOGGER.info("  | || | | | __/ _ \\| '__| |\\/| |/ _ \\ \\ / / _ \\/ __|");
         LOGGER.info("  | || |_| | || (_) | |  | |  | | (_) \\ V /  __/\\__ \\");
         LOGGER.info("  |_| \\__,_|\\__\\___/|_|  |_|  |_|\\___/ \\_/ \\___||___/");
+    }
+
+    private void checkImpactorDependency() {
+        isImpactorAvailable = FabricLoader.getInstance().isModLoaded("impactor");
+        if (isImpactorAvailable) {
+            LOGGER.info("Impactor API is available, enabling Impactor-specific features.");
+        } else {
+            LOGGER.warn("Impactor API is not available, disabling Impactor-specific features.");
+        }
     }
 
     public static void saveNPCEntities() {

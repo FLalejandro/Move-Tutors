@@ -20,41 +20,43 @@ import net.minecraft.util.Identifier;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 public class SelectionScreen {
 
     /**
      * Opens the selection menu GUI for the player.
-     *
      * @param player The player to open the GUI for.
+     * @param specificTutorName Optional tutor name for specific tutors.
      */
-    public static void open(ServerPlayerEntity player) {
+    public static void open(ServerPlayerEntity player, Optional<String> specificTutorName) {
         SimpleGui gui = new SimpleGui(ScreenHandlerType.GENERIC_9X3, player, false);
         gui.setTitle(Text.literal("Select a Pokémon"));
 
         try {
             PlayerPartyStore partyStore = Cobblemon.INSTANCE.getStorage().getParty(player.getUuid());
-
-            // Specific middle row indexes
             int[] middleRowIndexes = {10, 11, 12, 14, 15, 16};
 
             for (int i = 0; i < 6; i++) {
                 int slotIndex = middleRowIndexes[i];
                 Pokemon pokemon = partyStore.get(i);
-
                 final int slotNumber = i + 1;
 
                 if (pokemon != null) {
                     ItemStack pokemonItem = createPokemonItem(pokemon);
-                    gui.setSlot(slotIndex, GuiElementBuilder.from(pokemonItem)
-                            .setCallback((x, y, z) -> {
-                                try {
-                                    AllTutorScreen.open(player, slotNumber);
-                                } catch (NoPokemonStoreException e) {
-                                    player.sendMessage(Text.literal("No Pokémon found in slot " + slotNumber).formatted(Formatting.RED));
-                                }
-                            }));
+                    GuiElementBuilder element = GuiElementBuilder.from(pokemonItem).setCallback((x, y, z) -> {
+                        try {
+                            if (specificTutorName.isPresent()) {
+                                SpecificTutorScreen.open(player, slotNumber, specificTutorName.get());
+                            } else {
+                                AllTutorScreen.open(player, slotNumber);
+                            }
+                        } catch (NoPokemonStoreException e) {
+                            player.sendMessage(Text.literal("No Pokémon found in slot " + slotNumber).formatted(Formatting.RED));
+                        }
+                    });
+                    gui.setSlot(slotIndex, element);
                 } else {
                     ItemStack emptyItem = new ItemStack(Registries.ITEM.get(new Identifier("cobblemon:poke_ball")));
                     emptyItem.setCustomName(Text.literal("Empty Slot"));
@@ -66,7 +68,6 @@ public class SelectionScreen {
             player.sendMessage(Text.literal("Error retrieving Pokémon party").formatted(Formatting.RED));
         }
 
-        // Add filler items to all other slots
         ItemStack fillerItem = new ItemStack(Registries.ITEM.get(new Identifier("minecraft:cyan_stained_glass_pane")));
         fillerItem.setCustomName(Text.literal(""));
         for (int i = 0; i < 27; i++) {
@@ -78,12 +79,7 @@ public class SelectionScreen {
         gui.open();
     }
 
-    /**
-     * Creates an ItemStack representing the Pokémon with the appropriate NBT data.
-     *
-     * @param pokemon The Pokémon to represent.
-     * @return The ItemStack representing the Pokémon.
-     */
+
     private static ItemStack createPokemonItem(Pokemon pokemon) {
         Species species = pokemon.getSpecies();
         ItemStack itemStack = new ItemStack(Registries.ITEM.get(new Identifier("cobblemon:pokemon_model")));
@@ -103,6 +99,4 @@ public class SelectionScreen {
         itemStack.setCustomName(Text.literal(species.getName()));
         return itemStack;
     }
-
-
 }

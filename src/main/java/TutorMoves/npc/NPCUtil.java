@@ -1,4 +1,4 @@
-package TutorMoves.util;
+package TutorMoves.npc;
 
 import TutorMoves.TutorMoves;
 import com.google.gson.Gson;
@@ -18,22 +18,6 @@ public class NPCUtil {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final File NPC_FILE = new File(TutorMoves.getConfigFolder(), "npc_entities.json");
 
-
-    /**
-     * Adds an NPC entity to the map if it doesn't already exist.
-     *
-     * @param npcId The UUID of the NPC entity.
-     * @param tutorName The name of the tutor to assign to the NPC entity.
-     * @return true if the NPC was added, false if it already exists.
-     */
-    public static boolean addNPCEntity(UUID npcId, String tutorName) {
-        if (TutorMoves.npcEntities.containsKey(npcId)) {
-            return false;
-        }
-        TutorMoves.npcEntities.put(npcId, tutorName);
-        saveNPCEntities();
-        return true;
-    }
 
     /**
      * Saves the current NPC entities to the JSON file.

@@ -31,6 +31,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class SpecificTutorScreen {
@@ -154,6 +155,8 @@ public class SpecificTutorScreen {
                     open(player, slot, tutorFileName);
                 }
         );
+
+        GuiUtil.applyBackButton(gui, rows, () -> SelectionScreen.open(player, Optional.of(tutorFileName)));
 
         gui.open();
     }

@@ -4,7 +4,7 @@ import TutorMoves.TutorMoves;
 import TutorMoves.guis.AllTutorScreen;
 import TutorMoves.guis.SelectionScreen;
 import TutorMoves.guis.SpecificTutorScreen;
-import TutorMoves.util.NPCUtil;
+import TutorMoves.npc.NPCUtil;
 import TutorMoves.util.TutorYAMLReader;
 import com.cobblemon.mod.common.api.storage.NoPokemonStoreException;
 import com.mojang.brigadier.CommandDispatcher;
@@ -19,10 +19,12 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 
 import java.io.File;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.IntStream;
 
+import static TutorMoves.TutorMoves.npcModePlayers;
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
 
@@ -31,7 +33,6 @@ public class TutorCommands {
     // Permission nodes for the tutor commands.
     public static final String RELOAD_PERMISSION_NODE = "tutormoves.reload";
     public static final String TUTOR_PERMISSION_NODE = "tutormoves.tutor";
-    public static final String OPEN_PERMISSION_NODE = "tutormoves.open";
     public static final String MENU_PERMISSION_NODE = "tutormoves.menu";
     public static final String NPC_PERMISSION_NODE = "tutormoves.npc";
 
@@ -60,16 +61,6 @@ public class TutorCommands {
                                         })
                                 )
                         )
-                        .then(literal("open")
-                                .requires(Permissions.require(OPEN_PERMISSION_NODE, 2))
-                                .then(argument("specific_tutor", StringArgumentType.string())
-                                        .suggests(TutorCommands::suggestTutors)
-                                        .then(argument("slot", IntegerArgumentType.integer(1, 6))
-                                                .suggests(TutorCommands::suggestSlots)
-                                                .executes(ctx -> openSpecificTutor(ctx, StringArgumentType.getString(ctx, "specific_tutor"), IntegerArgumentType.getInteger(ctx, "slot")))
-                                        )
-                                )
-                        )
                         .then(literal("menu")
                                 .requires(Permissions.require(MENU_PERMISSION_NODE, 2))
                                 .executes(TutorCommands::openSelectionMenu)
@@ -80,28 +71,15 @@ public class TutorCommands {
                                         .suggests(TutorCommands::suggestTutors)
                                         .executes(ctx -> {
                                             ServerPlayerEntity player = ctx.getSource().getPlayer();
-                                            if (player != null) {
-                                                UUID playerId = player.getUuid();
-                                                String tutorName = StringArgumentType.getString(ctx, "tutor_name");
-                                                if (NPCUtil.addNPCEntity(playerId, tutorName)) {
-                                                    player.sendMessage(Text.literal("Right-click on an entity to set it as an NPC for this tutor."));
-                                                } else {
-                                                    player.sendMessage(Text.literal("This NPC is already assigned to a tutor."));
-                                                }
-                                            }
-                                            return 1;
-                                        })
-                                )
-                                .then(literal("off")
-                                        .executes(ctx -> {
-                                            ServerPlayerEntity player = ctx.getSource().getPlayer();
-                                            if (player != null) {
-                                                if (TutorMoves.npcModePlayers.containsKey(player.getUuid())) {
-                                                    TutorMoves.npcModePlayers.remove(player.getUuid());
-                                                    player.sendMessage(Text.literal("NPC mode has been turned off."));
-                                                } else {
-                                                    player.sendMessage(Text.literal("You are not in NPC mode."));
-                                                }
+                                            UUID playerId = player.getUuid();
+                                            String tutorName = StringArgumentType.getString(ctx, "tutor_name");
+
+                                            if (npcModePlayers.containsKey(playerId) && npcModePlayers.get(playerId).equals(tutorName)) {
+                                                npcModePlayers.remove(playerId);
+                                                player.sendMessage(Text.literal("NPC mode disabled."));
+                                            } else {
+                                                npcModePlayers.put(playerId, tutorName);
+                                                player.sendMessage(Text.literal("NPC mode enabled for " + tutorName + ". Right-click an entity to toggle as NPC."));
                                             }
                                             return 1;
                                         })
@@ -197,7 +175,6 @@ public class TutorCommands {
             return 0;
         }
 
-        // Fetch the tutor configuration from the YAML file
         TutorYAMLReader.TutorConfig tutorConfig;
         try {
             tutorConfig = TutorYAMLReader.readTutorFile(specificTutor);
@@ -206,15 +183,13 @@ public class TutorCommands {
             return 0;
         }
 
-        // Check if the player has the required permission
-        String permission = tutorConfig.getPermission();
-        if (!Permissions.check(player, permission)) {
+        if (!Permissions.check(player, tutorConfig.getPermission())) {
             TutorYAMLReader.sendFeedback(player, "You do not have permission to open this tutor.");
             return 0;
         }
 
-        // Open the specific tutor GUI
-        SpecificTutorScreen.open(player, slot, specificTutor);
+        // Open the selection screen for a specific tutor
+        SelectionScreen.open(player, Optional.of(specificTutor));
 
         return 1;
     }
@@ -227,7 +202,6 @@ public class TutorCommands {
      */
     public static int openSelectionMenu(CommandContext<ServerCommandSource> ctx) {
         ServerCommandSource source = ctx.getSource();
-        ServerPlayerEntity player = source.getPlayer();
 
         return openSelectionMenu(source);
     }
@@ -241,7 +215,7 @@ public class TutorCommands {
         }
 
         // Open the selection menu GUI
-        SelectionScreen.open(player);
+        SelectionScreen.open(player, Optional.empty());
 
         return 1;
     }

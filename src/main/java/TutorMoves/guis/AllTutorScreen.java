@@ -29,6 +29,7 @@ import net.minecraft.registry.Registries;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class AllTutorScreen {
@@ -156,7 +157,7 @@ public class AllTutorScreen {
         );
 
         // Add back button
-        GuiUtil.applyBackButton(gui, rows, () -> SelectionScreen.open(player));
+        GuiUtil.applyBackButton(gui, rows, () -> SelectionScreen.open(player, Optional.empty()));
 
         gui.open();
     }

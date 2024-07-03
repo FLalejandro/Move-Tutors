@@ -5,8 +5,6 @@ import com.cobblemon.mod.common.api.moves.Moves;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
@@ -16,8 +14,6 @@ import java.nio.file.Paths;
 import java.util.*;
 
 public class TutorYAMLReader {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(TutorYAMLReader.class);
 
     public static class TutorConfig {
         private final String name;
@@ -107,9 +103,6 @@ public class TutorYAMLReader {
                     moves.add(moveTemplate);
                 }
             }
-
-            LOGGER.info("Loaded tutor config: name={}, permission={}, currencyKey={}, size={}, cost={}, moves={}, blacklistedPokemon={}, fillerItem={}",
-                    name, permission, currencyKey, size, cost, moves, blacklistedPokemon, fillerItem);
 
             return new TutorConfig(name, permission, currencyKey, size, cost, moves, blacklistedPokemon, fillerItem);
         }
