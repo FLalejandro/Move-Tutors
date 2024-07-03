@@ -9,6 +9,7 @@ import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.text.Text;
 
 import java.util.Locale;
 import java.util.Map;
@@ -19,9 +20,9 @@ public class ColorUtil {
     private static final Pattern HEX_PATTERN = Pattern.compile("&#([A-Fa-f0-9]){6}");
     private static final Pattern LEGACY_PATTERN = Pattern.compile("[&§]([0-9a-fA-fk-oK-OrR])");
 
-    public static Component parseColour(String input) {
-        input = replaceCodes(input);
-        return MiniMessage.miniMessage().deserialize(input);
+    public static Text parseColour(String input) {
+        net.kyori.adventure.text.Component component = MiniMessage.miniMessage().deserialize(input);
+        return net.minecraft.text.Text.Serializer.fromJson(net.kyori.adventure.text.serializer.gson.GsonComponentSerializer.gson().serialize(component));
     }
 
     private static String replaceCodes(String input) {

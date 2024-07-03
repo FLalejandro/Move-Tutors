@@ -25,8 +25,8 @@ public class GuiUtil {
         ScreenHandlerType<?> screenHandlerType = getScreenHandlerType(rows);
         SimpleGui gui = new SimpleGui(screenHandlerType, player, false);
 
-        // Parse the title string to apply colors and styles
-        MutableText parsedTitle = parseFormattedTitle(title);
+        // Parse the title string to apply colors and styles using MiniMessage
+        Text parsedTitle = ColorUtil.parseColour(title);
         gui.setTitle(parsedTitle);
         return gui;
     }

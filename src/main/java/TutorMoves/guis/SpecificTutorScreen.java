@@ -5,6 +5,7 @@ import TutorMoves.util.EconUtil;
 import TutorMoves.util.GuiUtil;
 import TutorMoves.util.LangManager;
 import TutorMoves.util.MoveUtil;
+import TutorMoves.util.ColorUtil;
 import TutorMoves.util.TutorYAMLReader;
 import TutorMoves.util.ItemEconUtil;
 import com.cobblemon.mod.common.Cobblemon;
@@ -94,7 +95,7 @@ public class SpecificTutorScreen {
         String fillerItem = tutorConfig.getFillerItem();
 
         // Create the GUI
-        SimpleGui gui = GuiUtil.createGui(player, rows, guiTitle);
+        SimpleGui gui = GuiUtil.createGui(player, rows, tutorConfig.getName());
 
         Moves moves = Moves.INSTANCE;
         MoveUtil moveUtil = new MoveUtil(moves);

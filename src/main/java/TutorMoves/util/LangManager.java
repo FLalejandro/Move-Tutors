@@ -3,6 +3,7 @@ package TutorMoves.util;
 import TutorMoves.config.Configuration;
 import TutorMoves.util.ColorUtil;
 import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.text.ComponentLike;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -44,7 +45,7 @@ public class LangManager {
         }
         String prefix = getLang(prefixKey);
         if(prefix != null) lang = prefix + lang;
-        audience.sendMessage(ColorUtil.parseColour(lang));
+        audience.sendMessage((ComponentLike) ColorUtil.parseColour(lang));
     }
 }
 
