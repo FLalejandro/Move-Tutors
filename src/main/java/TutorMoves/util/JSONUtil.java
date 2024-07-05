@@ -16,6 +16,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -45,10 +46,11 @@ public class JSONUtil {
      */
     private static Path findSpeciesJsonFile(String speciesName) {
         try {
+            String alphabeticSpeciesName = makeAlphabetic(speciesName.toLowerCase());
             Path speciesDir = Paths.get(JSONUtil.class.getResource(SPECIES_DIRECTORY).toURI());
             if (Files.exists(speciesDir)) {
                 for (Path generationDir : Files.newDirectoryStream(speciesDir)) {
-                    Path jsonFile = generationDir.resolve(speciesName + ".json");
+                    Path jsonFile = generationDir.resolve(alphabeticSpeciesName + ".json");
                     if (Files.exists(jsonFile)) {
                         return jsonFile;
                     }
@@ -125,10 +127,8 @@ public class JSONUtil {
         List<String> blacklistedMoves = TutorMoves.getMainConfig().getStringList("TutorMoves.Blacklisted-Moves").stream()
                 .map(String::toLowerCase)
                 .collect(Collectors.toList());
-        boolean isBlacklisted = blacklistedMoves.contains(move);
-        return isBlacklisted;
+        return blacklistedMoves.contains(move);
     }
-
 
     /**
      * Checks if a move is a tutor move for X pokemon.
@@ -178,5 +178,18 @@ public class JSONUtil {
             e.printStackTrace();
         }
         return false;
+    }
+
+
+    /**
+     * Converts a string to its alphabetic equivalent by removing non-alphabetic characters
+     * and converting accented characters to their non-accented versions.
+     *
+     * @param input The input string.
+     * @return The alphabetic version of the input string.
+     */
+    public static String makeAlphabetic(String input) {
+        String normalized = Normalizer.normalize(input, Normalizer.Form.NFD);
+        return normalized.replaceAll("[^\\p{IsAlphabetic}]", "");
     }
 }
