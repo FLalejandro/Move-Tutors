@@ -2,13 +2,8 @@ package TutorMoves.guis;
 
 import TutorMoves.TutorMoves;
 import TutorMoves.helper.SortingHelper;
-import TutorMoves.util.EconUtil;
-import TutorMoves.util.GuiUtil;
-import TutorMoves.util.JSONUtil;
-import TutorMoves.util.LangManager;
-import TutorMoves.util.MoveUtil;
-import TutorMoves.util.ColorUtil;
-import TutorMoves.util.ItemEconUtil;
+import TutorMoves.util.*;
+import TutorMoves.util.PokemonUtil;
 import com.cobblemon.mod.common.api.moves.MoveTemplate;
 import com.cobblemon.mod.common.api.moves.Moves;
 import com.cobblemon.mod.common.api.storage.NoPokemonStoreException;
@@ -45,10 +40,10 @@ public class AllTutorScreen {
     public static void open(ServerPlayerEntity player, int slot) throws NoPokemonStoreException {
 
         // Fetch tutor moves for the Pokémon in the specified slot
-        List<String> tutorMoves = JSONUtil.getTutorMovesForSlot(player, slot);
+        List<String> tutorMoves = PokemonUtil.getTutorMovesForSlot(player, slot);
 
         // Fetch the Pokémon in the specified slot
-        Pokemon pokemon = JSONUtil.getPokemonInSlot(player, slot);
+        Pokemon pokemon = PokemonUtil.getPokemonInSlot(player, slot);
 
         if (tutorMoves.isEmpty()) {
             LangManager.send((Audience) player, "Error-No-Tutor-Moves", Map.of("{pokemon}", pokemon.getSpecies().getName()));

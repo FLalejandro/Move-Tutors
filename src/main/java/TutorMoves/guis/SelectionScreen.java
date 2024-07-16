@@ -1,6 +1,6 @@
 package TutorMoves.guis;
 
-import TutorMoves.util.JSONUtil;
+import TutorMoves.util.PokemonUtil;
 import com.cobblemon.mod.common.Cobblemon;
 import com.cobblemon.mod.common.api.storage.NoPokemonStoreException;
 import com.cobblemon.mod.common.api.storage.party.PlayerPartyStore;
@@ -83,7 +83,7 @@ public class SelectionScreen {
 
     private static ItemStack createPokemonItem(Pokemon pokemon) {
         Species species = pokemon.getSpecies();
-        String cleanedSpeciesName = JSONUtil.makeAlphabetic(species.getName().toLowerCase());
+        String cleanedSpeciesName = PokemonUtil.makeAlphabetic(species.getName().toLowerCase());
         ItemStack itemStack = new ItemStack(Registries.ITEM.get(new Identifier("cobblemon:pokemon_model")));
         NbtCompound nbt = new NbtCompound();
         nbt.putString("species", "cobblemon:" + cleanedSpeciesName);

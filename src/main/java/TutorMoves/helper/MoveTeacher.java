@@ -1,7 +1,6 @@
 package TutorMoves.helper;
 
 import TutorMoves.util.LangManager;
-import TutorMoves.util.JSONUtil;
 import com.cobblemon.mod.common.api.moves.BenchedMove;
 import com.cobblemon.mod.common.api.moves.MoveTemplate;
 import com.cobblemon.mod.common.api.pokemon.moves.LearnsetQuery;
@@ -32,7 +31,7 @@ public class MoveTeacher {
         }
 
         // Check if the move is a valid tutor move for the Pokémon
-        if (!JSONUtil.isTutorMoveForPokemon(pokemon, move.getName())) {
+        if (!pokemon.getForm().getMoves().getTutorMoves().contains(move)) {
             LangManager.send((Audience) player, "Error-Not-Tutor", Map.of("{pokemon}", pokemon.getDisplayName().getString(), "{move}", move.getDisplayName().getString()));
             return false;
         }
