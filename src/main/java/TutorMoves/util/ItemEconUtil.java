@@ -1,10 +1,10 @@
 package TutorMoves.util;
 
 import TutorMoves.helper.MoveTeacher;
+import TutorMoves.util.ribStuff.GuiUtils;
 import com.cobblemon.mod.common.api.moves.MoveTemplate;
 import com.cobblemon.mod.common.api.moves.Moves;
 import com.cobblemon.mod.common.api.storage.NoPokemonStoreException;
-import dev.roanoke.rib.utils.GuiUtils;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import net.kyori.adventure.audience.Audience;
@@ -81,6 +81,10 @@ public class ItemEconUtil {
         if (hasRequiredItems(player, requiredItems)) {
             if (MoveTeacher.teachMove(player, slot, move)) {
                 removeRequiredItems(player, requiredItems);
+                LangManager.send((Audience) player, "Successful-Tutor", Map.of(
+                        "{pokemon}", player.getName().getString(),
+                        "{move}", move.getDisplayName().getString()
+                ));
                 return true;
             }
         } else {
@@ -128,6 +132,13 @@ public class ItemEconUtil {
         return gui;
     }
 
+    /**
+     * Determines if two items are the same based on item type and metadata.
+     *
+     * @param item The first item to compare.
+     * @param shopItem The second item to compare.
+     * @return True if the items are the same, false otherwise.
+     */
     private static boolean isSameItem(ItemStack item, ItemStack shopItem) {
         if (item.getItem() != shopItem.getItem()) {
             return false;
@@ -144,6 +155,12 @@ public class ItemEconUtil {
         return !item.hasNbt() && !shopItem.hasNbt();
     }
 
+    /**
+     * Retrieves a formatted string of required item names and quantities.
+     *
+     * @param requiredItems The list of required items.
+     * @return A formatted string of item names and quantities.
+     */
     private static String getRequiredItemNames(List<ItemStack> requiredItems) {
         StringBuilder sb = new StringBuilder();
         for (ItemStack itemStack : requiredItems) {
@@ -159,13 +176,19 @@ public class ItemEconUtil {
     /**
      * Fetches the required items from the configuration for item-based transactions.
      *
+     * @param currencyKey The key defining the currency item.
+     * @param cost The default cost if no override is found.
+     * @param moveName The name of the move for which to fetch required items.
+     * @param overrides The map of move-specific item cost overrides.
      * @return List of required ItemStacks.
      */
-    public static List<ItemStack> getRequiredItemsFromConfig(String currencyKey, int cost) {
+    public static List<ItemStack> getRequiredItemsFromConfig(String currencyKey, int cost, Map<String, Integer> overrides, String moveName) {
+        // Check for move-specific overrides and return the required items accordingly
+        int overriddenCost = overrides.getOrDefault(moveName.toLowerCase(), cost);
+
         // Correctly parse the item ID from the currency key
         String itemId = currencyKey.substring("ITEMS:".length());
         Item item = Registries.ITEM.get(new Identifier(itemId));
-        List<ItemStack> requiredItems = List.of(new ItemStack(item, cost));
-        return requiredItems;
+        return List.of(new ItemStack(item, overriddenCost));
     }
 }

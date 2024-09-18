@@ -1,6 +1,6 @@
 package TutorMoves.util;
 
-import dev.roanoke.rib.utils.PaginatedSection;
+import TutorMoves.util.ribStuff.PaginatedSection;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import net.minecraft.item.Items;

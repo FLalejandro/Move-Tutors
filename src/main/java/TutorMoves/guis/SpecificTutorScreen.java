@@ -1,14 +1,12 @@
 package TutorMoves.guis;
 
 import TutorMoves.helper.SortingHelper;
-import TutorMoves.util.EconUtil;
-import TutorMoves.util.GuiUtil;
-import TutorMoves.util.LangManager;
-import TutorMoves.util.MoveUtil;
-import TutorMoves.util.ColorUtil;
-import TutorMoves.util.TutorYAMLReader;
-import TutorMoves.util.ItemEconUtil;
+import TutorMoves.util.*;
+import TutorMoves.util.ribStuff.PaginatedSection;
+import TutorMoves.util.ribStuff.SlotRange;
 import com.cobblemon.mod.common.Cobblemon;
+import com.cobblemon.mod.common.api.moves.MoveTemplate;
+import com.cobblemon.mod.common.api.moves.Moves;
 import com.cobblemon.mod.common.api.storage.NoPokemonStoreException;
 import com.cobblemon.mod.common.api.storage.party.PlayerPartyStore;
 import com.cobblemon.mod.common.pokemon.Pokemon;
@@ -18,25 +16,23 @@ import net.kyori.adventure.audience.Audience;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.registry.Registries;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
-import dev.roanoke.rib.utils.PaginatedSection;
-import dev.roanoke.rib.utils.SlotRange;
-import com.cobblemon.mod.common.api.moves.Moves;
-import com.cobblemon.mod.common.api.moves.MoveTemplate;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.Formatting;
-import net.minecraft.registry.Registries;
+import net.minecraft.util.Identifier;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class SpecificTutorScreen {
 
+    private static final Logger LOGGER = Logger.getLogger(SpecificTutorScreen.class.getName());
     private static SortingHelper.SortOption currentSortOption = SortingHelper.SortOption.ALPHABETICAL;
 
     /**
@@ -72,7 +68,6 @@ public class SpecificTutorScreen {
             return;
         }
 
-
         // Check for blacklisted Pokémon
         if (tutorConfig.getBlacklistedPokemon().contains(pokemon.getSpecies().getName().toLowerCase())) {
             LangManager.send((Audience) player, "Blacklisted-Pokemon", Map.of("{pokemon}", pokemon.getSpecies().getName()));
@@ -100,11 +95,21 @@ public class SpecificTutorScreen {
         Moves moves = Moves.INSTANCE;
         MoveUtil moveUtil = new MoveUtil(moves);
 
-        BigDecimal price = new BigDecimal(tutorConfig.getCost());
+        BigDecimal defaultPrice = new BigDecimal(tutorConfig.getCost());
         String currencyKey = tutorConfig.getCurrencyKey();
 
-        List<MoveTemplate> moveTemplates = tutorConfig.getMoves();
+        // Fetch the move overrides from the tutor configuration
+        Map<String, Integer> moveOverrides = tutorConfig.getMoveOverrides();
 
+        for (Map.Entry<String, Integer> entry : moveOverrides.entrySet()) {
+            String moveName = entry.getKey().toLowerCase();
+            Integer cost = entry.getValue();
+
+            // Log the move and its overridden cost
+            LOGGER.info("Move override detected: " + moveName + " -> " + cost);
+        }
+
+        List<MoveTemplate> moveTemplates = tutorConfig.getMoves();
         moveTemplates = SortingHelper.sortByOption(moveTemplates, currentSortOption);
 
         List<GuiElementBuilder> elements = moveTemplates.stream()
@@ -112,11 +117,16 @@ public class SpecificTutorScreen {
                     if (moveTemplate == null || moveTemplate.equals(MoveTemplate.Companion.dummy(moveTemplate.getName()))) {
                         return null;
                     }
+
+                    // Determine the price of the move, considering overrides
+                    String moveName = moveTemplate.getName().toLowerCase();
+                    BigDecimal price = getMoveOverrideCost(moveName, defaultPrice, moveOverrides);
+
                     ItemStack itemStack = moveUtil.getGemForMove(moveTemplate, price, currencyKey);
                     return GuiElementBuilder.from(itemStack).setCallback((x, y, z) -> {
                         try {
                             if (currencyKey.startsWith("ITEMS:")) {
-                                List<ItemStack> requiredItems = ItemEconUtil.getRequiredItemsFromConfig(currencyKey, tutorConfig.getCost());
+                                List<ItemStack> requiredItems = ItemEconUtil.getRequiredItemsFromConfig(currencyKey, tutorConfig.getCost(), moveOverrides, moveName);
                                 ItemEconUtil.openConfirmationWindow(player, moveTemplate, slot - 1, gui, requiredItems).open();
                             } else {
                                 EconUtil.openConfirmationWindow(player, moveTemplate, slot - 1, gui, price, currencyKey).open();
@@ -162,4 +172,15 @@ public class SpecificTutorScreen {
         gui.open();
     }
 
+    /**
+     * Retrieves the override cost for a specific move if it exists, otherwise returns the default cost.
+     *
+     * @param moveName The name of the move.
+     * @param defaultCost The default cost for moves.
+     * @param moveOverrides The map containing override costs for specific moves.
+     * @return The override cost if defined, otherwise the default cost.
+     */
+    private static BigDecimal getMoveOverrideCost(String moveName, BigDecimal defaultCost, Map<String, Integer> moveOverrides) {
+        return moveOverrides.containsKey(moveName) ? BigDecimal.valueOf(moveOverrides.get(moveName)) : defaultCost;
+    }
 }

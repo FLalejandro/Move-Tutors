@@ -1,10 +1,10 @@
 package TutorMoves.util;
 
 import TutorMoves.helper.MoveTeacher;
+import TutorMoves.util.ribStuff.GuiUtils;
 import com.cobblemon.mod.common.api.moves.MoveTemplate;
 import com.cobblemon.mod.common.api.moves.Moves;
 import com.cobblemon.mod.common.api.storage.NoPokemonStoreException;
-import dev.roanoke.rib.utils.GuiUtils;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import net.kyori.adventure.audience.Audience;
@@ -30,9 +30,19 @@ public class EconUtil {
      * @return True if the purchase was successful, false otherwise.
      */
     public static boolean purchaseMove(ServerPlayerEntity player, MoveTemplate move, int slot, BigDecimal price, String currencyKey) {
-        if (ImpactorUtil.getBalance(player, currencyKey) >= price.doubleValue()) {
-            if (ImpactorUtil.withdraw(player, price.doubleValue(), currencyKey)) {
-                return MoveTeacher.teachMove(player, slot, move);
+        double playerBalance = ImpactorUtil.getBalance(player, currencyKey);
+        double priceValue = price.doubleValue();
+
+        if (playerBalance >= priceValue) {
+            boolean canTeach = MoveTeacher.teachMove(player, slot, move);
+            if (canTeach) {
+                if (ImpactorUtil.withdraw(player, priceValue, currencyKey)) {
+                    LangManager.send((Audience) player, "Successful-Tutor", Map.of(
+                            "{pokemon}", player.getName().getString(),
+                            "{move}", move.getDisplayName().getString()
+                    ));
+                    return true;
+                }
             }
         } else {
             LangManager.send((Audience) player, "Insufficient-Funds");

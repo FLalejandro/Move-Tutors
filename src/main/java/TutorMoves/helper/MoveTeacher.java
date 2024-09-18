@@ -31,7 +31,7 @@ public class MoveTeacher {
         }
 
         // Check if the move is a valid tutor move for the Pokémon
-        if (!pokemon.getForm().getMoves().getTutorMoves().contains(move)) {
+        if (!pokemon.getForm().getMoves().getTutorMoves().contains(move) && !pokemon.getForm().getMoves().getEggMoves().contains(move)) {
             LangManager.send((Audience) player, "Error-Not-Tutor", Map.of("{pokemon}", pokemon.getDisplayName().getString(), "{move}", move.getDisplayName().getString()));
             return false;
         }

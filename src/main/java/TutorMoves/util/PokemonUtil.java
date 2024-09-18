@@ -2,6 +2,7 @@ package TutorMoves.util;
 
 import TutorMoves.TutorMoves;
 import com.cobblemon.mod.common.Cobblemon;
+import com.cobblemon.mod.common.api.moves.MoveTemplate;
 import com.cobblemon.mod.common.api.storage.NoPokemonStoreException;
 import com.cobblemon.mod.common.api.storage.party.PlayerPartyStore;
 import com.cobblemon.mod.common.pokemon.Pokemon;
@@ -10,6 +11,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import java.text.Normalizer;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class PokemonUtil {
 
@@ -37,10 +39,13 @@ public class PokemonUtil {
     public static List<String> getTutorMovesForSlot(ServerPlayerEntity player, int slot) throws NoPokemonStoreException {
         Pokemon pokemon = getPokemonInSlot(player, slot);
         if (pokemon != null) {
-            return pokemon.getForm().getMoves().getTutorMoves()
-                    .stream()
+            List<MoveTemplate> tutorMoves = pokemon.getForm().getMoves().getTutorMoves();
+            List<MoveTemplate> eggMoves = pokemon.getForm().getMoves().getEggMoves();
+
+            return Stream.concat(tutorMoves.stream(), eggMoves.stream())
                     .filter(move -> !isMoveBlacklisted(move.getName().toLowerCase()))
-                    .map(move -> move.getName())
+                    .map(MoveTemplate::getName)
+                    .distinct()
                     .collect(Collectors.toList());
         }
         return List.of();

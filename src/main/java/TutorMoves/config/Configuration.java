@@ -327,4 +327,24 @@ public class Configuration {
         List<?> val = get(path, def);
         return (val != null) ? val : def;
     }
+
+    public Map<String, Object> getValues(boolean deep) {
+        Map<String, Object> result = new LinkedHashMap<>();
+        for (Map.Entry<String, Object> entry : self.entrySet()) {
+            if (entry.getValue() instanceof Configuration) {
+                Configuration section = (Configuration) entry.getValue();
+                if (deep) {
+                    Map<String, Object> deepValues = section.getValues(true);
+                    for (Map.Entry<String, Object> deepEntry : deepValues.entrySet()) {
+                        result.put(entry.getKey() + SEPARATOR + deepEntry.getKey(), deepEntry.getValue());
+                    }
+                } else {
+                    result.put(entry.getKey(), entry.getValue());
+                }
+            } else {
+                result.put(entry.getKey(), entry.getValue());
+            }
+        }
+        return result;
+    }
 }

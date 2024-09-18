@@ -24,8 +24,9 @@ public class TutorYAMLReader {
         private final List<MoveTemplate> moves;
         private final Set<String> blacklistedPokemon;
         private final String fillerItem;
+        private final Map<String, Integer> moveOverrides;
 
-        public TutorConfig(String name, String permission, String currencyKey, int size, int cost, List<MoveTemplate> moves, Set<String> blacklistedPokemon, String fillerItem) {
+        public TutorConfig(String name, String permission, String currencyKey, int size, int cost, List<MoveTemplate> moves, Set<String> blacklistedPokemon, String fillerItem, Map<String, Integer> moveOverrides) {
             this.name = name;
             this.permission = permission;
             this.currencyKey = currencyKey;
@@ -34,6 +35,7 @@ public class TutorYAMLReader {
             this.moves = moves;
             this.blacklistedPokemon = blacklistedPokemon;
             this.fillerItem = fillerItem;
+            this.moveOverrides = moveOverrides;
         }
 
         public String getName() {
@@ -66,6 +68,10 @@ public class TutorYAMLReader {
 
         public String getFillerItem() {
             return fillerItem;
+        }
+
+        public Map<String, Integer> getMoveOverrides() {
+            return moveOverrides;
         }
     }
 
@@ -104,7 +110,17 @@ public class TutorYAMLReader {
                 }
             }
 
-            return new TutorConfig(name, permission, currencyKey, size, cost, moves, blacklistedPokemon, fillerItem);
+            // Parse the Move-Overrides section
+            Map<String, Integer> moveOverrides = new HashMap<>();
+            List<Map<String, Integer>> overridesList = (List<Map<String, Integer>>) specificTutor.get("Move-Overrides");
+            if (overridesList != null) {
+                for (Map<String, Integer> override : overridesList) {
+                    moveOverrides.putAll(override);
+                }
+            }
+
+
+            return new TutorConfig(name, permission, currencyKey, size, cost, moves, blacklistedPokemon, fillerItem, moveOverrides);
         }
     }
 

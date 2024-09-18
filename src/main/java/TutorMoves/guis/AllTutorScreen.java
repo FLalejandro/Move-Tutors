@@ -1,9 +1,11 @@
 package TutorMoves.guis;
 
 import TutorMoves.TutorMoves;
+import TutorMoves.config.Configuration;
 import TutorMoves.helper.SortingHelper;
 import TutorMoves.util.*;
-import TutorMoves.util.PokemonUtil;
+import TutorMoves.util.ribStuff.PaginatedSection;
+import TutorMoves.util.ribStuff.SlotRange;
 import com.cobblemon.mod.common.api.moves.MoveTemplate;
 import com.cobblemon.mod.common.api.moves.Moves;
 import com.cobblemon.mod.common.api.storage.NoPokemonStoreException;
@@ -16,19 +18,17 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
-import dev.roanoke.rib.utils.PaginatedSection;
-import dev.roanoke.rib.utils.SlotRange;
 import net.minecraft.util.Identifier;
 import net.minecraft.registry.Registries;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class AllTutorScreen {
 
+    private static final Logger LOGGER = Logger.getLogger(AllTutorScreen.class.getName());
     private static SortingHelper.SortOption currentSortOption = SortingHelper.SortOption.ALPHABETICAL;
 
     /**
@@ -63,9 +63,28 @@ public class AllTutorScreen {
             rows = 6; // Default value if configuration is invalid
         }
         String currencyKey = TutorMoves.getMainConfig().getString("TutorMoves.currencyKey");
-        BigDecimal price = new BigDecimal(TutorMoves.getMainConfig().getInt("TutorMoves.cost"));
+        BigDecimal defaultPrice = new BigDecimal(TutorMoves.getMainConfig().getInt("TutorMoves.cost"));
         String guiTitle = TutorMoves.getMainConfig().getString("GUI.title");
         String fillerItem = TutorMoves.getMainConfig().getString("GUI.filler-item");
+
+        // Fetch the move overrides from the configuration
+        Configuration moveOverridesConfig = TutorMoves.getMainConfig().getSection("Move-Overrides");
+        Map<String, Integer> moveOverrides = new HashMap<>();
+
+        if (moveOverridesConfig != null) {
+            List<Map<String, Integer>> overridesList = (List<Map<String, Integer>>) moveOverridesConfig.getList("");
+
+            for (Map<String, Integer> override : overridesList) {
+                for (Map.Entry<String, Integer> entry : override.entrySet()) {
+                    String moveName = entry.getKey().toLowerCase();
+                    Integer cost = entry.getValue();
+                    moveOverrides.put(moveName, cost);
+
+                    // Log the move and its overridden cost
+                    LOGGER.info("Move override detected: " + moveName + " -> " + cost);
+                }
+            }
+        }
 
         // Create the GUI
         SimpleGui gui = GuiUtil.createGui(player, rows, guiTitle);
@@ -87,12 +106,17 @@ public class AllTutorScreen {
                     if (moveTemplate == null) {
                         return null;
                     }
+
+                    // Determine the price of the move, considering overrides
+                    String moveName = moveTemplate.getName().toLowerCase();
+                    BigDecimal price = getMoveOverrideCost(moveName, defaultPrice, moveOverrides);
+
                     ItemStack itemStack = moveUtil.getGemForMove(moveTemplate, price, currencyKey);
                     return GuiElementBuilder.from(itemStack)
                             .setCallback((x, y, z) -> {
                                 try {
                                     if (currencyKey.startsWith("ITEMS:")) {
-                                        List<ItemStack> requiredItems = ItemEconUtil.getRequiredItemsFromConfig(currencyKey, TutorMoves.getMainConfig().getInt("TutorMoves.cost"));
+                                        List<ItemStack> requiredItems = ItemEconUtil.getRequiredItemsFromConfig(currencyKey, defaultPrice.intValue(), moveOverrides, moveName);
                                         ItemEconUtil.openConfirmationWindow(player, moveTemplate, slot - 1, gui, requiredItems).open();
                                     } else {
                                         EconUtil.openConfirmationWindow(player, moveTemplate, slot - 1, gui, price, currencyKey).open();
@@ -155,5 +179,17 @@ public class AllTutorScreen {
         GuiUtil.applyBackButton(gui, rows, () -> SelectionScreen.open(player, Optional.empty()));
 
         gui.open();
+    }
+
+    /**
+     * Retrieves the override cost for a specific move if it exists, otherwise returns the default cost.
+     *
+     * @param moveName The name of the move.
+     * @param defaultCost The default cost for moves.
+     * @param moveOverrides The map containing override costs for specific moves.
+     * @return The override cost if defined, otherwise the default cost.
+     */
+    private static BigDecimal getMoveOverrideCost(String moveName, BigDecimal defaultCost, Map<String, Integer> moveOverrides) {
+        return moveOverrides.containsKey(moveName) ? BigDecimal.valueOf(moveOverrides.get(moveName)) : defaultCost;
     }
 }
