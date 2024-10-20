@@ -74,6 +74,6 @@ public class PokemonUtil {
      */
     public static String makeAlphabetic(String input) {
         String normalized = Normalizer.normalize(input, Normalizer.Form.NFD);
-        return normalized.replaceAll("[^\\p{IsAlphabetic}]", "");
+        return normalized.replaceAll("[^\\p{IsAlphabetic}\\p{IsDigit}]", "");
     }
 }

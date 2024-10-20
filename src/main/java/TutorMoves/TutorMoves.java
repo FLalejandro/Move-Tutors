@@ -46,8 +46,9 @@ public class TutorMoves implements ModInitializer {
         // Initialize configuration
         this.configManager();
 
-        // Check if Impactor API is available
+        // Check for Impactor and LuckPerms
         checkImpactorDependency();
+        checkLuckPermsDependency();
 
         // Register all the commands available in the mod.
         registerCommands();
@@ -210,6 +211,15 @@ public class TutorMoves implements ModInitializer {
             LOGGER.info("Impactor API is available, enabling Impactor-specific features.");
         } else {
             LOGGER.warn("Impactor API is not available, disabling Impactor-specific features.");
+        }
+    }
+
+    private void checkLuckPermsDependency() {
+        isImpactorAvailable = FabricLoader.getInstance().isModLoaded("luckperms");
+        if (isImpactorAvailable) {
+            LOGGER.info("LuckPerms API is available, enabling LuckPerms-specific features.");
+        } else {
+            LOGGER.warn("LuckPerms API is not available, disabling LuckPerms-specific features.");
         }
     }
 

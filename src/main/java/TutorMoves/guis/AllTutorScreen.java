@@ -68,20 +68,16 @@ public class AllTutorScreen {
         String fillerItem = TutorMoves.getMainConfig().getString("GUI.filler-item");
 
         // Fetch the move overrides from the configuration
-        Configuration moveOverridesConfig = TutorMoves.getMainConfig().getSection("Move-Overrides");
+        List<Map<String, Integer>> moveOverridesList = (List<Map<String, Integer>>) TutorMoves.getMainConfig().getList("Move-Overrides");
         Map<String, Integer> moveOverrides = new HashMap<>();
 
-        if (moveOverridesConfig != null) {
-            List<Map<String, Integer>> overridesList = (List<Map<String, Integer>>) moveOverridesConfig.getList("");
-
-            for (Map<String, Integer> override : overridesList) {
+        if (moveOverridesList != null) {
+            for (Map<String, Integer> override : moveOverridesList) {
                 for (Map.Entry<String, Integer> entry : override.entrySet()) {
                     String moveName = entry.getKey().toLowerCase();
                     Integer cost = entry.getValue();
                     moveOverrides.put(moveName, cost);
 
-                    // Log the move and its overridden cost
-                    LOGGER.info("Move override detected: " + moveName + " -> " + cost);
                 }
             }
         }

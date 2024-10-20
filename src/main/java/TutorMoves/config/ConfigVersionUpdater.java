@@ -32,7 +32,8 @@ public class ConfigVersionUpdater {
     private void updateConfigFile(Configuration config, String fileName, boolean addOverrides) {
         String configVersion = config.getString("Config-Version", "1.0.0");
 
-        if (!configVersion.equals(currentVersion)) {
+        // Only update if the current version is older than the new version
+        if (isNewerVersion(configVersion, currentVersion)) {
             LOGGER.info("Updating " + fileName + " from version " + configVersion + " to " + currentVersion);
             config.set("Config-Version", currentVersion);
 
@@ -41,6 +42,8 @@ public class ConfigVersionUpdater {
             }
 
             saveConfigPreservingComments(new File(TutorMoves.getConfigFolder(), fileName), currentVersion);
+        } else {
+            LOGGER.info(fileName + " is already up to date (version " + configVersion + "). No update needed.");
         }
     }
 
@@ -54,11 +57,13 @@ public class ConfigVersionUpdater {
                         Configuration tutorConfig = YamlConfiguration.loadConfiguration(tutorFile);
                         String tutorVersion = tutorConfig.getString("Config-Version", "1.0.0");
 
-                        if (!tutorVersion.equals(currentVersion)) {
+                        if (isNewerVersion(tutorVersion, currentVersion)) {
                             LOGGER.info("Updating " + tutorFile.getName() + " from version " + tutorVersion + " to " + currentVersion);
                             tutorConfig.set("Config-Version", currentVersion);
                             addSpecificTutorMoveOverrides(tutorConfig, tutorFile.getName());
                             saveConfigPreservingComments(tutorFile, currentVersion);
+                        } else {
+                            LOGGER.info(tutorFile.getName() + " is already up to date. No update needed.");
                         }
                     } catch (IOException e) {
                         LOGGER.error("Failed to update tutor config: " + tutorFile.getName(), e);
@@ -68,29 +73,40 @@ public class ConfigVersionUpdater {
         }
     }
 
+    private boolean isNewerVersion(String currentVersion, String newVersion) {
+        String[] currentParts = currentVersion.split("\\.");
+        String[] newParts = newVersion.split("\\.");
+
+        int maxLength = Math.max(currentParts.length, newParts.length);
+
+        for (int i = 0; i < maxLength; i++) {
+            int currentPart = i < currentParts.length ? Integer.parseInt(currentParts[i]) : 0;
+            int newPart = i < newParts.length ? Integer.parseInt(newParts[i]) : 0;
+
+            if (currentPart < newPart) {
+                return true; // The new version is greater
+            } else if (currentPart > newPart) {
+                return false; // The current version is greater, no update needed
+            }
+        }
+        return false; // The versions are the same
+    }
+
     private void addMoveOverrides(Configuration config, String fileName) {
         if (!config.contains("Move-Overrides")) {
-            String overridesSection =
-                    "# Override the cost of specific moves\n" +
-                            "# Format - move:cost\n" +
-                            "Move-Overrides:\n" +
-                            "  - outrage: 6000\n" +
-                            "  - dracometeor: 10000\n";
+            config.set("Move-Overrides.outrage", 6000);
+            config.set("Move-Overrides.dracometeor", 10000);
 
-            appendToFile(new File(TutorMoves.getConfigFolder(), fileName), overridesSection, false);
+            saveConfigPreservingComments(new File(TutorMoves.getConfigFolder(), fileName), currentVersion);
         }
     }
 
     private void addSpecificTutorMoveOverrides(Configuration tutorConfig, String fileName) {
         if (!tutorConfig.contains("Move-Overrides")) {
-            String overridesSection =
-                    "# Override the cost of specific moves\n" +
-                            "# Format - move:cost\n" +
-                            "Move-Overrides:\n" +
-                            "  - outrage: 7\n" +
-                            "  - dracometeor: 10\n";
+            tutorConfig.set("Move-Overrides.outrage", 7);
+            tutorConfig.set("Move-Overrides.dracometeor", 10);
 
-            appendToFile(new File(TutorMoves.getConfigFolder(), "tutors/" + fileName), overridesSection, true);
+            saveConfigPreservingComments(new File(TutorMoves.getConfigFolder(), "tutors/" + fileName), currentVersion);
         }
     }
 
@@ -98,30 +114,12 @@ public class ConfigVersionUpdater {
         try {
             Path filePath = file.toPath();
             String originalContent = Files.readString(filePath, StandardCharsets.UTF_8);
-            String updatedContent = originalContent.replaceFirst("Config-Version: \\d+\\.\\d+\\.\\d+", "Config-Version: " + newVersion);
-            Files.writeString(filePath, updatedContent, StandardCharsets.UTF_8);
+            String updatedContent = originalContent.replaceFirst("(?m)^Config-Version: .*$", "Config-Version: " + newVersion);
+            Path tempFilePath = filePath.getParent().resolve(filePath.getFileName() + ".tmp");
+            Files.writeString(tempFilePath, updatedContent, StandardCharsets.UTF_8);
+            Files.move(tempFilePath, filePath, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             LOGGER.error("Failed to preserve comments while saving config: " + file.getName(), e);
-        }
-    }
-
-    private void appendToFile(File file, String content, boolean needsNewlineBefore) {
-        try {
-            String originalContent = Files.readString(file.toPath(), StandardCharsets.UTF_8);
-
-            // Remove excessive empty lines before adding content
-            originalContent = originalContent.replaceAll("(?m)^[ \t]*\r?\n", "\n");
-
-            // Ensure there is no extra new line before appending
-            if (needsNewlineBefore && !originalContent.endsWith("\n")) {
-                content = "\n" + content;
-            } else if (!needsNewlineBefore && originalContent.endsWith("\n")) {
-                content = content.stripLeading(); // Strip leading newlines if not needed
-            }
-
-            Files.write(file.toPath(), content.getBytes(StandardCharsets.UTF_8), java.nio.file.StandardOpenOption.APPEND);
-        } catch (IOException e) {
-            LOGGER.error("Failed to append content to " + file.getName(), e);
         }
     }
 }

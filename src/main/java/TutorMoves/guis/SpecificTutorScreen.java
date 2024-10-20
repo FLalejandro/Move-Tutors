@@ -105,8 +105,6 @@ public class SpecificTutorScreen {
             String moveName = entry.getKey().toLowerCase();
             Integer cost = entry.getValue();
 
-            // Log the move and its overridden cost
-            LOGGER.info("Move override detected: " + moveName + " -> " + cost);
         }
 
         List<MoveTemplate> moveTemplates = tutorConfig.getMoves();
