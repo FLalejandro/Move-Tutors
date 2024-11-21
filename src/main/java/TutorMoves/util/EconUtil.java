@@ -1,14 +1,12 @@
 package TutorMoves.util;
 
 import TutorMoves.helper.MoveTeacher;
-import TutorMoves.util.ribStuff.GuiUtils;
 import com.cobblemon.mod.common.api.moves.MoveTemplate;
 import com.cobblemon.mod.common.api.moves.Moves;
 import com.cobblemon.mod.common.api.storage.NoPokemonStoreException;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import net.kyori.adventure.audience.Audience;
-import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -66,9 +64,9 @@ public class EconUtil {
         gui.setTitle(Text.literal("Confirm Purchase"));
 
         MoveUtil moveUtil = new MoveUtil(Moves.INSTANCE);
-        ItemStack itemStack = moveUtil.getGemForMove(moveTemplate, price, currencyKey);
+        GuiElementBuilder elementBuilder = moveUtil.getGemForMove(moveTemplate, price, currencyKey);
 
-        gui.setSlot(13, GuiElementBuilder.from(itemStack).build());
+        gui.setSlot(13, elementBuilder.build());
 
         gui.setSlot(11, GuiElementBuilder.from(Items.GREEN_WOOL.getDefaultStack())
                 .setName(Text.literal("§aConfirm"))
@@ -84,7 +82,7 @@ public class EconUtil {
                 .setName(Text.literal("§cCancel"))
                 .setCallback((x, y, z) -> oldGui.open()));
 
-        GuiUtils.fillGUI(gui);
+        GuiUtil.fillGUI(gui);
         return gui;
     }
 }

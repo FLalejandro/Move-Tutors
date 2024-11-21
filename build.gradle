@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.6-SNAPSHOT'
+    id 'fabric-loom' version '1.7-SNAPSHOT'
     id 'maven-publish'
 }
 
@@ -52,13 +52,13 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-lifecycle-events-v1:${project.fabric_version}"
 
     // Ooey Gooey *moan*
-    modImplementation "eu.pb4:sgui:1.2.2+1.20"
-    include "eu.pb4:sgui:1.2.2+1.20"
+    modImplementation "eu.pb4:sgui:1.6.1+1.21.1"
 
     implementation "cloud.commandframework:cloud-core:1.8.4"
-    implementation "net.impactdev.impactor.api:economy:5.1.1-SNAPSHOT"
+    implementation "net.impactdev.impactor.api:economy:5.3.0-SNAPSHOT"
 
-    modImplementation("com.cobblemon:fabric:1.5.0+1.20.1")
+    // Cobblemon 1.6
+    modImplementation("com.cobblemon:fabric:1.6.0+1.21.1-SNAPSHOT")
 
     implementation "org.yaml:snakeyaml:2.1"
     modImplementation "me.lucko:fabric-permissions-api:0.3.1"
@@ -67,7 +67,7 @@ dependencies {
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
-    options.release = 17
+    options.release = 21
 }
 
 processResources {

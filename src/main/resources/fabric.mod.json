@@ -18,9 +18,10 @@
     ]
   },
   "depends": {
-    "fabricloader": ">=0.14.22",
-    "fabric": "*",
-    "minecraft": "1.20.1",
-    "cobblemon": ">=1.5.0+1.20.1"
+    "java": ">=17",
+    "minecraft": ">=1.21.0",
+    "fabric-api": "*",
+    "fabricloader": ">=0.14.21",
+    "luckperms": "*"
   }
 }

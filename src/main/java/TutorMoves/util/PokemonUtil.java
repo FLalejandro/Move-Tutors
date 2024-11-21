@@ -24,7 +24,7 @@ public class PokemonUtil {
      */
     public static Pokemon getPokemonInSlot(ServerPlayerEntity player, int slot) throws NoPokemonStoreException {
         slot = slot - 1;
-        PlayerPartyStore partyStore = Cobblemon.INSTANCE.getStorage().getParty(player.getUuid());
+        PlayerPartyStore partyStore = Cobblemon.INSTANCE.getStorage().getParty(player);
         return partyStore.get(slot);
     }
 

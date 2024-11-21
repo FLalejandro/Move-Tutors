@@ -15,7 +15,7 @@ TutorMoves:
     - pikachu
 GUI:
   # The GUI Title
-  title: "<red><bold>General Tutor"
+  title: "General Tutor"
   # The Size of the Main Tutor GUI (2-6)
   size: 6
   # GUI Elements
