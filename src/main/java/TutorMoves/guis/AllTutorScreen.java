@@ -1,11 +1,10 @@
 package TutorMoves.guis;
 
 import TutorMoves.TutorMoves;
-import TutorMoves.config.Configuration;
+import TutorMoves.guis.util.PaginatedSection;
+import TutorMoves.guis.util.SlotRange;
 import TutorMoves.helper.SortingHelper;
 import TutorMoves.util.*;
-import TutorMoves.util.ribStuff.PaginatedSection;
-import TutorMoves.util.ribStuff.SlotRange;
 import com.cobblemon.mod.common.api.moves.MoveTemplate;
 import com.cobblemon.mod.common.api.moves.Moves;
 import com.cobblemon.mod.common.api.storage.NoPokemonStoreException;
@@ -16,13 +15,15 @@ import net.kyori.adventure.audience.Audience;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 import net.minecraft.registry.Registries;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.Identifier;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -107,9 +108,8 @@ public class AllTutorScreen {
                     String moveName = moveTemplate.getName().toLowerCase();
                     BigDecimal price = getMoveOverrideCost(moveName, defaultPrice, moveOverrides);
 
-                    ItemStack itemStack = moveUtil.getGemForMove(moveTemplate, price, currencyKey);
-                    return GuiElementBuilder.from(itemStack)
-                            .setCallback((x, y, z) -> {
+                    GuiElementBuilder elementBuilder = moveUtil.getGemForMove(moveTemplate, price, currencyKey);
+                    return elementBuilder.setCallback((x, y, z) -> {
                                 try {
                                     if (currencyKey.startsWith("ITEMS:")) {
                                         List<ItemStack> requiredItems = ItemEconUtil.getRequiredItemsFromConfig(currencyKey, defaultPrice.intValue(), moveOverrides, moveName);
@@ -126,7 +126,7 @@ public class AllTutorScreen {
                 .collect(Collectors.toList());
 
         // Get filler item from the configuration
-        Item fillerItemInstance = Registries.ITEM.get(new Identifier(fillerItem));
+        Item fillerItemInstance = Registries.ITEM.get(Identifier.of((fillerItem)));
         if (fillerItemInstance == Items.AIR) {
             fillerItemInstance = Items.GRAY_STAINED_GLASS_PANE; // Default fallback item
         }
@@ -135,7 +135,8 @@ public class AllTutorScreen {
         // Create PaginatedSection with configurable filler item
         PaginatedSection paginatedSection = new PaginatedSection(elements)
                 .setSlotRanges(List.of(new SlotRange(0, rows * 9 - 10)))
-                .setFillItem(GuiElementBuilder.from(fillerStack.setCustomName(Text.literal(""))));
+                .setFillItem(GuiElementBuilder.from(fillerStack));
+
 
         // Fill the GUI and add pagination controls
         GuiUtil.applyPaginationControls(gui, paginatedSection, rows);

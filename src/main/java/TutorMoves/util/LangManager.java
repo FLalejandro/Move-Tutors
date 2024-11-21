@@ -45,7 +45,6 @@ public class LangManager {
         }
         String prefix = getLang(prefixKey);
         if(prefix != null) lang = prefix + lang;
-        audience.sendMessage((ComponentLike) ColorUtil.parseColour(lang));
+        audience.sendMessage(ColorUtil.parseColour(lang));
     }
 }
-

@@ -7,9 +7,8 @@ import net.kyori.adventure.text.TranslatableComponent;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.minecraft.component.ComponentMap;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.text.Text;
 
 import java.util.Locale;
 import java.util.Map;
@@ -20,9 +19,9 @@ public class ColorUtil {
     private static final Pattern HEX_PATTERN = Pattern.compile("&#([A-Fa-f0-9]){6}");
     private static final Pattern LEGACY_PATTERN = Pattern.compile("[&§]([0-9a-fA-fk-oK-OrR])");
 
-    public static Text parseColour(String input) {
-        net.kyori.adventure.text.Component component = MiniMessage.miniMessage().deserialize(input);
-        return net.minecraft.text.Text.Serializer.fromJson(net.kyori.adventure.text.serializer.gson.GsonComponentSerializer.gson().serialize(component));
+    public static Component parseColour(String input) {
+        input = replaceCodes(input);
+        return MiniMessage.miniMessage().deserialize(input);
     }
 
     private static String replaceCodes(String input) {
@@ -43,7 +42,7 @@ public class ColorUtil {
         return input;
     }
 
-    private static String getLegacyReplacement(String input) {
+    public static String getLegacyReplacement(String input) {
         return switch (input.toUpperCase(Locale.ENGLISH)) {
             case "0" -> "<reset><c:#000000>";
             case "1" -> "<reset><c:#0000AA>";
@@ -92,7 +91,7 @@ public class ColorUtil {
     }
 
     public static String toMiniItemHover(ItemStack item) {
-        NbtCompound itemNBT = item.getNbt();
+        ComponentMap itemNBT = item.getComponents();
         if(itemNBT != null) {
             return "<hover:show_item:"
                     + item.getItem().getName().getString()
@@ -109,4 +108,3 @@ public class ColorUtil {
         }
     }
 }
-

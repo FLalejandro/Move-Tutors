@@ -1,13 +1,14 @@
 package TutorMoves.util;
 
 import TutorMoves.helper.MoveTeacher;
-import TutorMoves.util.ribStuff.GuiUtils;
+import TutorMoves.guis.util.*;
 import com.cobblemon.mod.common.api.moves.MoveTemplate;
 import com.cobblemon.mod.common.api.moves.Moves;
 import com.cobblemon.mod.common.api.storage.NoPokemonStoreException;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import net.kyori.adventure.audience.Audience;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -110,7 +111,7 @@ public class ItemEconUtil {
         gui.setTitle(Text.literal("Confirm Purchase"));
 
         MoveUtil moveUtil = new MoveUtil(Moves.INSTANCE);
-        ItemStack itemStack = moveUtil.getGemForMove(moveTemplate, new BigDecimal(requiredItems.get(0).getCount()), requiredItems.get(0).getItem().toString());
+        ItemStack itemStack = moveUtil.getGemForMove(moveTemplate, new BigDecimal(requiredItems.get(0).getCount()), requiredItems.get(0).getItem().toString()).asStack();
 
         gui.setSlot(13, GuiElementBuilder.from(itemStack).build());
 
@@ -128,7 +129,7 @@ public class ItemEconUtil {
                 .setName(Text.literal("§cCancel"))
                 .setCallback((x, y, z) -> oldGui.open()));
 
-        GuiUtils.fillGUI(gui);
+        GuiUtil.fillGUI(gui);
         return gui;
     }
 
@@ -148,11 +149,12 @@ public class ItemEconUtil {
             return false;
         }
 
-        if (item.hasNbt() && shopItem.hasNbt()) {
-            return item.getNbt().equals(shopItem.getNbt());
+
+        if (item.getComponents().contains(DataComponentTypes.CUSTOM_DATA) && shopItem.getComponents().contains(DataComponentTypes.CUSTOM_DATA)) {
+            return item.getComponents().equals(shopItem.getComponents());
         }
 
-        return !item.hasNbt() && !shopItem.hasNbt();
+        return !item.getComponents().contains(DataComponentTypes.CUSTOM_DATA) && !shopItem.getComponents().contains(DataComponentTypes.CUSTOM_DATA);
     }
 
     /**
@@ -188,7 +190,7 @@ public class ItemEconUtil {
 
         // Correctly parse the item ID from the currency key
         String itemId = currencyKey.substring("ITEMS:".length());
-        Item item = Registries.ITEM.get(new Identifier(itemId));
+        Item item = Registries.ITEM.get(Identifier.of(itemId));
         return List.of(new ItemStack(item, overriddenCost));
     }
 }

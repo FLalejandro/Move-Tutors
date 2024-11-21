@@ -1,4 +1,4 @@
-package TutorMoves.util.ribStuff;
+package TutorMoves.guis.util;
 
 public class SlotRange {
     private int start;
@@ -7,10 +7,6 @@ public class SlotRange {
     public SlotRange(int start, int end) {
         this.start = start;
         this.end = end;
-    }
-
-    public boolean contains(int slot) {
-        return start <= slot && slot <= end;
     }
 
     public int getStart() {
@@ -25,3 +21,4 @@ public class SlotRange {
         return end - start + 1;
     }
 }
+

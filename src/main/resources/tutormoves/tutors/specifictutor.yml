@@ -18,7 +18,7 @@ SpecificTutor:
     - jirachi
 GUI:
   # The GUI Title
-  title: "<blue><bold>Dragon Master"
+  title: "Dragon Master"
   # The Size of the Main Tutor GUI (2-6)
   size: 6
   # GUI Elements

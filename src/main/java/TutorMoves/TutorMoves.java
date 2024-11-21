@@ -104,7 +104,7 @@ public class TutorMoves implements ModInitializer {
     public void configManager() {
         mainConfig = getConfig("config.yml");
         langConfig = getConfig("lang.yml");
-        ConfigVersionUpdater updater = new ConfigVersionUpdater(mainConfig, langConfig, "1.4.0");
+        ConfigVersionUpdater updater = new ConfigVersionUpdater(mainConfig, langConfig, "2.0.0");
         updater.updateConfig();
         LangManager.loadConfig(langConfig);
 

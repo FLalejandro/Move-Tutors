@@ -2,14 +2,14 @@ package TutorMoves.guis;
 
 import TutorMoves.helper.SortingHelper;
 import TutorMoves.util.*;
-import TutorMoves.util.ribStuff.PaginatedSection;
-import TutorMoves.util.ribStuff.SlotRange;
+import TutorMoves.guis.util.*;
 import com.cobblemon.mod.common.Cobblemon;
 import com.cobblemon.mod.common.api.moves.MoveTemplate;
 import com.cobblemon.mod.common.api.moves.Moves;
 import com.cobblemon.mod.common.api.storage.NoPokemonStoreException;
 import com.cobblemon.mod.common.api.storage.party.PlayerPartyStore;
 import com.cobblemon.mod.common.pokemon.Pokemon;
+import eu.pb4.sgui.api.elements.GuiElement;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import net.kyori.adventure.audience.Audience;
@@ -45,12 +45,7 @@ public class SpecificTutorScreen {
     public static void open(ServerPlayerEntity player, int slot, String tutorFileName) {
 
         PlayerPartyStore partyStore;
-        try {
-            partyStore = Cobblemon.INSTANCE.getStorage().getParty(player.getUuid());
-        } catch (NoPokemonStoreException e) {
-            player.sendMessage(Text.literal("No Pokémon found in slot " + slot).formatted(Formatting.RED));
-            return;
-        }
+        partyStore = Cobblemon.INSTANCE.getStorage().getParty(player);
 
         Pokemon pokemon = partyStore.get(slot - 1);
 
@@ -120,8 +115,8 @@ public class SpecificTutorScreen {
                     String moveName = moveTemplate.getName().toLowerCase();
                     BigDecimal price = getMoveOverrideCost(moveName, defaultPrice, moveOverrides);
 
-                    ItemStack itemStack = moveUtil.getGemForMove(moveTemplate, price, currencyKey);
-                    return GuiElementBuilder.from(itemStack).setCallback((x, y, z) -> {
+                    GuiElementBuilder elementBuilder = moveUtil.getGemForMove(moveTemplate, price, currencyKey);
+                    return elementBuilder.setCallback((x, y, z) -> {
                         try {
                             if (currencyKey.startsWith("ITEMS:")) {
                                 List<ItemStack> requiredItems = ItemEconUtil.getRequiredItemsFromConfig(currencyKey, tutorConfig.getCost(), moveOverrides, moveName);
@@ -137,7 +132,7 @@ public class SpecificTutorScreen {
                 .filter(element -> element != null)
                 .collect(Collectors.toList());
 
-        Item fillerItemInstance = Registries.ITEM.get(new Identifier(fillerItem));
+        Item fillerItemInstance = Registries.ITEM.get(Identifier.of(fillerItem));
         if (fillerItemInstance == Items.AIR) {
             fillerItemInstance = Items.GRAY_STAINED_GLASS_PANE;
         }
@@ -145,7 +140,7 @@ public class SpecificTutorScreen {
 
         PaginatedSection paginatedSection = new PaginatedSection(elements)
                 .setSlotRanges(List.of(new SlotRange(0, rows * 9 - 10)))
-                .setFillItem(GuiElementBuilder.from(fillerStack.setCustomName(Text.literal(""))));
+                .setFillItem(GuiElementBuilder.from(fillerStack));
 
         GuiUtil.applyPaginationControls(gui, paginatedSection, rows);
         paginatedSection.applyToGui(gui);

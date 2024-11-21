@@ -1,8 +1,10 @@
 package TutorMoves.util;
 
-import TutorMoves.util.ribStuff.PaginatedSection;
+import TutorMoves.guis.util.*;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -10,6 +12,8 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 
 import java.util.Locale;
+
+import static net.minecraft.item.Items.BLACK_STAINED_GLASS_PANE;
 
 public class GuiUtil {
 
@@ -26,7 +30,7 @@ public class GuiUtil {
         SimpleGui gui = new SimpleGui(screenHandlerType, player, false);
 
         // Parse the title string to apply colors and styles using MiniMessage
-        Text parsedTitle = ColorUtil.parseColour(title);
+        Text parsedTitle = parseFormattedTitle(title);
         gui.setTitle(parsedTitle);
         return gui;
     }
@@ -34,39 +38,12 @@ public class GuiUtil {
     private static MutableText parseFormattedTitle(String title) {
         for (char c : "0123456789AaBbCcDdEeFfKkLlMmNnOoRr".toCharArray()) {
             String legacyCode = "§" + c;
-            String replacement = getLegacyReplacement(String.valueOf(c));
+            String replacement = ColorUtil.getLegacyReplacement(String.valueOf(c));
             title = title.replace(legacyCode, replacement);
         }
         return Text.literal(title);
     }
 
-    private static String getLegacyReplacement(String input) {
-        return switch (input.toUpperCase(Locale.ENGLISH)) {
-            case "0" -> "<reset><c:#000000>";
-            case "1" -> "<reset><c:#0000AA>";
-            case "2" -> "<reset><c:#00AA00>";
-            case "3" -> "<reset><c:#00AAAA>";
-            case "4" -> "<reset><c:#AA0000>";
-            case "5" -> "<reset><c:#AA00AA>";
-            case "6" -> "<reset><c:#FFAA00>";
-            case "7" -> "<reset><c:#AAAAAA>";
-            case "8" -> "<reset><c:#555555>";
-            case "9" -> "<reset><c:#5555FF>";
-            case "A" -> "<reset><c:#55FF55>";
-            case "B" -> "<reset><c:#55FFFF>";
-            case "C" -> "<reset><c:#FF5555>";
-            case "D" -> "<reset><c:#FF55FF>";
-            case "E" -> "<reset><c:#FFFF55>";
-            case "F" -> "<reset><c:#FFFFFF>";
-            case "K" -> "<obf>";
-            case "L" -> "<b>";
-            case "M" -> "<st>";
-            case "N" -> "<u>";
-            case "O" -> "<i>";
-            case "R" -> "<reset>";
-            default -> input;
-        };
-    }
 
     /**
      * Applies pagination controls (Previous and Next Page buttons) to the GUI.
@@ -79,17 +56,17 @@ public class GuiUtil {
         int controlSlotPrevious = (rows - 1) * 9;
         int controlSlotNext = controlSlotPrevious + 8;
 
-        gui.setSlot(controlSlotPrevious, GuiElementBuilder.from(Items.ARROW.getDefaultStack().setCustomName(Text.literal("Previous Page")))
+        gui.setSlot(controlSlotPrevious, GuiElementBuilder.from(createArrowItem("Previous Page"))
                 .setCallback((x, y, z) -> {
                     paginatedSection.decrementPage();
                     paginatedSection.applyToGui(gui);
-                }));
+                }).build());
 
-        gui.setSlot(controlSlotNext, GuiElementBuilder.from(Items.ARROW.getDefaultStack().setCustomName(Text.literal("Next Page")))
+        gui.setSlot(controlSlotNext, GuiElementBuilder.from(createArrowItem("Next Page"))
                 .setCallback((x, y, z) -> {
-                    paginatedSection.incremementPage();
+                    paginatedSection.incrementPage();
                     paginatedSection.applyToGui(gui);
-                }));
+                }).build());
     }
 
     /**
@@ -106,14 +83,14 @@ public class GuiUtil {
         int sortSlotCategory = (rows - 1) * 9 + 4;
         int sortSlotType = (rows - 1) * 9 + 5;
 
-        gui.setSlot(sortSlotAlpha, GuiElementBuilder.from(Items.PAPER.getDefaultStack().setCustomName(Text.literal("Alphabetical")))
-                .setCallback((x, y, z) -> alphabeticalCallback.run()));
+        gui.setSlot(sortSlotAlpha, GuiElementBuilder.from(createItem(Items.PAPER.getDefaultStack(), "Alphabetical"))
+                .setCallback((x, y, z) -> alphabeticalCallback.run()).build());
 
-        gui.setSlot(sortSlotCategory, GuiElementBuilder.from(Items.NAME_TAG.getDefaultStack().setCustomName(Text.literal("Category")))
-                .setCallback((x, y, z) -> categoryCallback.run()));
+        gui.setSlot(sortSlotCategory, GuiElementBuilder.from(createItem(Items.NAME_TAG.getDefaultStack(), "Category"))
+                .setCallback((x, y, z) -> categoryCallback.run()).build());
 
-        gui.setSlot(sortSlotType, GuiElementBuilder.from(Items.GOLD_INGOT.getDefaultStack().setCustomName(Text.literal("Type")))
-                .setCallback((x, y, z) -> typeCallback.run()));
+        gui.setSlot(sortSlotType, GuiElementBuilder.from(createItem(Items.GOLD_INGOT.getDefaultStack(), "Type"))
+                .setCallback((x, y, z) -> typeCallback.run()).build());
     }
 
     /**
@@ -126,8 +103,31 @@ public class GuiUtil {
     public static void applyBackButton(SimpleGui gui, int rows, Runnable backCallback) {
         int backButtonSlot = (rows - 1) * 9 + 1;
 
-        gui.setSlot(backButtonSlot, GuiElementBuilder.from(Items.BARRIER.getDefaultStack().setCustomName(Text.literal("Back")))
-                .setCallback((x, y, z) -> backCallback.run()));
+        gui.setSlot(backButtonSlot, GuiElementBuilder.from(createItem(Items.BARRIER.getDefaultStack(), "Back"))
+                .setCallback((x, y, z) -> backCallback.run()).build());
+    }
+
+    /**
+     * Creates an ItemStack with a custom name using Components for Minecraft 1.21.1.
+     *
+     * @param item The base item to modify.
+     * @param name The custom name to apply to the item.
+     * @return The modified ItemStack with the custom name.
+     */
+    private static ItemStack createItem(ItemStack item, String name) {
+        ItemStack stack = new ItemStack(item.getItem());
+        stack.set(DataComponentTypes.CUSTOM_NAME, Text.literal(name));
+        return stack;
+    }
+
+    /**
+     * Creates an arrow ItemStack with a custom name using NBT components.
+     *
+     * @param name The custom name to apply to the arrow.
+     * @return The modified ItemStack.
+     */
+    private static ItemStack createArrowItem(String name) {
+        return createItem(Items.ARROW.getDefaultStack(), name);
     }
 
     /**
@@ -150,6 +150,14 @@ public class GuiUtil {
                 return ScreenHandlerType.GENERIC_9X6;
             default:
                 throw new IllegalArgumentException("Invalid number of rows: " + rows);
+        }
+    }
+
+    public static void fillGUI(SimpleGui gui) {
+        int freeslot = gui.getFirstEmptySlot();
+        while (freeslot != -1) {
+            gui.setSlot(freeslot, GuiElementBuilder.from(BLACK_STAINED_GLASS_PANE.getDefaultStack()).setName(Text.literal("")));
+            freeslot = gui.getFirstEmptySlot();
         }
     }
 }

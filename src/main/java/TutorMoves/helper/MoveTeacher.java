@@ -17,12 +17,7 @@ public class MoveTeacher {
 
     public static boolean teachMove(ServerPlayerEntity player, int slot, MoveTemplate move) {
         PlayerPartyStore partyStore;
-        try {
-            partyStore = Cobblemon.INSTANCE.getStorage().getParty(player.getUuid());
-        } catch (NoPokemonStoreException e) {
-            LangManager.send((Audience) player, "Error-No-Pokemon", Map.of("{slot}", String.valueOf(slot + 1)));
-            return false;
-        }
+        partyStore = Cobblemon.INSTANCE.getStorage().getParty(player);
         Pokemon pokemon = partyStore.get(slot);
 
         if (pokemon == null) {
