@@ -1,5 +1,6 @@
 package TutorMoves.util;
 
+import TutorMoves.TutorMoves;
 import TutorMoves.helper.MoveTeacher;
 import com.cobblemon.mod.common.api.moves.MoveTemplate;
 import com.cobblemon.mod.common.api.moves.Moves;
@@ -18,23 +19,37 @@ import java.util.Map;
 public class EconUtil {
 
     /**
-     * Processes the purchase of a move using currency.
-     *
-     * @param player The player purchasing the move.
-     * @param move The move being purchased.
-     * @param slot The slot of the Pokémon.
-     * @param price The price of the move.
-     * @param currencyKey The currency key used for the transaction.
-     * @return True if the purchase was successful, false otherwise.
+     * Processes the purchase of a move using currency, checking which economy is loaded.
      */
-    public static boolean purchaseMove(ServerPlayerEntity player, MoveTemplate move, int slot, BigDecimal price, String currencyKey) {
-        double playerBalance = ImpactorUtil.getBalance(player, currencyKey);
+    public static boolean purchaseMove(ServerPlayerEntity player,
+                                       MoveTemplate move,
+                                       int slot,
+                                       BigDecimal price,
+                                       String currencyKey) {
         double priceValue = price.doubleValue();
+        double playerBalance;
+
+        // Get player balance depending on what's available
+        if (TutorMoves.isImpactorAvailable) {
+            playerBalance = ImpactorUtil.getBalance(player, currencyKey);
+        } else if (TutorMoves.isPebblesAvailable) {
+            playerBalance = PebblesEconomy.getBalance(player.getUuid());
+        } else {
+            return false;
+        }
 
         if (playerBalance >= priceValue) {
             boolean canTeach = MoveTeacher.teachMove(player, slot, move);
             if (canTeach) {
-                if (ImpactorUtil.withdraw(player, priceValue, currencyKey)) {
+                boolean withdrawalSuccess;
+                if (TutorMoves.isImpactorAvailable) {
+                    withdrawalSuccess = ImpactorUtil.withdraw(player, priceValue, currencyKey);
+                } else {
+                    PebblesEconomy.withdraw(player.getUuid(), priceValue);
+                    withdrawalSuccess = true;
+                }
+
+                if (withdrawalSuccess) {
                     LangManager.send((Audience) player, "Successful-Tutor", Map.of(
                             "{pokemon}", player.getName().getString(),
                             "{move}", move.getDisplayName().getString()
@@ -45,21 +60,19 @@ public class EconUtil {
         } else {
             LangManager.send((Audience) player, "Insufficient-Funds");
         }
+
         return false;
     }
 
     /**
      * Opens a confirmation window to handle the purchase of a move using currency.
-     *
-     * @param player The player who initiated the purchase.
-     * @param moveTemplate The move template to purchase.
-     * @param slot The slot of the Pokémon.
-     * @param oldGui The previous GUI.
-     * @param price The price of the move.
-     * @param currencyKey The currency key used for the transaction.
-     * @return The confirmation GUI.
      */
-    public static SimpleGui openConfirmationWindow(ServerPlayerEntity player, MoveTemplate moveTemplate, int slot, SimpleGui oldGui, BigDecimal price, String currencyKey) throws NoPokemonStoreException {
+    public static SimpleGui openConfirmationWindow(ServerPlayerEntity player,
+                                                   MoveTemplate moveTemplate,
+                                                   int slot,
+                                                   SimpleGui oldGui,
+                                                   BigDecimal price,
+                                                   String currencyKey) throws NoPokemonStoreException {
         SimpleGui gui = new SimpleGui(ScreenHandlerType.GENERIC_9X3, player, false);
         gui.setTitle(Text.literal("Confirm Purchase"));
 
@@ -72,8 +85,10 @@ public class EconUtil {
                 .setName(Text.literal("§aConfirm"))
                 .setCallback((x, y, z) -> {
                     if (purchaseMove(player, moveTemplate, slot, price, currencyKey)) {
-                        LangManager.send((Audience) player, "Successful-Tutor", Map.of("{pokemon}", player.getName().getString(),
-                                "{move}", moveTemplate.getDisplayName().getString()));
+                        LangManager.send((Audience) player, "Successful-Tutor", Map.of(
+                                "{pokemon}", player.getName().getString(),
+                                "{move}", moveTemplate.getDisplayName().getString()
+                        ));
                     }
                     oldGui.open();
                 }));
