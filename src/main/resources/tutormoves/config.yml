@@ -1,9 +1,9 @@
 # DON'T TOUCH Config-Version OR THINGS WILL BREAK
-Config-Version: 1.4.0
+Config-Version: 2.2.0
 # General Tutor Settings
 TutorMoves:
   # The currency which will be used to "purchase" tutor moves.
-  # Options: impactor:{currency}, ITEMS:{item id}.
+  # Options: impactor:{currency}, pebbles, ITEMS:{item id}.
   currencyKey: impactor:dollars
   # The cost of teaching moves
   cost: 5000

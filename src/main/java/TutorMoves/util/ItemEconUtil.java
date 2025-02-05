@@ -1,7 +1,6 @@
 package TutorMoves.util;
 
 import TutorMoves.helper.MoveTeacher;
-import TutorMoves.guis.util.*;
 import com.cobblemon.mod.common.api.moves.MoveTemplate;
 import com.cobblemon.mod.common.api.moves.Moves;
 import com.cobblemon.mod.common.api.storage.NoPokemonStoreException;

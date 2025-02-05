@@ -55,10 +55,14 @@ dependencies {
     modImplementation "eu.pb4:sgui:1.6.1+1.21.1"
 
     implementation "cloud.commandframework:cloud-core:1.8.4"
+
+    // impactor and pebs
     implementation "net.impactdev.impactor.api:economy:5.3.0-SNAPSHOT"
+    modImplementation(files("libs/pebbles-economy-1.0.1-1.21.1.jar"))
 
     // Cobblemon 1.6
     modImplementation("com.cobblemon:fabric:1.6.1+1.21.1")
+
 
     implementation "org.yaml:snakeyaml:2.1"
     modImplementation "me.lucko:fabric-permissions-api:0.3.1"
@@ -86,19 +90,3 @@ jar {
     }
 }
 
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            artifact tasks.remapJar
-            artifact tasks.remapSourcesJar
-        }
-    }
-
-    repositories {
-        // Define your repositories here
-    }
-}
-
-java {
-    withSourcesJar()
-}

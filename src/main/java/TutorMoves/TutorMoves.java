@@ -33,7 +33,10 @@ public class TutorMoves implements ModInitializer {
     public static PermissionHelper perms = null;
     private static Configuration mainConfig;
     private static Configuration langConfig;
-    private boolean isImpactorAvailable;
+    public static boolean isImpactorAvailable = false;
+    public static boolean isPebblesAvailable = false;
+    private boolean isLuckPermsAvailable = false;
+
 
     public static Map<UUID, String> npcModePlayers = new HashMap<>();
     public static Map<UUID, String> npcEntities = new HashMap<>();
@@ -47,7 +50,7 @@ public class TutorMoves implements ModInitializer {
         this.configManager();
 
         // Check for Impactor and LuckPerms
-        checkImpactorDependency();
+        checkEconomyDependency();
         checkLuckPermsDependency();
 
         // Register all the commands available in the mod.
@@ -104,7 +107,7 @@ public class TutorMoves implements ModInitializer {
     public void configManager() {
         mainConfig = getConfig("config.yml");
         langConfig = getConfig("lang.yml");
-        ConfigVersionUpdater updater = new ConfigVersionUpdater(mainConfig, langConfig, "2.0.0");
+        ConfigVersionUpdater updater = new ConfigVersionUpdater(mainConfig, langConfig, "2.2.0");
         updater.updateConfig();
         LangManager.loadConfig(langConfig);
 
@@ -205,18 +208,30 @@ public class TutorMoves implements ModInitializer {
         LOGGER.info("  |_| \\__,_|\\__\\___/|_|  |_|  |_|\\___/ \\_/ \\___||___/");
     }
 
-    private void checkImpactorDependency() {
+    /**
+     * Checks if either Impactor or Pebbles Economy is loaded,
+     * and sets the appropriate boolean flags.
+     */
+    public void checkEconomyDependency() {
         isImpactorAvailable = FabricLoader.getInstance().isModLoaded("impactor");
+        isPebblesAvailable = FabricLoader.getInstance().isModLoaded("pebbles-economy");
         if (isImpactorAvailable) {
             LOGGER.info("Impactor API is available, enabling Impactor-specific features.");
+        } else if (isPebblesAvailable) {
+            LOGGER.info("Pebbles Economy is available, enabling Pebbles-specific features.");
         } else {
-            LOGGER.warn("Impactor API is not available, disabling Impactor-specific features.");
+            LOGGER.warn("No recognized economy mod found! Economy features will be unavailable.");
         }
     }
 
+
+    /**
+     * Checks if LuckPerms is loaded,
+     * sets the boolean, and logs accordingly.
+     */
     private void checkLuckPermsDependency() {
-        isImpactorAvailable = FabricLoader.getInstance().isModLoaded("luckperms");
-        if (isImpactorAvailable) {
+        isLuckPermsAvailable = FabricLoader.getInstance().isModLoaded("luckperms");
+        if (isLuckPermsAvailable) {
             LOGGER.info("LuckPerms API is available, enabling LuckPerms-specific features.");
         } else {
             LOGGER.warn("LuckPerms API is not available, disabling LuckPerms-specific features.");
