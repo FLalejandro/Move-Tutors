@@ -52,7 +52,7 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-lifecycle-events-v1:${project.fabric_version}"
 
     // Ooey Gooey *moan*
-    modImplementation "eu.pb4:sgui:1.6.1+1.21.1"
+    modImplementation include("eu.pb4:sgui:1.6.1+1.21.1")
 
     implementation "cloud.commandframework:cloud-core:1.8.4"
 
