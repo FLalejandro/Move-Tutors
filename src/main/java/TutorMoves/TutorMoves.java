@@ -33,6 +33,7 @@ public class TutorMoves implements ModInitializer {
     public static PermissionHelper perms = null;
     private static Configuration mainConfig;
     private static Configuration langConfig;
+    public static boolean isCobbleEconomyAvailable = false;
     public static boolean isImpactorAvailable = false;
     public static boolean isPebblesAvailable = false;
     private boolean isLuckPermsAvailable = false;
@@ -209,13 +210,17 @@ public class TutorMoves implements ModInitializer {
     }
 
     /**
-     * Checks if either Impactor or Pebbles Economy is loaded,
+     * Checks if either Impactor, Pebbles Economy or CobbleEconomy is loaded,
      * and sets the appropriate boolean flags.
      */
     public void checkEconomyDependency() {
+        isCobbleEconomyAvailable = FabricLoader.getInstance().isModLoaded("cobbleeconomy");
         isImpactorAvailable = FabricLoader.getInstance().isModLoaded("impactor");
         isPebblesAvailable = FabricLoader.getInstance().isModLoaded("pebbles-economy");
-        if (isImpactorAvailable) {
+
+        if (isCobbleEconomyAvailable) {
+            LOGGER.info("CobbleEconomy is available, enabling CobbleEconomy-specific features.");
+        } else if (isImpactorAvailable) {
             LOGGER.info("Impactor API is available, enabling Impactor-specific features.");
         } else if (isPebblesAvailable) {
             LOGGER.info("Pebbles Economy is available, enabling Pebbles-specific features.");

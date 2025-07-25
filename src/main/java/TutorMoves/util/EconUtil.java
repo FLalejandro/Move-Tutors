@@ -7,6 +7,7 @@ import com.cobblemon.mod.common.api.moves.Moves;
 import com.cobblemon.mod.common.api.storage.NoPokemonStoreException;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
+import gg.levely.cobblestory.economy.api.Economy;
 import net.kyori.adventure.audience.Audience;
 import net.minecraft.item.Items;
 import net.minecraft.screen.ScreenHandlerType;
@@ -15,6 +16,7 @@ import net.minecraft.text.Text;
 
 import java.math.BigDecimal;
 import java.util.Map;
+import java.util.UUID;
 
 public class EconUtil {
 
@@ -28,12 +30,15 @@ public class EconUtil {
                                        String currencyKey) {
         double priceValue = price.doubleValue();
         double playerBalance;
+        UUID playerUUID = player.getUuid();
 
         // Get player balance depending on what's available
-        if (TutorMoves.isImpactorAvailable) {
+        if (TutorMoves.isCobbleEconomyAvailable) {
+            playerBalance = CobbleEconomy.getBalance(playerUUID, currencyKey);
+        } else if (TutorMoves.isImpactorAvailable) {
             playerBalance = ImpactorUtil.getBalance(player, currencyKey);
         } else if (TutorMoves.isPebblesAvailable) {
-            playerBalance = PebblesEconomy.getBalance(player.getUuid());
+            playerBalance = PebblesEconomy.getBalance(playerUUID);
         } else {
             return false;
         }
@@ -42,10 +47,12 @@ public class EconUtil {
             boolean canTeach = MoveTeacher.teachMove(player, slot, move);
             if (canTeach) {
                 boolean withdrawalSuccess;
-                if (TutorMoves.isImpactorAvailable) {
+                if (TutorMoves.isCobbleEconomyAvailable) {
+                    withdrawalSuccess = CobbleEconomy.withdraw(playerUUID, priceValue, currencyKey);
+                } else if (TutorMoves.isImpactorAvailable) {
                     withdrawalSuccess = ImpactorUtil.withdraw(player, priceValue, currencyKey);
                 } else {
-                    PebblesEconomy.withdraw(player.getUuid(), priceValue);
+                    PebblesEconomy.withdraw(playerUUID, priceValue);
                     withdrawalSuccess = true;
                 }
 
