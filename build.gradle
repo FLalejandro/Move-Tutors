@@ -28,6 +28,13 @@ repositories {
     maven {
         url 'https://maven.impactdev.net/repository/development/'
     }
+    maven {
+        url = uri("https://maven.pkg.github.com/CobbleStory/CobbleEconomyAPI")
+        credentials {
+            username = project.findProperty("gpr.user")?.toString()
+            password = project.findProperty("gpr.token")?.toString()
+        }
+    }
 }
 
 loom {
@@ -56,8 +63,9 @@ dependencies {
 
     implementation "cloud.commandframework:cloud-core:1.8.4"
 
-    // impactor and pebs
+    // impactor, pebs and cobble economy api
     implementation "net.impactdev.impactor.api:economy:5.3.0-SNAPSHOT"
+    implementation "gg.levely.cobblestory:economy-api:2.0.0"
     modImplementation(files("libs/pebbles-economy-1.0.1-1.21.1.jar"))
 
     // Cobblemon 1.6
