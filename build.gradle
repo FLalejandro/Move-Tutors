@@ -1,14 +1,10 @@
 plugins {
-    id 'fabric-loom' version '1.7-SNAPSHOT'
+    id 'fabric-loom' version '1.9-SNAPSHOT'
     id 'maven-publish'
 }
 
 version = project.mod_version
 group = project.maven_group
-
-base {
-    archivesName = project.archives_base_name
-}
 
 repositories {
     mavenCentral()
@@ -65,11 +61,10 @@ dependencies {
 
     // impactor, pebs and cobble economy api
     implementation "net.impactdev.impactor.api:economy:5.3.0-SNAPSHOT"
-    implementation "gg.levely.cobblestory:economy-api:2.0.0"
     modImplementation(files("libs/pebbles-economy-1.0.1-1.21.1.jar"))
 
-    // Cobblemon 1.6
-    modImplementation("com.cobblemon:fabric:1.6.1+1.21.1")
+    // Cobblemon 1.7
+    modImplementation("com.cobblemon:fabric:1.7.0+1.21.1-SNAPSHOT")
 
 
     implementation "org.yaml:snakeyaml:2.1"

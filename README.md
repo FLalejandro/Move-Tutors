@@ -5,11 +5,11 @@ A Cobblemon-Fabric Server-Side mod that introduces Move Tutoring to the game!
 
 ### Customization
 
-TutorMoves is highly customizable, allowing server administrators to define various tutors with different sets of moves, permissions, and GUI sizes through configuration files.
+me.novoro.TutorMoves is highly customizable, allowing server administrators to define various tutors with different sets of moves, permissions, and GUI sizes through configuration files.
 
 ### Economy Integration
 
-TutorMoves integrates with the Impactor economy mod, enabling players to purchase moves for their Pokémon using in-game currency. This adds an additional layer of gameplay and economy management.
+me.novoro.TutorMoves integrates with the Impactor economy mod, enabling players to purchase moves for their Pokémon using in-game currency. This adds an additional layer of gameplay and economy management.
 
 ### GUI-Based Move Tutoring
 
@@ -62,11 +62,11 @@ In the tutor's GUI, each move will display its price. Players must have sufficie
 
 ## Compatibility
 
-TutorMoves is designed to work seamlessly with other mods, including:
+me.novoro.TutorMoves is designed to work seamlessly with other mods, including:
 
 - **Impactor**: For economy integration.
 - **LuckPerms**: For permission management.
 
 ---
 
-Enjoy using TutorMoves and take your Pokémon training to the next level!
+Enjoy using me.novoro.TutorMoves and take your Pokémon training to the next level!

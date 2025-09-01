@@ -14,7 +14,7 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "TutorMoves.TutorMoves"
+      "me.novoro.TutorMoves.TutorMoves"
     ]
   },
   "depends": {
