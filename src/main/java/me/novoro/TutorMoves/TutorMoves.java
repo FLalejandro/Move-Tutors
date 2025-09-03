@@ -206,6 +206,7 @@ public class TutorMoves implements ModInitializer {
         TutorMovesLogger.info("\u001B[1;35m  | || | | | __/ _ \\| '__| |\\/| |/ _ \\ \\ / / _ \\/ __|\u001B[0m");
         TutorMovesLogger.info("\u001B[1;35m  | || |_| | || (_) | |  | |  | | (_) \\ V /  __/\\__ \\\u001B[0m");
         TutorMovesLogger.info("\u001B[1;35m  |_| \\__,_|\\__\\___/|_|  |_|  |_|\\___/ \\_/ \\___||___/\u001B[0m");
+        TutorMovesLogger.info("\u001B[1;35m  By Novoro: https://discord.gg/wzpp8jeJ9s \u001B[0m");
     }
 
     /**
