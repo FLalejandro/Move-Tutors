@@ -1,5 +1,5 @@
 # DON'T TOUCH Config-Version OR THINGS WILL BREAK
-Config-Version: 2.2.0
+Config-Version: 2.0
 # Specific Tutor Settings
 SpecificTutor:
   # Permission needed to open
@@ -16,7 +16,7 @@ SpecificTutor:
   # Pokemon that should not be able to use this tutor
   Blacklisted-Pokemon:
     - jirachi
-GUI:
+Specific-Tutor-GUI:
   # The GUI Title
   title: "Dragon Master"
   # The Size of the Main Tutor GUI (2-6)
@@ -25,6 +25,6 @@ GUI:
   filler-item: "minecraft:gray_stained_glass_pane"
 # Override the cost of specific moves
 # Format - move:cost
-Move-Overrides:
+Specific-Tutor-Move-Overrides:
   outrage: 6000
   dracometeor: 10000

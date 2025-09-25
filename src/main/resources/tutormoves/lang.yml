@@ -1,11 +1,23 @@
+Lang:
+# Mod Prefix
+  Prefix: "<gray><bold>[<gradient:#6a3093:#a044ff><bold>TᴜᴛᴏʀMᴏᴠᴇꜱ</gradient><gray><bold>]&f "
+
+  # We Support Legacy and MiniMessage Formatting!
+  Success-Learned: "<dark_aqua>{pokemon} <aqua>was taught <dark_aqua>{move}!"
+  Insufficient-Funds: "<red>You do not have enough money to purchase this move."
+  Insufficient-Items: "<red>You must have <dark_red>{itemcost} <red>to purchase this move. "
+  Error-No-Pokemon: "<red>No Pokemon found in slot <dark_red>{slot}."
+  Error-Not-Tutor: "<dark_red>{move} <red>is not a tutor move for <dark_red>{pokemon}!"
+  Error-No-Tutor-Moves: "<dark_red>{pokemon} <red>does not learn any tutor moves."
+  Error-Already-Knows: "<dark_red>{pokemon} <red>already knows <dark_red>{move}."
+  Blacklisted-Pokemon: "<dark_red>{pokemon} <red>can not use this move tutor."
+
+  Menu-Self-Message: "<aqua>You have opened up the General Tutor Menu!"
+  Menu-Other-Message: "<dark_aqua>{player} <aqua>has opened up the General Tutor Menu!"
+  Menu-All-Message: "<aqua>You have opened up the General Tutor Menu for <dark_aqua>{amount} <aqua>players."
+
+  NPC-Mode-Enabled: "<aqua>You have enabled NPC Mode!"
+  NPC-Mode-Disabled: "<aqua>You have disabled NPC Mode!"
+
 # DON'T TOUCH Config-Version OR THINGS WILL BREAK
-Config-Version: 2.2.0
-# We Support Legacy and MiniMessage Formatting!
-Success-Learned: "<dark_aqua>{pokemon} <aqua>was taught <dark_aqua>{move}!"
-Insufficient-Funds: "<red>You do not have enough money to purchase this move."
-Insufficient-Items: "<red>You must have <dark_red>{itemcost} <red>to purchase this move. "
-Error-No-Pokemon: "<red>No Pokemon found in slot <dark_red>{slot}."
-Error-Not-Tutor: "<dark_red>{move} <red>is not a tutor move for <dark_red>{pokemon}!"
-Error-No-Tutor-Moves: "<dark_red>{pokemon} <red>does not learn any tutor moves."
-Error-Already-Knows: "<dark_red>{pokemon} <red>already knows <dark_red>{move}."
-Blacklisted-Pokemon: "<dark_red>{pokemon} <red>can not use this move tutor."
+Config-Version: 2.2.1

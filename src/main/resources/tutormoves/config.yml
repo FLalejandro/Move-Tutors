@@ -1,5 +1,5 @@
 # DON'T TOUCH Config-Version OR THINGS WILL BREAK
-Config-Version: 2.2.0
+Config-Version: 2.0
 # General Tutor Settings
 TutorMoves:
   # The currency which will be used to "purchase" tutor moves.
@@ -13,9 +13,24 @@ TutorMoves:
   # Pokemon that should not be able to use the General Tutor
   Blacklisted-Pokemon:
     - pikachu
-GUI:
+# Which types of moves should appear in the Tutor GUI
+Move-Options:
+  tutorMoves: true
+  eggMoves: false
+  tmMoves: false
+  evolutionMoves: false
+  levelUpMoves: false
+  formChangeMoves: false
+Selection-GUI:
+    # The GUI Title
+    title: "<green>Select a Pokemon"
+    # The Size of the Selection GUI (2-6)
+    size: 6
+    # GUI Elements
+    filler-item: "minecraft:red_stained_glass_pane"
+General-Tutor-GUI:
   # The GUI Title
-  title: "General Tutor"
+  title: "<gold>General Tutor"
   # The Size of the Main Tutor GUI (2-6)
   size: 6
   # GUI Elements

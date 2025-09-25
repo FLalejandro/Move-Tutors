@@ -8,20 +8,19 @@
     "Novoro"
   ],
   "contact": {
-    "repo": ""
+    "repo": "https://github.com/AleGuzAva/"
   },
   "license": "All Rights Reserved",
   "environment": "*",
   "entrypoints": {
     "main": [
-      "me.novoro.TutorMoves.TutorMoves"
+      "me.novoro.tutormoves.TutorMoves"
     ]
   },
   "depends": {
-    "java": ">=21",
-    "minecraft": ">=1.21.1",
     "fabric-api": "*",
     "fabricloader": ">=0.14.21",
-    "luckperms": "*"
+    "minecraft": "~${minecraft_version}",
+    "java": ">=21"
   }
 }
