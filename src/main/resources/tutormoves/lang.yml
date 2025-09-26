@@ -1,6 +1,6 @@
 Lang:
 # Mod Prefix
-  Prefix: "<gray><bold>[<gradient:#6a3093:#a044ff><bold>TᴜᴛᴏʀMᴏᴠᴇꜱ</gradient><gray><bold>]&f "
+  Prefix: "<yellow><bold>[<gradient:#6a3093:#a044ff><bold>TᴜᴛᴏʀMᴏᴠᴇꜱ</gradient><yellow><bold>]&f "
 
   # We Support Legacy and MiniMessage Formatting!
   Success-Learned: "<dark_aqua>{pokemon} <aqua>was taught <dark_aqua>{move}!"
@@ -12,9 +12,9 @@ Lang:
   Error-Already-Knows: "<dark_red>{pokemon} <red>already knows <dark_red>{move}."
   Blacklisted-Pokemon: "<dark_red>{pokemon} <red>can not use this move tutor."
 
-  Menu-Self-Message: "<aqua>You have opened up the General Tutor Menu!"
-  Menu-Other-Message: "<dark_aqua>{player} <aqua>has opened up the General Tutor Menu!"
-  Menu-All-Message: "<aqua>You have opened up the General Tutor Menu for <dark_aqua>{amount} <aqua>players."
+  Menu-Self-Message: "<aqua>You have opened up the {tutor} Menu!"
+  Menu-Other-Message: "<dark_aqua>{player} <aqua>has opened up the {tutor} Menu!"
+  Menu-All-Message: "<aqua>You have opened up the {tutor} Menu for <dark_aqua>{amount} <aqua>players."
 
   NPC-Mode-Enabled: "<aqua>You have enabled NPC Mode!"
   NPC-Mode-Disabled: "<aqua>You have disabled NPC Mode!"

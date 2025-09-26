@@ -31,10 +31,7 @@ public class SelectionScreen {
      */
     public static void open(ServerPlayerEntity player, Optional<String> specificTutorName) {
         // Fetch GUI settings from the configuration
-        int rows = ConfigManager.getSelectionGuiSize();
-        if (rows < 2 || rows > 6) {
-            rows = 6;
-        }
+        int rows = 3;
         String guiTitle = ConfigManager.getSelectionGuiTitle();
         String selectionFillerItem = ConfigManager.getSelectionFillerItem();
         ItemStack fillerItem = new ItemStack(Registries.ITEM.get(Identifier.of(selectionFillerItem)));
@@ -88,7 +85,6 @@ public class SelectionScreen {
         gui.open();
     }
 
-
     /**
      * Creates an ItemStack representing the Pokémon for display in the GUI.
      * @param pokemon The Pokémon to create the ItemStack for.
@@ -106,5 +102,4 @@ public class SelectionScreen {
         // Return the generated ItemStack
         return PokemonItem.from(species, aspectsArray);
     }
-
 }

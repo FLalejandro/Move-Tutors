@@ -24,8 +24,6 @@ Move-Options:
 Selection-GUI:
     # The GUI Title
     title: "<green>Select a Pokemon"
-    # The Size of the Selection GUI (2-6)
-    size: 6
     # GUI Elements
     filler-item: "minecraft:red_stained_glass_pane"
 General-Tutor-GUI:

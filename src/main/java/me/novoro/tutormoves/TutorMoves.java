@@ -11,7 +11,6 @@ import me.novoro.tutormoves.commands.NPCCommand;
 import me.novoro.tutormoves.commands.TutorMovesReloadCommand;
 import me.novoro.tutormoves.config.ConfigManager;
 import me.novoro.tutormoves.config.LangManager;
-import me.novoro.tutormoves.config.TutorsManager;
 import me.novoro.tutormoves.events.EntityInteractEvent;
 import me.novoro.tutormoves.npc.NPCUtil;
 import me.novoro.tutormoves.utils.TutorMovesLogger;
@@ -31,16 +30,16 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 public class TutorMoves implements ModInitializer {
-    public static final String MOD_PREFIX = "<gray><bold>[<gradient:#6a3093:#a044ff><bold>TᴜᴛᴏʀMᴏᴠᴇꜱ</gradient><gray><bold>]&f ";
+    public static final String MOD_PREFIX = "<yellow><bold>[<gradient:#6a3093:#a044ff><bold>TᴜᴛᴏʀMᴏᴠᴇꜱ</gradient><yellow><bold>]&f ";
     private static TutorMoves instance;
     private MinecraftServer server;
     private PermissionProvider permissionProvider = null;
     private final LangManager langManager = new LangManager();
     private final ConfigManager configManager = new ConfigManager();
-    private final TutorsManager tutorsManager = new TutorsManager();
 
     public static boolean isCobbleEconomyAvailable = false;
     public static boolean isImpactorAvailable = false;
@@ -78,10 +77,26 @@ public class TutorMoves implements ModInitializer {
     public void reloadConfigs() {
         // Lang
         this.langManager.reload();
-        // Settings
+        // Config
         this.configManager.reload();
-        // Tutors
-        this.tutorsManager.reload();
+
+        // Ensure default tutor files exist
+        ensureDefaultTutorFiles();
+
+        // Specific Tutors
+        try {
+            File tutorsFolder = getTutorsFolder();
+
+            if (tutorsFolder.exists() && tutorsFolder.isDirectory()) {
+                for (File file : Objects.requireNonNull(tutorsFolder.listFiles())) {
+                    if (file.isFile() && file.getName().endsWith(".yml")) {
+                        YamlConfiguration.loadConfiguration(file);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -106,29 +121,6 @@ public class TutorMoves implements ModInitializer {
         File configFolder = FabricLoader.getInstance().getConfigDir().resolve("tutormoves").toFile();
         if (!configFolder.exists()) configFolder.mkdirs();
         return configFolder;
-    }
-
-
-    private void ensureDefaultTutorFiles() {
-        File tutorsFolder = new File(getConfigFolder(), "tutors");
-        if (!tutorsFolder.exists()) {
-            tutorsFolder.mkdirs();
-        }
-        if (tutorsFolder.isDirectory() && tutorsFolder.list().length == 0) {
-            File defaultTutorFile = new File(tutorsFolder, "specifictutor.yml");
-            if (!defaultTutorFile.exists()) {
-                try (FileOutputStream outputStream = new FileOutputStream(defaultTutorFile)) {
-                    Path path = Paths.get("tutormoves", "tutors", "specifictutor.yml");
-                    InputStream in = getClass().getClassLoader().getResourceAsStream(path.toString().replace("\\", "/"));
-                    if (in == null) {
-                        throw new RuntimeException("specifictutor.yml resource not found");
-                    }
-                    in.transferTo(outputStream);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
     }
 
     /**
@@ -219,11 +211,11 @@ public class TutorMoves implements ModInitializer {
         return file;
     }
 
-    public Configuration getConfig(String resourcePath, boolean saveResource) {
-        File configFile = this.getFile(new File(resourcePath).getName());
+    public Configuration getConfig(String fileName, boolean saveResource) {
+        File configFile = this.getFile(fileName);
         if (!configFile.exists()) {
             if (!saveResource) return null;
-            this.saveResource(resourcePath, false);
+            this.saveResource(fileName, false);
         }
         return this.getConfig(configFile);
     }
@@ -248,20 +240,52 @@ public class TutorMoves implements ModInitializer {
         }
     }
 
-    public void saveResource(String resourcePath, boolean overwrite) {
-        File file = this.getFile(new File(resourcePath).getName());
+    @SuppressWarnings("resource")
+    public void saveResource(String fileName, boolean overwrite) {
+        File file = this.getFile(fileName);
         if (file.exists() && !overwrite) return;
-        try (InputStream in = this.getClass().getClassLoader().getResourceAsStream(resourcePath);
-             FileOutputStream outputStream = new FileOutputStream(file)) {
-
-            if (in == null) {
-                throw new IllegalArgumentException("Resource not found in JAR: " + resourcePath);
-            }
+        try {
+            FileOutputStream outputStream = new FileOutputStream(file);
+            Path path = Paths.get("tutormoves", fileName);
+            InputStream in = this.getClass().getClassLoader().getResourceAsStream(path.toString().replace("\\", "/"));
+            assert in != null;
             in.transferTo(outputStream);
-
         } catch (IOException e) {
-            TutorMovesLogger.error("Something went wrong saving the resource: " + resourcePath + ".");
+            TutorMovesLogger.error("Something went wrong saving the resource: " + fileName + ".");
             TutorMovesLogger.printStackTrace(e);
+        }
+    }
+
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    public File getTutorsFolder() {
+        File folder = new File(getDataFolder(), "tutors");
+        if (!folder.exists()) folder.mkdirs();
+        return folder;
+    }
+
+    private void ensureDefaultTutorFiles() {
+        File tutorsFolder = getTutorsFolder();
+        if (!tutorsFolder.exists()) tutorsFolder.mkdirs();
+
+        File defaultTutorFile = new File(tutorsFolder, "specifictutor.yml");
+        if (!defaultTutorFile.exists()) {
+            try (InputStream in = getClass().getClassLoader()
+                    .getResourceAsStream("tutormoves/tutors/specifictutor.yml")) {
+
+                if (in == null) {
+                    TutorMovesLogger.error("Default tutor resource 'specifictutor.yml' not found in JAR!");
+                    return;
+                }
+
+                try (FileOutputStream out = new FileOutputStream(defaultTutorFile)) {
+                    in.transferTo(out);
+                    TutorMovesLogger.info("Copied default specifictutor.yml to tutors folder.");
+                }
+
+            } catch (IOException e) {
+                TutorMovesLogger.error("Failed to copy default specifictutor.yml to tutors folder!");
+                TutorMovesLogger.printStackTrace(e);
+            }
         }
     }
 

@@ -9,7 +9,7 @@ import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import me.novoro.tutormoves.utils.GuiUtil;
 import me.novoro.tutormoves.config.LangManager;
-import me.novoro.tutormoves.utils.MoveItemBuilder;
+import me.novoro.tutormoves.utils.ItemBuilder;
 import net.minecraft.item.Items;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -80,7 +80,7 @@ public class EconUtil {
         SimpleGui gui = new SimpleGui(ScreenHandlerType.GENERIC_9X3, player, false);
         gui.setTitle(Text.literal("Confirm Purchase"));
 
-        MoveItemBuilder moveUtil = new MoveItemBuilder(Moves.INSTANCE);
+        ItemBuilder moveUtil = new ItemBuilder(Moves.INSTANCE);
         GuiElementBuilder elementBuilder = moveUtil.getGemForMove(moveTemplate, price, currencyKey);
 
         gui.setSlot(13, elementBuilder.build());

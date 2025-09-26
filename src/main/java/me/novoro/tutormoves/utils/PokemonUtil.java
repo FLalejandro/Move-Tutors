@@ -11,7 +11,6 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import java.text.Normalizer;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class PokemonUtil {

@@ -71,9 +71,9 @@ public class GeneralTutorScreen {
         // Create the GUI
         SimpleGui gui = GuiUtil.createGui(player, rows, ColorUtil.parseColourToText(guiTitle));
 
-        // Create an instance of Moves and MoveItemBuilder
+        // Create an instance of Moves and ItemBuilder
         Moves moves = Moves.INSTANCE;
-        MoveItemBuilder moveUtil = new MoveItemBuilder(moves);
+        ItemBuilder moveUtil = new ItemBuilder(moves);
 
         // Create MoveTemplate list and apply sorting
         List<MoveTemplate> moveTemplates = tutorMoves.stream()
@@ -91,7 +91,7 @@ public class GeneralTutorScreen {
 
                     // Determine the price of the move, considering overrides
                     String moveName = moveTemplate.getName().toLowerCase();
-                    BigDecimal price = MoveItemBuilder.getMoveOverrideCost(moveName, defaultPrice, moveOverrides);
+                    BigDecimal price = ItemBuilder.getMoveOverrideCost(moveName, defaultPrice, moveOverrides);
 
                     GuiElementBuilder elementBuilder = moveUtil.getGemForMove(moveTemplate, price, currencyKey);
                     return elementBuilder.setCallback((x, y, z) -> {
@@ -113,7 +113,7 @@ public class GeneralTutorScreen {
         // Get filler item from the configuration
         Item fillerItemInstance = Registries.ITEM.get(Identifier.of((fillerItem)));
         if (fillerItemInstance == Items.AIR) {
-            fillerItemInstance = Items.GRAY_STAINED_GLASS_PANE; // Default fallback item
+            fillerItemInstance = Items.GRAY_STAINED_GLASS_PANE;
         }
         ItemStack fillerStack = new ItemStack(fillerItemInstance);
 
@@ -123,13 +123,9 @@ public class GeneralTutorScreen {
                 .setFillItem(GuiElementBuilder.from(fillerStack));
 
 
-        // Fill the GUI and add pagination controls
+        // Fill the GUI and add pagination controls + sorting buttons
         GuiUtil.applyPaginationControls(gui, paginatedSection, rows);
-
-        // Apply the initial page to the GUI
         paginatedSection.applyToGui(gui);
-
-        // Add sorting buttons
         GuiUtil.applySortingButtons(gui, rows,
                 () -> {
                     currentSortOption = SortingHelper.SortOption.ALPHABETICAL;

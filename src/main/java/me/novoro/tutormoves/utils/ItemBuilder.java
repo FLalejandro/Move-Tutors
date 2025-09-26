@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MoveItemBuilder {
+public class ItemBuilder {
 
     private static final Map<String, String> TYPE_GEM_MAP = new HashMap<>();
     private static final Map<String, Integer> TYPE_COLOR_MAP = new HashMap<>();
@@ -62,7 +62,7 @@ public class MoveItemBuilder {
 
     private final Moves moves;
 
-    public MoveItemBuilder(Moves moves) {
+    public ItemBuilder(Moves moves) {
         this.moves = moves;
     }
 

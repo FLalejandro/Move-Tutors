@@ -1,6 +1,7 @@
 package me.novoro.tutormoves.guis;
 
-import me.novoro.tutormoves.config.TutorsManager;
+import me.novoro.tutormoves.config.ConfigManager;
+import me.novoro.tutormoves.config.TutorYAMLReader;
 import me.novoro.tutormoves.helper.SortingHelper;
 import me.novoro.tutormoves.config.LangManager;
 import me.novoro.tutormoves.utils.*;
@@ -59,43 +60,39 @@ public class SpecificTutorScreen {
         try {
             tutorConfig = TutorYAMLReader.readTutorFile(tutorFileName);
         } catch (Exception e) {
-            TutorYAMLReader.sendFeedback(player, "Error reading tutor file: " + tutorFileName);
+            LangManager.sendLang(player, "Error reading tutor file: " + tutorFileName);
             return;
         }
 
         // Check for blacklisted Pokémon
-        if (tutorConfig.getBlacklistedPokemon().contains(pokemon.getSpecies().getName().toLowerCase())) {
+        if (tutorConfig.blacklistedPokemon().contains(pokemon.getSpecies().getName().toLowerCase())) {
             LangManager.sendLang(player, "Blacklisted-Pokemon", Map.of("{pokemon}", pokemon.getSpecies().getName()));
             return;
         }
 
-        List<String> missingMoves = tutorConfig.getMoves().stream()
+        List<String> missingMoves = tutorConfig.moves().stream()
                 .filter(moveTemplate -> Objects.equals(moveTemplate, MoveTemplate.Companion.dummy(moveTemplate.getName())))
                 .map(MoveTemplate::getName)
-                .collect(Collectors.toList());
+                .toList();
 
-        if (!missingMoves.isEmpty()) {
-            TutorYAMLReader.sendFeedback(player, "Moves not found: " + String.join(", ", missingMoves));
-        }
-
-        int rows = tutorConfig.getSize();
+        int rows = tutorConfig.size();
 
         // Fetch GUI settings from the configuration
-        String currencyKey = TutorsManager.getCurrencyKey();
-        BigDecimal defaultPrice = BigDecimal.valueOf(TutorsManager.getCost());
-        String guiTitle = TutorsManager.getGuiTitle();
-        String fillerItem = TutorsManager.getFillerItem();
+        String currencyKey = ConfigManager.getCurrencyKey();
+        BigDecimal defaultPrice = BigDecimal.valueOf(ConfigManager.getCost());
+        String guiTitle = tutorConfig.name();
+        String fillerItem = tutorConfig.fillerItem();
 
         // Create the GUI
         SimpleGui gui = GuiUtil.createGui(player, rows, ColorUtil.parseColourToText(guiTitle));
 
         Moves moves = Moves.INSTANCE;
-        MoveItemBuilder moveUtil = new MoveItemBuilder(moves);
+        ItemBuilder moveUtil = new ItemBuilder(moves);
 
         // Fetch the move overrides from the tutor configuration
-        Map<String, Integer> moveOverrides = tutorConfig.getMoveOverrides();
+        Map<String, Integer> moveOverrides = tutorConfig.moveOverrides();
 
-        List<MoveTemplate> moveTemplates = tutorConfig.getMoves();
+        List<MoveTemplate> moveTemplates = tutorConfig.moves();
         moveTemplates = SortingHelper.sortByOption(moveTemplates, currentSortOption);
 
         List<GuiElementBuilder> elements = moveTemplates.stream()
@@ -106,13 +103,13 @@ public class SpecificTutorScreen {
 
                     // Determine the price of the move, considering overrides
                     String moveName = moveTemplate.getName().toLowerCase();
-                    BigDecimal price = MoveItemBuilder.getMoveOverrideCost(moveName, defaultPrice, moveOverrides);
+                    BigDecimal price = ItemBuilder.getMoveOverrideCost(moveName, defaultPrice, moveOverrides);
 
                     GuiElementBuilder elementBuilder = moveUtil.getGemForMove(moveTemplate, price, currencyKey);
                     return elementBuilder.setCallback((x, y, z) -> {
                         try {
                             if (currencyKey.startsWith("ITEMS:")) {
-                                List<ItemStack> requiredItems = ItemEconUtil.getRequiredItemsFromConfig(currencyKey, tutorConfig.getCost(), moveOverrides, moveName);
+                                List<ItemStack> requiredItems = ItemEconUtil.getRequiredItemsFromConfig(currencyKey, (int) tutorConfig.cost(), moveOverrides, moveName);
                                 ItemEconUtil.openConfirmationWindow(player, moveTemplate, slot - 1, gui, requiredItems).open();
                             } else {
                                 EconUtil.openConfirmationWindow(player, moveTemplate, slot - 1, gui, price, currencyKey).open();

@@ -8,7 +8,7 @@ import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import me.novoro.tutormoves.utils.GuiUtil;
 import me.novoro.tutormoves.config.LangManager;
-import me.novoro.tutormoves.utils.MoveItemBuilder;
+import me.novoro.tutormoves.utils.ItemBuilder;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -111,7 +111,7 @@ public class ItemEconUtil {
         SimpleGui gui = new SimpleGui(ScreenHandlerType.GENERIC_9X3, player, false);
         gui.setTitle(Text.literal("Confirm Purchase"));
 
-        MoveItemBuilder moveUtil = new MoveItemBuilder(Moves.INSTANCE);
+        ItemBuilder moveUtil = new ItemBuilder(Moves.INSTANCE);
         ItemStack itemStack = moveUtil.getGemForMove(moveTemplate, new BigDecimal(requiredItems.get(0).getCount()), requiredItems.get(0).getItem().toString()).asStack();
 
         gui.setSlot(13, GuiElementBuilder.from(itemStack).build());

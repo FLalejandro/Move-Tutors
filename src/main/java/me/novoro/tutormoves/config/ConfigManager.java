@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 public final class ConfigManager extends VersionedConfig {
     private static String currencyKey;
     private static double cost;
@@ -20,7 +21,6 @@ public final class ConfigManager extends VersionedConfig {
     private static int generalGuiSize;
     private static String generalGuiFillerItem;
     private static String selectionGuiTitle;
-    private static int selectionGuiSize;
     private static String selectionGuiFillerItem;
     private static Map<String, Integer> moveOverrides;
     private static boolean tutorMovesEnabled;
@@ -48,7 +48,6 @@ public final class ConfigManager extends VersionedConfig {
         ConfigManager.generalGuiSize = settingsConfig.getInt("General-Tutor-GUI.size");
         ConfigManager.generalGuiFillerItem = settingsConfig.getString("General-Tutor-GUI.filler-item");
         ConfigManager.selectionGuiTitle = settingsConfig.getString("Selection-GUI.title");
-        ConfigManager.selectionGuiSize = settingsConfig.getInt("Selection-GUI.size");
         ConfigManager.selectionGuiFillerItem = settingsConfig.getString("Selection-GUI.filler-item");
         List<?> rawList = settingsConfig.getList("Move-Overrides");
         Map<String, Integer> overrides = new HashMap<>();
@@ -72,8 +71,8 @@ public final class ConfigManager extends VersionedConfig {
                 }
             }
         }
-
         ConfigManager.moveOverrides = overrides;
+
     }
 
     public static String getCurrencyKey() {
@@ -117,9 +116,6 @@ public final class ConfigManager extends VersionedConfig {
     }
     public static String getSelectionGuiTitle() {
         return selectionGuiTitle;
-    }
-    public static int getSelectionGuiSize() {
-        return selectionGuiSize;
     }
     public static String getSelectionFillerItem() {
         return selectionGuiFillerItem;

@@ -1,5 +1,8 @@
 package me.novoro.tutormoves.api.configuration;
 
+import com.cobblemon.mod.common.api.moves.MoveTemplate;
+import com.cobblemon.mod.common.api.moves.Moves;
+
 import java.io.File;
 import java.util.*;
 
@@ -321,6 +324,16 @@ public class Configuration {
         }
 
         return result;
+    }
+
+    public List<MoveTemplate> getMoveTemplateList(String path) {
+        List<String> moveNames = getStringList(path);
+        List<MoveTemplate> moves = new ArrayList<>();
+        for (String name : moveNames) {
+            MoveTemplate move = Moves.INSTANCE.getByName(name);
+            if (move != null) moves.add(move);
+        }
+        return moves;
     }
 
     public List<?> getList(String path) {

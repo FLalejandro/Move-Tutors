@@ -73,7 +73,7 @@ public final class LangManager extends VersionedConfig {
 
     @Override
     protected double getCurrentConfigVersion() {
-        return 1.0;
+        return 2.0;
     }
 
     @Override
