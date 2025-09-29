@@ -1,71 +1,114 @@
 package me.novoro.tutormoves.config;
 
 import com.cobblemon.mod.common.api.moves.MoveTemplate;
-import com.cobblemon.mod.common.api.moves.Moves;
-import org.yaml.snakeyaml.Yaml;
+import me.novoro.tutormoves.api.configuration.Configuration;
+import me.novoro.tutormoves.api.configuration.YamlConfiguration;
+import me.novoro.tutormoves.utils.TutorMovesLogger;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.nio.file.Paths;
 import java.util.*;
 
-public class TutorYAMLReader {
+public final class TutorYAMLReader {
     private static final Map<String, TutorConfig> tutors = new HashMap<>();
 
-    public record TutorConfig(String name, String permission, String currencyKey, int size, int cost,
-                              List<MoveTemplate> moves, List<String> blacklistedPokemon, String fillerItem,
-                              Map<String, Integer> moveOverrides) {
+    public record TutorConfig(
+            String name,
+            String permission,
+            String currencyKey,
+            int size,
+            int cost,
+            List<MoveTemplate> moves,
+            List<String> blacklistedPokemon,
+            String fillerItem,
+            Map<String, Integer> moveOverrides
+    ) {}
+
+    public static TutorConfig readTutorFile(String tutorFileName) throws Exception {
+        File file = Paths.get("config/TutorMoves/tutors", tutorFileName + ".yml").toFile();
+        TutorMovesLogger.info("Reading tutor config: " + file.getAbsolutePath());
+        if (!file.exists()) {
+            throw new IllegalArgumentException("Tutor file " + tutorFileName + " does not exist.");
+        }
+
+        Configuration config = YamlConfiguration.loadConfiguration(file);
+
+        Configuration specific = config.getSection("Specific-Tutor");
+        Configuration gui = config.getSection("Specific-Tutor-GUI");
+
+        if (specific == null || gui == null) {
+            throw new IllegalArgumentException("Missing Specific-Tutor or Specific-Tutor-GUI in " + tutorFileName);
+        }
+
+        TutorMovesLogger.info("Parsing tutor sections for: " + tutorFileName);
+
+        String permission = specific.getString("permission");
+        String currencyKey = specific.getString("currencyKey");
+        int cost = specific.getInt("cost");
+        List<String> blacklistedPokemon = specific.getStringList("Blacklisted-Pokemon");
+        List<MoveTemplate> moves = specific.getMoveTemplateList("moves");
+
+        String fillerItem = gui.getString("filler-item");
+        int size = gui.getInt("size");
+
+        // Move overrides parsing (same pattern as ConfigManager)
+        Map<String, Integer> overrides = new HashMap<>();
+        List<?> rawOverrides = specific.getList("Move-Overrides");
+        if (rawOverrides != null) {
+            for (Object obj : rawOverrides) {
+                if (obj instanceof Map<?, ?> entry) {
+                    for (Map.Entry<?, ?> e : entry.entrySet()) {
+                        if (e.getKey() instanceof String key) {
+                            Object val = e.getValue();
+                            if (val instanceof Number n) {
+                                overrides.put(key.toLowerCase(), n.intValue());
+                            } else if (val instanceof String s) {
+                                try {
+                                    overrides.put(key.toLowerCase(), Integer.parseInt(s));
+                                } catch (NumberFormatException ignored) {}
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        TutorConfig tutorConfig = new TutorConfig(
+                tutorFileName, permission, currencyKey, size, cost, moves, blacklistedPokemon, fillerItem, overrides
+        );
+
+        tutors.put(tutorFileName, tutorConfig);
+        return tutorConfig;
+    }
+
+    public static List<String> getAllTutorNames() {
+        List<String> names = new ArrayList<>();
+        names.add("general");
+        names.addAll(tutors.keySet());
+        return names;
+    }
+
+    public static Map<String, TutorConfig> getTutors() {
+        return Collections.unmodifiableMap(tutors);
+    }
+
+    public static void loadTutorFile(File file) {
+        try {
+            String tutorName = file.getName().replace(".yml", "");
+            TutorConfig config = readTutorFile(tutorName);
+            tutors.put(tutorName.toLowerCase(), config);
+            TutorMovesLogger.info("Registered tutor: " + tutorName);
+        } catch (Exception e) {
+            TutorMovesLogger.error("Failed to parse tutor file: " + file.getName());
+            TutorMovesLogger.printStackTrace(e);
+        }
     }
 
     public static Set<String> getTutorNames() {
         return tutors.keySet();
     }
 
-    public static TutorConfig readTutorFile(String tutorFileName) throws Exception {
-        File file = new File(Paths.get("config/TutorMoves/tutors", tutorFileName + ".yml").toUri());
-        if (!file.exists()) {
-            throw new IllegalArgumentException("Tutor file " + tutorFileName + " does not exist.");
-        }
-
-        Yaml yaml = new Yaml();
-        try (InputStream inputStream = new FileInputStream(file)) {
-            Map<String, Object> obj = yaml.load(inputStream);
-            Map<String, Object> specificTutor = (Map<String, Object>) obj.get("Specific-Tutor");
-            Map<String, Object> gui = (Map<String, Object>) obj.get("Specific-Tutor-GUI");
-
-            if (specificTutor == null || gui == null) {
-                throw new IllegalArgumentException("SpecificTutor or GUI section not found in file " + tutorFileName + ".yml");
-            }
-
-            String name = (String) gui.get("title");
-            String permission = (String) specificTutor.get("permission");
-            String currencyKey = (String) specificTutor.get("currencyKey");
-            int size = (int) gui.get("size");
-            int cost = (int) specificTutor.get("cost");
-            List<String> moveNames = (List<String>) specificTutor.get("moves");
-            List<String> blacklistedPokemon = (List<String>) specificTutor.get("Blacklisted-Pokemon");
-            String fillerItem = (String) gui.get("filler-item");
-
-            List<MoveTemplate> moves = new ArrayList<>();
-            for (String moveName : moveNames) {
-                MoveTemplate moveTemplate = Moves.INSTANCE.getByNameOrDummy(moveName);
-                if (!moveTemplate.equals(MoveTemplate.Companion.dummy(moveName))) {
-                    moves.add(moveTemplate);
-                }
-            }
-
-            // Parse the Move-Overrides section
-            Map<String, Integer> moveOverrides = new HashMap<>();
-            List<Map<String, Integer>> overridesList = (List<Map<String, Integer>>) specificTutor.get("Move-Overrides");
-            if (overridesList != null) {
-                for (Map<String, Integer> override : overridesList) {
-                    moveOverrides.putAll(override);
-                }
-            }
-
-
-            return new TutorConfig(name, permission, currencyKey, size, cost, moves, blacklistedPokemon, fillerItem, moveOverrides);
-        }
+    public static TutorConfig getTutorConfig(String name) {
+        return tutors.get(name.toLowerCase());
     }
 }

@@ -11,6 +11,7 @@ import me.novoro.tutormoves.commands.NPCCommand;
 import me.novoro.tutormoves.commands.TutorMovesReloadCommand;
 import me.novoro.tutormoves.config.ConfigManager;
 import me.novoro.tutormoves.config.LangManager;
+import me.novoro.tutormoves.config.TutorYAMLReader;
 import me.novoro.tutormoves.events.EntityInteractEvent;
 import me.novoro.tutormoves.npc.NPCUtil;
 import me.novoro.tutormoves.utils.TutorMovesLogger;
@@ -84,18 +85,26 @@ public class TutorMoves implements ModInitializer {
         ensureDefaultTutorFiles();
 
         // Specific Tutors
-        try {
-            File tutorsFolder = getTutorsFolder();
+        File tutorsFolder = getTutorsFolder();
 
-            if (tutorsFolder.exists() && tutorsFolder.isDirectory()) {
-                for (File file : Objects.requireNonNull(tutorsFolder.listFiles())) {
-                    if (file.isFile() && file.getName().endsWith(".yml")) {
+        if (tutorsFolder.exists() && tutorsFolder.isDirectory()) {
+            File[] files = tutorsFolder.listFiles((dir, name) -> name.endsWith(".yml"));
+            if (files == null || files.length == 0) {
+                //TutorMovesLogger.warn("No tutor files found in " + tutorsFolder.getAbsolutePath());
+            } else {
+                //TutorMovesLogger.info("Found " + files.length + " tutor file(s) in " + tutorsFolder.getAbsolutePath());
+                for (File file : files) {
+                    //TutorMovesLogger.info("Attempting to load tutor file: " + file.getName());
+                    TutorYAMLReader.loadTutorFile(file);
+                    try {
                         YamlConfiguration.loadConfiguration(file);
+                        //TutorMovesLogger.info("Successfully loaded " + file.getName());
+                    } catch (Exception e) {
+                        //TutorMovesLogger.error("Failed to load tutor file: " + file.getName());
+                        TutorMovesLogger.printStackTrace(e);
                     }
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
