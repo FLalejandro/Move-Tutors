@@ -49,8 +49,8 @@ dependencies {
     //TODO: Kotlin (Delete this when impactor gets fixed)
     implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.23"
 
-    // Cobblemon 1.6.1
-    modImplementation("com.cobblemon:fabric:1.6.1+1.21.1")
+    // Cobblemon 1.7
+    modImplementation("com.cobblemon:fabric:1.7.0+1.21.1-SNAPSHOT")
 
     // SnakeYAML
     implementation include(group: 'org.yaml', name: 'snakeyaml', version: '2.1')

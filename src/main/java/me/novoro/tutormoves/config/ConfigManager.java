@@ -29,6 +29,8 @@ public final class ConfigManager extends VersionedConfig {
     private static boolean evolutionMoves;
     private static boolean levelUpMoves;
     private static boolean formChangeMoves;
+    private static boolean legacyMoves;
+    private static boolean specialMoves;
 
 
     @Override
@@ -44,6 +46,8 @@ public final class ConfigManager extends VersionedConfig {
         ConfigManager.evolutionMoves = settingsConfig.getBoolean("Move-Options.evolutionMoves");
         ConfigManager.levelUpMoves = settingsConfig.getBoolean("Move-Options.levelUpMoves");
         ConfigManager.formChangeMoves = settingsConfig.getBoolean("Move-Options.formChangeMoves");
+        ConfigManager.legacyMoves = settingsConfig.getBoolean("Move-Options.legacyMoves");
+        ConfigManager.specialMoves = settingsConfig.getBoolean("Move-Options.specialMoves");
         ConfigManager.generalGuiTitle = settingsConfig.getString("General-Tutor-GUI.title");
         ConfigManager.generalGuiSize = settingsConfig.getInt("General-Tutor-GUI.size");
         ConfigManager.generalGuiFillerItem = settingsConfig.getString("General-Tutor-GUI.filler-item");
@@ -104,6 +108,12 @@ public final class ConfigManager extends VersionedConfig {
     }
     public static boolean isFormChangeMoves() {
         return formChangeMoves;
+    }
+    public static boolean isLegacyMoves() {
+        return legacyMoves;
+    }
+    public static boolean isSpecialMoves() {
+        return specialMoves;
     }
     public static String getGeneralGuiTitle() {
         return generalGuiTitle;

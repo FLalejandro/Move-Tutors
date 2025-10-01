@@ -73,6 +73,12 @@ public class PokemonUtil {
         if (ConfigManager.isFormChangeMoves()) {
             moves = Stream.concat(moves, pokemon.getForm().getMoves().getFormChangeMoves().stream());
         }
+        if (ConfigManager.isLegacyMoves()) {
+            moves = Stream.concat(moves, pokemon.getForm().getMoves().getLegacyMoves().stream());
+        }
+        if (ConfigManager.isSpecialMoves()) {
+            moves = Stream.concat(moves, pokemon.getForm().getMoves().getSpecialMoves().stream());
+        }
 
         return moves
                 .filter(move -> !isMoveBlacklisted(move.getName().toLowerCase()))

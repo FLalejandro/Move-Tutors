@@ -28,13 +28,13 @@ public class MoveTeacher {
         // TODO: 1.6 and 1.7 have major differences
         // Check if the move is a valid tutor move for the Pokémon
         if (!isValidMove(pokemon, move)) {
-            LangManager.sendLang(player, "Error-Not-Tutor", Map.of("{pokemon}", pokemon.getDisplayName().getString(), "{move}", move.getDisplayName().getString()));
+            LangManager.sendLang(player, "Error-Not-Tutor", Map.of("{pokemon}", pokemon.getDisplayName(true).getString(), "{move}", move.getDisplayName().getString()));
             return false;
         }
 
         // Ensure the move can be learned by the Pokémon
         if (!LearnsetQuery.Companion.getANY().canLearn(move, pokemon.getForm().getMoves())) {
-            LangManager.sendLang(player, "Error-Cant-Learn", Map.of("{pokemon}", pokemon.getDisplayName().getString(), "{move}", move.getDisplayName().getString()));
+            LangManager.sendLang(player, "Error-Cant-Learn", Map.of("{pokemon}", pokemon.getDisplayName(true).getString(), "{move}", move.getDisplayName().getString()));
             return false;
         }
 
@@ -50,7 +50,7 @@ public class MoveTeacher {
         }
 
         if (knowsMove) {
-            LangManager.sendLang(player, "Error-Already-Knows", Map.of("{pokemon}", pokemon.getDisplayName().getString(), "{move}", move.getDisplayName().getString()));
+            LangManager.sendLang(player, "Error-Already-Knows", Map.of("{pokemon}", pokemon.getDisplayName(true).getString(), "{move}", move.getDisplayName().getString()));
             return false;
         }
 
@@ -60,7 +60,7 @@ public class MoveTeacher {
             pokemon.getBenchedMoves().add(new BenchedMove(move, 0));
         }
 
-        LangManager.sendLang(player, "Success-Learned", Map.of("{pokemon}", pokemon.getDisplayName().getString(), "{move}", move.getDisplayName().getString()));
+        LangManager.sendLang(player, "Success-Learned", Map.of("{pokemon}", pokemon.getDisplayName(true).getString(), "{move}", move.getDisplayName().getString()));
         return true;
     }
 
@@ -100,6 +100,18 @@ public class MoveTeacher {
         // Check form change moves if enabled
         if (ConfigManager.isFormChangeMoves() &&
                 pokemon.getForm().getMoves().getFormChangeMoves().contains(move)) {
+            return true;
+        }
+
+        // Check legacy moves if enabled
+        if (ConfigManager.isFormChangeMoves() &&
+                pokemon.getForm().getMoves().getLegacyMoves().contains(move)) {
+            return true;
+        }
+
+        // Check special moves if enabled
+        if (ConfigManager.isFormChangeMoves() &&
+                pokemon.getForm().getMoves().getSpecialMoves().contains(move)) {
             return true;
         }
 

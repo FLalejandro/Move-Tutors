@@ -1,5 +1,3 @@
-# DON'T TOUCH Config-Version OR THINGS WILL BREAK
-Config-Version: 2.0
 # Specific Tutor Settings
 Specific-Tutor:
   # Permission needed to open
@@ -28,3 +26,6 @@ Specific-Tutor-GUI:
 Specific-Tutor-Move-Overrides:
   outrage: 6000
   dracometeor: 10000
+
+# DON'T TOUCH Config-Version OR THINGS WILL BREAK
+Config-Version: 2.3
