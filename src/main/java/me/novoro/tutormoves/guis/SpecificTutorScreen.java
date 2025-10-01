@@ -1,6 +1,5 @@
 package me.novoro.tutormoves.guis;
 
-import me.novoro.tutormoves.config.ConfigManager;
 import me.novoro.tutormoves.config.TutorYAMLReader;
 import me.novoro.tutormoves.helper.SortingHelper;
 import me.novoro.tutormoves.config.LangManager;
@@ -55,33 +54,18 @@ public class SpecificTutorScreen {
             return;
         }
 
-        // Fetch the tutor configuration from the YAML file
-        TutorYAMLReader.TutorConfig tutorConfig;
-        try {
-            tutorConfig = TutorYAMLReader.readTutorFile(tutorFileName);
-        } catch (Exception e) {
-            LangManager.sendLang(player, "Error reading tutor file: " + tutorFileName);
-            return;
-        }
-
         // Check for blacklisted Pokémon
-        if (tutorConfig.blacklistedPokemon().contains(pokemon.getSpecies().getName().toLowerCase())) {
+        if (TutorYAMLReader.getTutorBlacklistedPokemon(tutorFileName).contains(pokemon.getSpecies().getName().toLowerCase())) {
             LangManager.sendLang(player, "Blacklisted-Pokemon", Map.of("{pokemon}", pokemon.getSpecies().getName()));
             return;
         }
 
-        List<String> missingMoves = tutorConfig.moves().stream()
-                .filter(moveTemplate -> Objects.equals(moveTemplate, MoveTemplate.Companion.dummy(moveTemplate.getName())))
-                .map(MoveTemplate::getName)
-                .toList();
-
-        int rows = tutorConfig.size();
-
         // Fetch GUI settings from the configuration
-        String currencyKey = ConfigManager.getCurrencyKey();
-        BigDecimal defaultPrice = BigDecimal.valueOf(ConfigManager.getCost());
-        String guiTitle = tutorConfig.name();
-        String fillerItem = tutorConfig.fillerItem();
+        int rows = TutorYAMLReader.getTutorSize(tutorFileName);
+        String currencyKey = TutorYAMLReader.getTutorCurrencyKey(tutorFileName);
+        BigDecimal defaultPrice = BigDecimal.valueOf(TutorYAMLReader.getTutorCost(tutorFileName));
+        String guiTitle = TutorYAMLReader.getTutorName(tutorFileName);
+        String fillerItem = TutorYAMLReader.getTutorFillerItem(tutorFileName);
 
         // Create the GUI
         SimpleGui gui = GuiUtil.createGui(player, rows, ColorUtil.parseColourToText(guiTitle));
@@ -90,9 +74,12 @@ public class SpecificTutorScreen {
         ItemBuilder moveUtil = new ItemBuilder(moves);
 
         // Fetch the move overrides from the tutor configuration
-        Map<String, Integer> moveOverrides = tutorConfig.moveOverrides();
+        Map<String, Integer> moveOverrides = TutorYAMLReader.getTutorMoveOverrides(tutorFileName);
 
-        List<MoveTemplate> moveTemplates = tutorConfig.moves();
+        List<MoveTemplate> moveTemplates = TutorYAMLReader.getTutorMoves(tutorFileName).stream()
+                .filter(Objects::nonNull)
+                .distinct()
+                .collect(Collectors.toList());
         moveTemplates = SortingHelper.sortByOption(moveTemplates, currentSortOption);
 
         List<GuiElementBuilder> elements = moveTemplates.stream()
@@ -109,7 +96,7 @@ public class SpecificTutorScreen {
                     return elementBuilder.setCallback((x, y, z) -> {
                         try {
                             if (currencyKey.startsWith("ITEMS:")) {
-                                List<ItemStack> requiredItems = ItemEconUtil.getRequiredItemsFromConfig(currencyKey, (int) tutorConfig.cost(), moveOverrides, moveName);
+                                List<ItemStack> requiredItems = ItemEconUtil.getRequiredItemsFromConfig(currencyKey, (int) TutorYAMLReader.getTutorCost(tutorFileName), moveOverrides, moveName);
                                 ItemEconUtil.openConfirmationWindow(player, moveTemplate, slot - 1, gui, requiredItems).open();
                             } else {
                                 EconUtil.openConfirmationWindow(player, moveTemplate, slot - 1, gui, price, currencyKey).open();

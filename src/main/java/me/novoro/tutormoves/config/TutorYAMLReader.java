@@ -108,7 +108,68 @@ public final class TutorYAMLReader {
         return tutors.keySet();
     }
 
-    public static TutorConfig getTutorConfig(String name) {
-        return tutors.get(name.toLowerCase());
+    public static TutorConfig getTutor(String tutorName) {
+        return tutors.get(tutorName.toLowerCase());
+    }
+
+    public static String getTutorName(String tutorName) {
+        TutorConfig config = getTutor(tutorName);
+        return config != null ? config.name() : tutorName;
+    }
+
+    public static String getTutorPermission(String tutorName) {
+        TutorConfig config = getTutor(tutorName);
+        return config != null ? config.permission() : "tutormoves.tutor." + tutorName.toLowerCase();
+    }
+
+    public static String getTutorCurrencyKey(String tutorName) {
+        TutorConfig config = getTutor(tutorName);
+        return config != null ? config.currencyKey() : "minecraft:diamond";
+    }
+
+    public static int getTutorSize(String tutorName) {
+        TutorConfig config = getTutor(tutorName);
+        return config != null ? config.size() : 54;
+    }
+
+    public static int getTutorCost(String tutorName) {
+        TutorConfig config = getTutor(tutorName);
+        return config != null ? config.cost() : 1000;
+    }
+
+    public static List<MoveTemplate> getTutorMoves(String tutorName) {
+        TutorConfig config = getTutor(tutorName);
+        return config != null ? Collections.unmodifiableList(config.moves()) : Collections.emptyList();
+    }
+
+    public static Map<String, Integer> getTutorMoveOverrides(String tutorName) {
+        TutorConfig config = getTutor(tutorName);
+        return config != null ? Collections.unmodifiableMap(config.moveOverrides()) : Collections.emptyMap();
+    }
+
+    public static int getMoveCost(String tutorName, String moveName) {
+        Map<String, Integer> overrides = getTutorMoveOverrides(tutorName);
+        String lowerMoveName = moveName.toLowerCase();
+
+        if (overrides.containsKey(lowerMoveName)) {
+            return overrides.get(lowerMoveName);
+        }
+
+        return getTutorCost(tutorName);
+    }
+
+    public static List<String> getTutorBlacklistedPokemon(String tutorName) {
+        TutorConfig config = getTutor(tutorName);
+        return config != null ? Collections.unmodifiableList(config.blacklistedPokemon()) : Collections.emptyList();
+    }
+
+    public static boolean isPokemonBlacklisted(String tutorName, String pokemonName) {
+        List<String> blacklisted = getTutorBlacklistedPokemon(tutorName);
+        return blacklisted.contains(pokemonName.toLowerCase());
+    }
+
+    public static String getTutorFillerItem(String tutorName) {
+        TutorConfig config = getTutor(tutorName);
+        return config != null ? config.fillerItem() : "minecraft:black_stained_glass_pane";
     }
 }
