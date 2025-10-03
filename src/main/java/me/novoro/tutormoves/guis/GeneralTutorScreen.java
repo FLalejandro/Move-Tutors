@@ -112,9 +112,7 @@ public class GeneralTutorScreen {
 
         // Get filler item from the configuration
         Item fillerItemInstance = Registries.ITEM.get(Identifier.of((fillerItem)));
-        if (fillerItemInstance == Items.AIR) {
-            fillerItemInstance = Items.GRAY_STAINED_GLASS_PANE;
-        }
+
         ItemStack fillerStack = new ItemStack(fillerItemInstance);
 
         // Create PaginatedSection with configurable filler item
