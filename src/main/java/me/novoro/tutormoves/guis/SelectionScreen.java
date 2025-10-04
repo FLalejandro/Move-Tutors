@@ -30,22 +30,15 @@ public class SelectionScreen {
      * @param specificTutorName Optional tutor name for specific tutors.
      */
     public static void open(ServerPlayerEntity player, Optional<String> specificTutorName) {
-        // Fetch GUI settings from the configuration
         int rows = 3;
         String guiTitle = ConfigManager.getSelectionGuiTitle();
-        String selectionFillerItem = ConfigManager.getSelectionFillerItem();
-        ItemStack fillerItem = new ItemStack(Registries.ITEM.get(Identifier.of(selectionFillerItem)));
-
-        // Create the GUI
         SimpleGui gui = GuiUtil.createGui(player, rows, ColorUtil.parseColourToText(guiTitle));
 
-        // get party
         PlayerPartyStore partyStore;
         partyStore = Cobblemon.INSTANCE.getStorage().getParty(player);
 
         int[] middleRowIndexes = {10, 11, 12, 14, 15, 16};
 
-        // Iterate over the first 6 party slots to display the player's Pokémon
         for (int i = 0; i < 6; i++) {
             int slotIndex = middleRowIndexes[i];
             Pokemon pokemon = partyStore.get(i);
@@ -74,10 +67,10 @@ public class SelectionScreen {
         }
 
         // Add a filler item for any remaining slots
-        fillerItem.set(DataComponentTypes.CUSTOM_NAME, Text.literal(""));
+        ConfigManager.getSelectionFillerItem().set(DataComponentTypes.CUSTOM_NAME, Text.literal(""));
         for (int i = 0; i < 27; i++) {
             if (gui.getSlot(i) == null) {
-                gui.setSlot(i, GuiElementBuilder.from(fillerItem));
+                gui.setSlot(i, GuiElementBuilder.from(ConfigManager.getSelectionFillerItem()));
             }
         }
 
@@ -93,13 +86,7 @@ public class SelectionScreen {
     private static ItemStack createPokemonItem(Pokemon pokemon) {
         Species species = pokemon.getSpecies();
         Set<String> aspects = pokemon.getAspects();
-
-        // Convert the Set<String> of aspects to a String array, as required by the method
         String[] aspectsArray = aspects.toArray(new String[0]);
-
-        // Use the built-in method with the species and converted aspects array
-
-        // Return the generated ItemStack
         return PokemonItem.from(species, aspectsArray);
     }
 }

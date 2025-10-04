@@ -2,10 +2,12 @@ package me.novoro.tutormoves.config;
 
 import me.novoro.tutormoves.api.configuration.Configuration;
 import me.novoro.tutormoves.api.configuration.VersionedConfig;
+import me.novoro.tutormoves.utils.ItemBuilder;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.CustomModelDataComponent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
+import net.minecraft.util.Identifier;
 
 import java.util.HashMap;
 import java.util.List;
@@ -19,9 +21,8 @@ public final class ConfigManager extends VersionedConfig {
     private static List<String> pokemonBlacklist;
     private static String generalGuiTitle;
     private static int generalGuiSize;
-    private static String generalGuiFillerItem;
     private static String selectionGuiTitle;
-    private static String selectionGuiFillerItem;
+    private static String confirmationGuiTitle;
     private static Map<String, Integer> moveOverrides;
     private static boolean tutorMovesEnabled;
     private static boolean eggMovesEnabled;
@@ -31,6 +32,18 @@ public final class ConfigManager extends VersionedConfig {
     private static boolean formChangeMoves;
     private static boolean legacyMoves;
     private static boolean specialMoves;
+
+    private static ItemStack previousPageItem;
+    private static ItemStack nextPageItem;
+    private static ItemStack exitItem;
+    private static ItemStack alphabeticalSortItem;
+    private static ItemStack typeSortItem;
+    private static ItemStack categorySortItem;
+    private static ItemStack generalGuiFillerItem;
+    private static ItemStack selectionGuiFillerItem;
+    private static ItemStack confirmationGuiFillerItem;
+    private static ItemStack confirmItem;
+    private static ItemStack cancelItem;
 
 
     @Override
@@ -50,9 +63,19 @@ public final class ConfigManager extends VersionedConfig {
         ConfigManager.specialMoves = settingsConfig.getBoolean("Move-Options.specialMoves");
         ConfigManager.generalGuiTitle = settingsConfig.getString("General-Tutor-GUI.title");
         ConfigManager.generalGuiSize = settingsConfig.getInt("General-Tutor-GUI.size");
-        ConfigManager.generalGuiFillerItem = settingsConfig.getString("General-Tutor-GUI.filler-item");
+        ConfigManager.confirmationGuiTitle = settingsConfig.getString("Confirmation-GUI.title");
         ConfigManager.selectionGuiTitle = settingsConfig.getString("Selection-GUI.title");
-        ConfigManager.selectionGuiFillerItem = settingsConfig.getString("Selection-GUI.filler-item");
+        ConfigManager.previousPageItem = parseItem(settingsConfig.getString("General-Tutor-GUI.previous-page-item"));
+        ConfigManager.nextPageItem = parseItem(settingsConfig.getString("General-Tutor-GUI.next-page-item"));
+        ConfigManager.exitItem = parseItem(settingsConfig.getString("General-Tutor-GUI.exit-item"));
+        ConfigManager.alphabeticalSortItem = parseItem(settingsConfig.getString("General-Tutor-GUI.alphabetical-sort-item"));
+        ConfigManager.typeSortItem = parseItem(settingsConfig.getString("General-Tutor-GUI.type-sort-item"));
+        ConfigManager.categorySortItem = parseItem(settingsConfig.getString("General-Tutor-GUI.category-sort-item"));
+        ConfigManager.generalGuiFillerItem = parseItem(settingsConfig.getString("General-Tutor-GUI.filler-item"));
+        ConfigManager.selectionGuiFillerItem = parseItem(settingsConfig.getString("Selection-GUI.filler-item"));
+        ConfigManager.confirmationGuiFillerItem = parseItem(settingsConfig.getString("Confirmation-GUI.filler-item"));
+        ConfigManager.confirmItem = parseItem(settingsConfig.getString("Confirmation-GUI.confirm-item"));
+        ConfigManager.cancelItem = parseItem(settingsConfig.getString("Confirmation-GUI.cancel-item"));
         List<?> rawList = settingsConfig.getList("Move-Overrides");
         Map<String, Integer> overrides = new HashMap<>();
 
@@ -121,29 +144,79 @@ public final class ConfigManager extends VersionedConfig {
     public static int getGeneralGuiSize() {
         return generalGuiSize;
     }
-    public static String getGeneralFillerItem() {
+    public static ItemStack getPreviousPageItem() {
+        return previousPageItem;
+    }
+    public static ItemStack getNextPageItem() {
+        return nextPageItem;
+    }
+    public static ItemStack getExitItem() {
+        return exitItem;
+    }
+    public static ItemStack getAlphabeticalSortItem() {
+        return alphabeticalSortItem;
+    }
+    public static ItemStack getTypeSortItem() {
+        return typeSortItem;
+    }
+    public static ItemStack getCategorySortItem() {
+        return categorySortItem;
+    }
+    public static ItemStack getGeneralFillerItem() {
         return generalGuiFillerItem;
     }
     public static String getSelectionGuiTitle() {
         return selectionGuiTitle;
     }
-    public static String getSelectionFillerItem() {
+    public static ItemStack getSelectionFillerItem() {
         return selectionGuiFillerItem;
+    }
+    public static String getConfirmationGuiTitle() {
+        return confirmationGuiTitle;
+    }
+    public static ItemStack getConfirmationFillerItem() {
+        return confirmationGuiFillerItem;
+    }
+    public static ItemStack getConfirmItem() {
+        return confirmItem;
+    }
+    public static ItemStack getCancelItem() {
+        return cancelItem;
     }
     public static Map<String, Integer> getMoveOverrides() {
         return moveOverrides;
     }
 
+    /**
+     * Simple item parser that handles custom model data
+     * Format: "minecraft:stone" or "minecraft:stone:123"
+     */
+    private static ItemStack parseItem(String itemString) {
+        if (itemString == null || itemString.isEmpty()) {
+            return new ItemStack(Registries.ITEM.get(Identifier.of("minecraft:air")));
+        }
 
-    // TODO: Check in pokemon and move blacklist
-    private static boolean checkBlacklist(ItemStack item, List<String> blacklist) {
-        if (blacklist.isEmpty()) return false;
+        String[] parts = itemString.split(":");
+        String itemId;
+        int customModelData = 0;
 
-        final String itemId = Registries.ITEM.getId(item.getItem()).toString();
-        CustomModelDataComponent customModelDataComponent = item.get(DataComponentTypes.CUSTOM_MODEL_DATA);
-        int customModelData = customModelDataComponent != null ? customModelDataComponent.value() : 0;
+        if (parts.length >= 3) {
+            try {
+                itemId = parts[0] + ":" + parts[1];
+                customModelData = Integer.parseInt(parts[2]);
+            } catch (NumberFormatException e) {
+                itemId = itemString;
+            }
+        } else {
+            itemId = itemString;
+        }
 
-        return blacklist.contains(itemId) || blacklist.contains(itemId + ":" + customModelData);
+        ItemStack stack = new ItemStack(Registries.ITEM.get(Identifier.of(itemId)));
+        if (customModelData != 0) {
+            stack.set(DataComponentTypes.CUSTOM_MODEL_DATA, new CustomModelDataComponent(customModelData));
+        }
+
+        return stack;
     }
 
     @Override

@@ -19,20 +19,31 @@ Move-Options:
   evolutionMoves: false
   levelUpMoves: false
   formChangeMoves: false
-  legacyMoves: false
-  specialMoves: false
-Selection-GUI:
-    # The GUI Title
-    title: "<green>Select a Pokemon"
-    # GUI Elements
-    filler-item: "minecraft:red_stained_glass_pane"
 General-Tutor-GUI:
   # The GUI Title
   title: "<gold>General Tutor"
   # The Size of the Main Tutor GUI (2-6)
   size: 6
   # GUI Elements
-  filler-item: "minecraft:gray_stained_glass_pane"
+  previous-page-item: "minecraft:arrow"
+  next-page-item: "minecraft:arrow"
+  exit-item: "minecraft:barrier"
+  alphabetical-sort-item: "minecraft:paper"
+  category-sort-item: "minecraft:name_tag"
+  type-sort-item: "minecraft:gold_ingot"
+  filler-item: "minecraft:light_gray_stained_glass_pane"
+Selection-GUI:
+    # The GUI Title
+    title: "<green>Select a Pokemon"
+    # GUI Elements
+    filler-item: "minecraft:red_stained_glass_pane"
+Confirmation-GUI:
+    # The GUI Title
+    title: "<yellow>Confirm Move"
+    # GUI Elements
+    confirm-item: "minecraft:lime_wool"
+    cancel-item: "minecraft:red_wool"
+    filler-item: "minecraft:gray_stained_glass_pane"
 # Override the cost of specific moves
 # Format - move:cost
 Move-Overrides:

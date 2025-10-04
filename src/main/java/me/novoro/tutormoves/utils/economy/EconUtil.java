@@ -1,19 +1,23 @@
 package me.novoro.tutormoves.utils.economy;
 
 import me.novoro.tutormoves.TutorMoves;
+import me.novoro.tutormoves.config.ConfigManager;
 import me.novoro.tutormoves.helper.MoveTeacher;
 import com.cobblemon.mod.common.api.moves.MoveTemplate;
 import com.cobblemon.mod.common.api.moves.Moves;
 import com.cobblemon.mod.common.api.storage.NoPokemonStoreException;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
+import me.novoro.tutormoves.utils.ColorUtil;
 import me.novoro.tutormoves.utils.GuiUtil;
 import me.novoro.tutormoves.config.LangManager;
 import me.novoro.tutormoves.utils.ItemBuilder;
 import net.minecraft.item.Items;
+import net.minecraft.registry.Registries;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 
 import java.math.BigDecimal;
 import java.util.Map;
@@ -78,14 +82,15 @@ public class EconUtil {
                                                    BigDecimal price,
                                                    String currencyKey) throws NoPokemonStoreException {
         SimpleGui gui = new SimpleGui(ScreenHandlerType.GENERIC_9X3, player, false);
-        gui.setTitle(Text.literal("Confirm Purchase"));
+        String guiTitle = ConfigManager.getConfirmationGuiTitle();
+        gui.setTitle(ColorUtil.parseColourToText(guiTitle));
 
         ItemBuilder moveUtil = new ItemBuilder(Moves.INSTANCE);
         GuiElementBuilder elementBuilder = moveUtil.getGemForMove(moveTemplate, price, currencyKey);
 
         gui.setSlot(13, elementBuilder.build());
 
-        gui.setSlot(11, GuiElementBuilder.from(Items.GREEN_WOOL.getDefaultStack())
+        gui.setSlot(11, GuiElementBuilder.from(ConfigManager.getConfirmItem())
                 .setName(Text.literal("§aConfirm"))
                 .setCallback((x, y, z) -> {
                     if (purchaseMove(player, moveTemplate, slot, price, currencyKey)) {
@@ -97,7 +102,7 @@ public class EconUtil {
                     oldGui.open();
                 }));
 
-        gui.setSlot(15, GuiElementBuilder.from(Items.RED_WOOL.getDefaultStack())
+        gui.setSlot(15, GuiElementBuilder.from(ConfigManager.getCancelItem())
                 .setName(Text.literal("§cCancel"))
                 .setCallback((x, y, z) -> oldGui.open()));
 

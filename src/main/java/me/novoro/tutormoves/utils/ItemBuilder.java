@@ -3,6 +3,8 @@ package me.novoro.tutormoves.utils;
 import com.cobblemon.mod.common.api.moves.MoveTemplate;
 import com.cobblemon.mod.common.api.moves.Moves;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.CustomModelDataComponent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
@@ -142,5 +144,6 @@ public class ItemBuilder {
     public static BigDecimal getMoveOverrideCost(String moveName, BigDecimal defaultCost, Map<String, Integer> moveOverrides) {
         return moveOverrides.containsKey(moveName) ? BigDecimal.valueOf(moveOverrides.get(moveName)) : defaultCost;
     }
+
 }
 
