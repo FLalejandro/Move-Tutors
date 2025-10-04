@@ -19,9 +19,19 @@ public final class ConfigManager extends VersionedConfig {
     private static List<String> pokemonBlacklist;
     private static String generalGuiTitle;
     private static int generalGuiSize;
+    private static String previousPageItem;
+    private static String nextPageItem;
+    private static String exitItem;
+    private static String alphabeticalSortItem;
+    private static String typeSortItem;
+    private static String categorySortItem;
     private static String generalGuiFillerItem;
     private static String selectionGuiTitle;
     private static String selectionGuiFillerItem;
+    private static String confirmationGuiTitle;
+    private static String confirmationGuiFillerItem;
+    private static String confirmItem;
+    private static String cancelItem;
     private static Map<String, Integer> moveOverrides;
     private static boolean tutorMovesEnabled;
     private static boolean eggMovesEnabled;
@@ -46,9 +56,19 @@ public final class ConfigManager extends VersionedConfig {
         ConfigManager.formChangeMoves = settingsConfig.getBoolean("Move-Options.formChangeMoves");
         ConfigManager.generalGuiTitle = settingsConfig.getString("General-Tutor-GUI.title");
         ConfigManager.generalGuiSize = settingsConfig.getInt("General-Tutor-GUI.size");
+        ConfigManager.previousPageItem = settingsConfig.getString("General-Tutor-GUI.previous-page-item");
+        ConfigManager.nextPageItem = settingsConfig.getString("General-Tutor-GUI.next-page-item");
+        ConfigManager.exitItem = settingsConfig.getString("General-Tutor-GUI.exit-item");
+        ConfigManager.alphabeticalSortItem = settingsConfig.getString("General-Tutor-GUI.alphabetical-sort-item");
+        ConfigManager.typeSortItem = settingsConfig.getString("General-Tutor-GUI.type-sort-item");
+        ConfigManager.categorySortItem = settingsConfig.getString("General-Tutor-GUI.category-sort-item");
         ConfigManager.generalGuiFillerItem = settingsConfig.getString("General-Tutor-GUI.filler-item");
         ConfigManager.selectionGuiTitle = settingsConfig.getString("Selection-GUI.title");
         ConfigManager.selectionGuiFillerItem = settingsConfig.getString("Selection-GUI.filler-item");
+        ConfigManager.confirmationGuiTitle = settingsConfig.getString("Confirmation-GUI.title");
+        ConfigManager.confirmationGuiFillerItem = settingsConfig.getString("Confirmation-GUI.filler-item");
+        ConfigManager.confirmItem = settingsConfig.getString("Confirmation-GUI.confirm-item");
+        ConfigManager.cancelItem = settingsConfig.getString("Confirmation-GUI.cancel-item");
         List<?> rawList = settingsConfig.getList("Move-Overrides");
         Map<String, Integer> overrides = new HashMap<>();
 
@@ -111,6 +131,24 @@ public final class ConfigManager extends VersionedConfig {
     public static int getGeneralGuiSize() {
         return generalGuiSize;
     }
+    public static String getPreviousPageItem() {
+        return previousPageItem;
+    }
+    public static String getNextPageItem() {
+        return nextPageItem;
+    }
+    public static String getExitItem() {
+        return exitItem;
+    }
+    public static String getAlphabeticalSortItem() {
+        return alphabeticalSortItem;
+    }
+    public static String getTypeSortItem() {
+        return typeSortItem;
+    }
+    public static String getCategorySortItem() {
+        return categorySortItem;
+    }
     public static String getGeneralFillerItem() {
         return generalGuiFillerItem;
     }
@@ -119,6 +157,18 @@ public final class ConfigManager extends VersionedConfig {
     }
     public static String getSelectionFillerItem() {
         return selectionGuiFillerItem;
+    }
+    public static String getConfirmationGuiTitle() {
+        return confirmationGuiTitle;
+    }
+    public static String getConfirmationFillerItem() {
+        return confirmationGuiFillerItem;
+    }
+    public static String getConfirmItem() {
+        return confirmItem;
+    }
+    public static String getCancelItem() {
+        return cancelItem;
     }
     public static Map<String, Integer> getMoveOverrides() {
         return moveOverrides;

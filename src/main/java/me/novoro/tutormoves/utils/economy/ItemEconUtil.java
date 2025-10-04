@@ -1,11 +1,13 @@
 package me.novoro.tutormoves.utils.economy;
 
+import me.novoro.tutormoves.config.ConfigManager;
 import me.novoro.tutormoves.helper.MoveTeacher;
 import com.cobblemon.mod.common.api.moves.MoveTemplate;
 import com.cobblemon.mod.common.api.moves.Moves;
 import com.cobblemon.mod.common.api.storage.NoPokemonStoreException;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
+import me.novoro.tutormoves.utils.ColorUtil;
 import me.novoro.tutormoves.utils.GuiUtil;
 import me.novoro.tutormoves.config.LangManager;
 import me.novoro.tutormoves.utils.ItemBuilder;
@@ -109,14 +111,17 @@ public class ItemEconUtil {
      */
     public static SimpleGui openConfirmationWindow(ServerPlayerEntity player, MoveTemplate moveTemplate, int slot, SimpleGui oldGui, List<ItemStack> requiredItems) throws NoPokemonStoreException {
         SimpleGui gui = new SimpleGui(ScreenHandlerType.GENERIC_9X3, player, false);
-        gui.setTitle(Text.literal("Confirm Purchase"));
+        String guiTitle = ConfigManager.getConfirmationGuiTitle();
+        gui.setTitle(ColorUtil.parseColourToText(guiTitle));
 
         ItemBuilder moveUtil = new ItemBuilder(Moves.INSTANCE);
-        ItemStack itemStack = moveUtil.getGemForMove(moveTemplate, new BigDecimal(requiredItems.get(0).getCount()), requiredItems.get(0).getItem().toString()).asStack();
+        ItemStack itemStack = moveUtil.getGemForMove(moveTemplate, new BigDecimal(requiredItems.getFirst().getCount()), requiredItems.getFirst().getItem().toString()).asStack();
 
         gui.setSlot(13, GuiElementBuilder.from(itemStack).build());
 
-        gui.setSlot(11, GuiElementBuilder.from(Items.GREEN_WOOL.getDefaultStack())
+        String confirmItem = ConfigManager.getConfirmItem();
+        String cancelItem = ConfigManager.getCancelItem();
+        gui.setSlot(11, GuiElementBuilder.from(Registries.ITEM.get(Identifier.of((confirmItem))).getDefaultStack())
                 .setName(Text.literal("§aConfirm"))
                 .setCallback((x, y, z) -> {
                     if (purchaseMove(player, moveTemplate, slot, requiredItems)) {
@@ -126,7 +131,7 @@ public class ItemEconUtil {
                     oldGui.open();
                 }));
 
-        gui.setSlot(15, GuiElementBuilder.from(Items.RED_WOOL.getDefaultStack())
+        gui.setSlot(15, GuiElementBuilder.from(Registries.ITEM.get(Identifier.of((cancelItem))).getDefaultStack())
                 .setName(Text.literal("§cCancel"))
                 .setCallback((x, y, z) -> oldGui.open()));
 
@@ -173,7 +178,7 @@ public class ItemEconUtil {
                     .append(itemStack.getCount() > 1 ? "s" : "")
                     .append(", ");
         }
-        return sb.length() > 0 ? sb.substring(0, sb.length() - 2) : sb.toString();
+        return !sb.isEmpty() ? sb.substring(0, sb.length() - 2) : sb.toString();
     }
 
     /**

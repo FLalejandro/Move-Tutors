@@ -1,14 +1,16 @@
 package me.novoro.tutormoves.utils;
 
+import me.novoro.tutormoves.config.ConfigManager;
 import me.novoro.tutormoves.guis.util.*;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
+import net.minecraft.registry.Registries;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 
 import static net.minecraft.item.Items.BLACK_STAINED_GLASS_PANE;
 
@@ -40,13 +42,13 @@ public class GuiUtil {
         int controlSlotPrevious = (rows - 1) * 9;
         int controlSlotNext = controlSlotPrevious + 8;
 
-        gui.setSlot(controlSlotPrevious, GuiElementBuilder.from(createArrowItem("Previous Page"))
+        gui.setSlot(controlSlotPrevious, GuiElementBuilder.from(createPreviousPageItem())
                 .setCallback((x, y, z) -> {
                     paginatedSection.decrementPage();
                     paginatedSection.applyToGui(gui);
                 }).build());
 
-        gui.setSlot(controlSlotNext, GuiElementBuilder.from(createArrowItem("Next Page"))
+        gui.setSlot(controlSlotNext, GuiElementBuilder.from(createNextPageItem())
                 .setCallback((x, y, z) -> {
                     paginatedSection.incrementPage();
                     paginatedSection.applyToGui(gui);
@@ -67,13 +69,17 @@ public class GuiUtil {
         int sortSlotCategory = (rows - 1) * 9 + 4;
         int sortSlotType = (rows - 1) * 9 + 5;
 
-        gui.setSlot(sortSlotAlpha, GuiElementBuilder.from(createItem(Items.PAPER.getDefaultStack(), "Alphabetical"))
+        String alphabeticalSortItem = ConfigManager.getAlphabeticalSortItem();
+        String categorySortItem = ConfigManager.getCategorySortItem();
+        String typeSortItem = ConfigManager.getTypeSortItem();
+
+        gui.setSlot(sortSlotAlpha, GuiElementBuilder.from(createItem(Registries.ITEM.get(Identifier.of((alphabeticalSortItem))).getDefaultStack(), "Alphabetical"))
                 .setCallback((x, y, z) -> alphabeticalCallback.run()).build());
 
-        gui.setSlot(sortSlotCategory, GuiElementBuilder.from(createItem(Items.NAME_TAG.getDefaultStack(), "Category"))
+        gui.setSlot(sortSlotCategory, GuiElementBuilder.from(createItem(Registries.ITEM.get(Identifier.of((categorySortItem))).getDefaultStack(), "Category"))
                 .setCallback((x, y, z) -> categoryCallback.run()).build());
 
-        gui.setSlot(sortSlotType, GuiElementBuilder.from(createItem(Items.GOLD_INGOT.getDefaultStack(), "Type"))
+        gui.setSlot(sortSlotType, GuiElementBuilder.from(createItem(Registries.ITEM.get(Identifier.of((typeSortItem))).getDefaultStack(), "Type"))
                 .setCallback((x, y, z) -> typeCallback.run()).build());
     }
 
@@ -87,7 +93,9 @@ public class GuiUtil {
     public static void applyBackButton(SimpleGui gui, int rows, Runnable backCallback) {
         int backButtonSlot = (rows - 1) * 9 + 1;
 
-        gui.setSlot(backButtonSlot, GuiElementBuilder.from(createItem(Items.BARRIER.getDefaultStack(), "Back"))
+        String exitButtonItem = ConfigManager.getExitItem();
+
+        gui.setSlot(backButtonSlot, GuiElementBuilder.from(createItem(Registries.ITEM.get(Identifier.of((exitButtonItem))).getDefaultStack(), "Back"))
                 .setCallback((x, y, z) -> backCallback.run()).build());
     }
 
@@ -105,13 +113,23 @@ public class GuiUtil {
     }
 
     /**
-     * Creates an arrow ItemStack with a custom name using NBT components.
+     * Creates a left arrow ItemStack with a custom name using NBT components.
      *
-     * @param name The custom name to apply to the arrow (supports color codes).
      * @return The modified ItemStack.
      */
-    private static ItemStack createArrowItem(String name) {
-        return createItem(Items.ARROW.getDefaultStack(), name);
+    private static ItemStack createPreviousPageItem() {
+        String previousPageItem = ConfigManager.getPreviousPageItem();
+        return createItem(Registries.ITEM.get(Identifier.of((previousPageItem))).getDefaultStack(), "Previous Page");
+    }
+
+    /**
+     * Creates a right arrow ItemStack with a custom name using NBT components.
+     *
+     * @return The modified ItemStack.
+     */
+    private static ItemStack createNextPageItem() {
+        String nextPageItem = ConfigManager.getNextPageItem();
+        return createItem(Registries.ITEM.get(Identifier.of((nextPageItem))).getDefaultStack(), "Next Page");
     }
 
     /**
@@ -121,26 +139,21 @@ public class GuiUtil {
      * @return The ScreenHandlerType corresponding to the number of rows.
      */
     private static ScreenHandlerType<?> getScreenHandlerType(int rows) {
-        switch (rows) {
-            case 2:
-                return ScreenHandlerType.GENERIC_9X2;
-            case 3:
-                return ScreenHandlerType.GENERIC_9X3;
-            case 4:
-                return ScreenHandlerType.GENERIC_9X4;
-            case 5:
-                return ScreenHandlerType.GENERIC_9X5;
-            case 6:
-                return ScreenHandlerType.GENERIC_9X6;
-            default:
-                throw new IllegalArgumentException("Invalid number of rows: " + rows);
-        }
+        return switch (rows) {
+            case 2 -> ScreenHandlerType.GENERIC_9X2;
+            case 3 -> ScreenHandlerType.GENERIC_9X3;
+            case 4 -> ScreenHandlerType.GENERIC_9X4;
+            case 5 -> ScreenHandlerType.GENERIC_9X5;
+            case 6 -> ScreenHandlerType.GENERIC_9X6;
+            default -> throw new IllegalArgumentException("Invalid number of rows: " + rows);
+        };
     }
 
     public static void fillGUI(SimpleGui gui) {
         int freeslot = gui.getFirstEmptySlot();
+        String fillerItem = ConfigManager.getConfirmationFillerItem();
         while (freeslot != -1) {
-            gui.setSlot(freeslot, GuiElementBuilder.from(BLACK_STAINED_GLASS_PANE.getDefaultStack()).setName(Text.literal("")));
+            gui.setSlot(freeslot, GuiElementBuilder.from(Registries.ITEM.get(Identifier.of((fillerItem))).getDefaultStack()).setName(Text.literal("")));
             freeslot = gui.getFirstEmptySlot();
         }
     }
