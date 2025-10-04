@@ -63,7 +63,6 @@ public class GeneralTutorScreen {
         String currencyKey = ConfigManager.getCurrencyKey();
         BigDecimal defaultPrice = BigDecimal.valueOf(ConfigManager.getCost());
         String guiTitle = ConfigManager.getGeneralGuiTitle();
-        String fillerItem = ConfigManager.getGeneralFillerItem();
 
         // Fetch the move overrides from the configuration
         Map<String, Integer> moveOverrides = getStringIntegerMap();
@@ -110,15 +109,10 @@ public class GeneralTutorScreen {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
-        // Get filler item from the configuration
-        Item fillerItemInstance = Registries.ITEM.get(Identifier.of((fillerItem)));
-
-        ItemStack fillerStack = new ItemStack(fillerItemInstance);
-
         // Create PaginatedSection with configurable filler item
         PaginatedSection paginatedSection = new PaginatedSection(elements)
                 .setSlotRanges(List.of(new SlotRange(0, rows * 9 - 10)))
-                .setFillItem(GuiElementBuilder.from(fillerStack));
+                .setFillItem(GuiElementBuilder.from(ConfigManager.getGeneralFillerItem()));
 
 
         // Fill the GUI and add pagination controls + sorting buttons

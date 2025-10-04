@@ -90,9 +90,7 @@ public class EconUtil {
 
         gui.setSlot(13, elementBuilder.build());
 
-        String confirmItem = ConfigManager.getConfirmItem();
-        String cancelItem = ConfigManager.getCancelItem();
-        gui.setSlot(11, GuiElementBuilder.from(Registries.ITEM.get(Identifier.of((confirmItem))).getDefaultStack())
+        gui.setSlot(11, GuiElementBuilder.from(ConfigManager.getConfirmItem())
                 .setName(Text.literal("§aConfirm"))
                 .setCallback((x, y, z) -> {
                     if (purchaseMove(player, moveTemplate, slot, price, currencyKey)) {
@@ -104,7 +102,7 @@ public class EconUtil {
                     oldGui.open();
                 }));
 
-        gui.setSlot(15, GuiElementBuilder.from(Registries.ITEM.get(Identifier.of((cancelItem))).getDefaultStack())
+        gui.setSlot(15, GuiElementBuilder.from(ConfigManager.getCancelItem())
                 .setName(Text.literal("§cCancel"))
                 .setCallback((x, y, z) -> oldGui.open()));
 

@@ -32,9 +32,6 @@ public class SelectionScreen {
     public static void open(ServerPlayerEntity player, Optional<String> specificTutorName) {
         int rows = 3;
         String guiTitle = ConfigManager.getSelectionGuiTitle();
-        String selectionFillerItem = ConfigManager.getSelectionFillerItem();
-        ItemStack fillerItem = new ItemStack(Registries.ITEM.get(Identifier.of(selectionFillerItem)));
-
         SimpleGui gui = GuiUtil.createGui(player, rows, ColorUtil.parseColourToText(guiTitle));
 
         PlayerPartyStore partyStore;
@@ -70,10 +67,10 @@ public class SelectionScreen {
         }
 
         // Add a filler item for any remaining slots
-        fillerItem.set(DataComponentTypes.CUSTOM_NAME, Text.literal(""));
+        ConfigManager.getSelectionFillerItem().set(DataComponentTypes.CUSTOM_NAME, Text.literal(""));
         for (int i = 0; i < 27; i++) {
             if (gui.getSlot(i) == null) {
-                gui.setSlot(i, GuiElementBuilder.from(fillerItem));
+                gui.setSlot(i, GuiElementBuilder.from(ConfigManager.getSelectionFillerItem()));
             }
         }
 

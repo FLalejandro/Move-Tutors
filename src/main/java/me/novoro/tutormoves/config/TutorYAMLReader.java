@@ -26,7 +26,7 @@ public final class TutorYAMLReader {
 
     public static TutorConfig readTutorFile(String tutorFileName) throws Exception {
         File file = Paths.get("config/TutorMoves/tutors", tutorFileName + ".yml").toFile();
-        TutorMovesLogger.info("Reading tutor config: " + file.getAbsolutePath());
+        //TutorMovesLogger.info("Reading tutor config: " + file.getAbsolutePath());
         if (!file.exists()) {
             throw new IllegalArgumentException("Tutor file " + tutorFileName + " does not exist.");
         }
@@ -40,7 +40,7 @@ public final class TutorYAMLReader {
             throw new IllegalArgumentException("Missing Specific-Tutor or Specific-Tutor-GUI in " + tutorFileName);
         }
 
-        TutorMovesLogger.info("Parsing tutor sections for: " + tutorFileName);
+       // TutorMovesLogger.info("Parsing tutor sections for: " + tutorFileName);
 
         String permission = specific.getString("permission");
         String currencyKey = specific.getString("currencyKey");
@@ -79,17 +79,6 @@ public final class TutorYAMLReader {
 
         tutors.put(tutorFileName, tutorConfig);
         return tutorConfig;
-    }
-
-    public static List<String> getAllTutorNames() {
-        List<String> names = new ArrayList<>();
-        names.add("general");
-        names.addAll(tutors.keySet());
-        return names;
-    }
-
-    public static Map<String, TutorConfig> getTutors() {
-        return Collections.unmodifiableMap(tutors);
     }
 
     public static void loadTutorFile(File file) {
