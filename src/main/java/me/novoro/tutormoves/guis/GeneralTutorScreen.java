@@ -14,12 +14,9 @@ import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import me.novoro.tutormoves.utils.economy.EconUtil;
 import me.novoro.tutormoves.utils.economy.ItemEconUtil;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
-import net.minecraft.registry.Registries;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
@@ -76,7 +73,7 @@ public class GeneralTutorScreen {
 
         // Create MoveTemplate list and apply sorting
         List<MoveTemplate> moveTemplates = tutorMoves.stream()
-                .map(moves::getByNameOrDummy)
+                .map(Moves::getByNameOrDummy)
                 .collect(Collectors.toList());
 
         moveTemplates = SortingHelper.sortByOption(moveTemplates, currentSortOption);
