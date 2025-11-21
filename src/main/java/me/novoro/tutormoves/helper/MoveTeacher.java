@@ -104,13 +104,13 @@ public class MoveTeacher {
         }
 
         // Check legacy moves if enabled
-        if (ConfigManager.isFormChangeMoves() &&
+        if (ConfigManager.isLegacyMoves() &&
                 pokemon.getForm().getMoves().getLegacyMoves().contains(move)) {
             return true;
         }
 
         // Check special moves if enabled
-        if (ConfigManager.isFormChangeMoves() &&
+        if (ConfigManager.isSpecialMoves() &&
                 pokemon.getForm().getMoves().getSpecialMoves().contains(move)) {
             return true;
         }

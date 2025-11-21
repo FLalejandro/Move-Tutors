@@ -19,6 +19,8 @@ Move-Options:
   evolutionMoves: false
   levelUpMoves: false
   formChangeMoves: false
+  legacyMoves: false
+  specialMoves: false
 General-Tutor-GUI:
   # The GUI Title
   title: "<gold>General Tutor"
