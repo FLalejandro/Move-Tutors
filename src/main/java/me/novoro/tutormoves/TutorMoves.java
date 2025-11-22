@@ -127,7 +127,7 @@ public class TutorMoves implements ModInitializer {
     }
 
     public static File getConfigFolder() {
-        File configFolder = FabricLoader.getInstance().getConfigDir().resolve("tutormoves").toFile();
+        File configFolder = FabricLoader.getInstance().getConfigDir().resolve("TutorMoves").toFile();
         if (!configFolder.exists()) configFolder.mkdirs();
         return configFolder;
     }
