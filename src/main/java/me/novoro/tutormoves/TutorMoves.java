@@ -6,8 +6,6 @@ import me.novoro.tutormoves.api.permissions.LuckPermsPermissionProvider;
 import me.novoro.tutormoves.api.permissions.PermissionProvider;
 import me.novoro.tutormoves.api.configuration.Configuration;
 import me.novoro.tutormoves.api.configuration.YamlConfiguration;
-import me.novoro.tutormoves.commands.MenuCommand;
-import me.novoro.tutormoves.commands.NPCCommand;
 import me.novoro.tutormoves.commands.TutorMovesReloadCommand;
 import me.novoro.tutormoves.config.ConfigManager;
 import me.novoro.tutormoves.config.LangManager;
@@ -31,7 +29,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.UUID;
 
 public class TutorMoves implements ModInitializer {
@@ -113,8 +110,6 @@ public class TutorMoves implements ModInitializer {
      */
     private void registerCommands(CommandDispatcher<ServerCommandSource> dispatcher) {
         new TutorMovesReloadCommand().register(dispatcher);
-        new MenuCommand().register(dispatcher);
-        new NPCCommand().register(dispatcher);
     }
 
     /**
