@@ -2,6 +2,7 @@ package me.novoro.tutormoves.utils.economy;
 
 import me.novoro.tutormoves.TutorMoves;
 import me.novoro.tutormoves.config.ConfigManager;
+import me.novoro.tutormoves.config.MoveOptions;
 import me.novoro.tutormoves.helper.MoveTeacher;
 import com.cobblemon.mod.common.api.moves.MoveTemplate;
 import com.cobblemon.mod.common.api.moves.Moves;
@@ -33,6 +34,15 @@ public class EconUtil {
                                        int slot,
                                        BigDecimal price,
                                        String currencyKey) {
+        return purchaseMove(player, move, slot, price, currencyKey, MoveOptions.fromGlobal());
+    }
+
+    public static boolean purchaseMove(ServerPlayerEntity player,
+                                       MoveTemplate move,
+                                       int slot,
+                                       BigDecimal price,
+                                       String currencyKey,
+                                       MoveOptions options) {
         double priceValue = price.doubleValue();
         double playerBalance;
         UUID playerUUID = player.getUuid();
@@ -47,7 +57,7 @@ public class EconUtil {
         }
 
         if (playerBalance >= priceValue) {
-            boolean canTeach = MoveTeacher.teachMove(player, slot, move);
+            boolean canTeach = MoveTeacher.teachMove(player, slot, move, options);
             if (canTeach) {
                 boolean withdrawalSuccess;
                 if (TutorMoves.isImpactorAvailable) {
@@ -81,6 +91,16 @@ public class EconUtil {
                                                    SimpleGui oldGui,
                                                    BigDecimal price,
                                                    String currencyKey) throws NoPokemonStoreException {
+        return openConfirmationWindow(player, moveTemplate, slot, oldGui, price, currencyKey, MoveOptions.fromGlobal());
+    }
+
+    public static SimpleGui openConfirmationWindow(ServerPlayerEntity player,
+                                                   MoveTemplate moveTemplate,
+                                                   int slot,
+                                                   SimpleGui oldGui,
+                                                   BigDecimal price,
+                                                   String currencyKey,
+                                                   MoveOptions options) throws NoPokemonStoreException {
         SimpleGui gui = new SimpleGui(ScreenHandlerType.GENERIC_9X3, player, false);
         String guiTitle = ConfigManager.getConfirmationGuiTitle();
         gui.setTitle(ColorUtil.parseColourToText(guiTitle));
@@ -93,7 +113,7 @@ public class EconUtil {
         gui.setSlot(11, GuiElementBuilder.from(ConfigManager.getConfirmItem())
                 .setName(Text.literal("§aConfirm"))
                 .setCallback((x, y, z) -> {
-                    if (purchaseMove(player, moveTemplate, slot, price, currencyKey)) {
+                    if (purchaseMove(player, moveTemplate, slot, price, currencyKey, options)) {
                         LangManager.sendLang(player, "Successful-Tutor", Map.of(
                                 "{pokemon}", player.getName().getString(),
                                 "{move}", moveTemplate.getDisplayName().getString()

@@ -1,16 +1,33 @@
 # Specific Tutor Settings
 Specific-Tutor:
+  # "specific" = fixed move list, "general" = all learnable moves (like General Tutor)
+  mode: specific
   # Permission needed to open
   permission: tutormoves.open.dragonmaster
   # Options: impactor:{currency}, ITEMS:{item id}
   currencyKey: ITEMS:minecraft:diamond
   # The cost of teaching moves
   cost: 3
+  # Optional: override global Move-Options for this tutor
+  # If omitted, uses the global Move-Options from config.yml
+  # Move-Options:
+  #   tutorMoves: true
+  #   eggMoves: false
+  #   tmMoves: true
+  #   evolutionMoves: false
+  #   levelUpMoves: false
+  #   formChangeMoves: false
+  #   legacyMoves: false
+  #   specialMoves: false
   # List of Moves the Tutor Offers
   moves:
     - dracometeor
     - dragonclaw
     - dragondance
+    # Use type: prefix to include all learnable moves of a type
+    # - type:dragon
+  # Moves that should not appear in this tutor's GUI
+  Blacklisted-Moves: []
   # Pokemon that should not be able to use this tutor
   Blacklisted-Pokemon:
     - jirachi

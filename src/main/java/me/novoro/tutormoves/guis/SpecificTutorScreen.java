@@ -1,5 +1,6 @@
 package me.novoro.tutormoves.guis;
 
+import me.novoro.tutormoves.config.MoveOptions;
 import me.novoro.tutormoves.config.TutorYAMLReader;
 import me.novoro.tutormoves.helper.SortingHelper;
 import me.novoro.tutormoves.config.LangManager;
@@ -24,6 +25,7 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -66,6 +68,10 @@ public class SpecificTutorScreen {
         String guiTitle = TutorYAMLReader.getTutorName(tutorFileName);
         String fillerItem = TutorYAMLReader.getTutorFillerItem(tutorFileName);
 
+        // Fetch tutor-specific settings
+        MoveOptions effectiveOptions = TutorYAMLReader.getEffectiveMoveOptions(tutorFileName);
+        List<String> blacklistedMoves = TutorYAMLReader.getTutorBlacklistedMoves(tutorFileName);
+
         // Create the GUI
         SimpleGui gui = GuiUtil.createGui(player, rows, ColorUtil.parseColourToText(guiTitle));
 
@@ -75,10 +81,37 @@ public class SpecificTutorScreen {
         // Fetch the move overrides from the tutor configuration
         Map<String, Integer> moveOverrides = TutorYAMLReader.getTutorMoveOverrides(tutorFileName);
 
-        List<MoveTemplate> moveTemplates = TutorYAMLReader.getTutorMoves(tutorFileName).stream()
-                .filter(Objects::nonNull)
-                .distinct()
-                .collect(Collectors.toList());
+        List<MoveTemplate> moveTemplates;
+
+        if (TutorYAMLReader.isGeneralMode(tutorFileName)) {
+            List<String> moveNames;
+            try {
+                moveNames = PokemonUtil.getMovesForSlot(player, slot, effectiveOptions, blacklistedMoves);
+            } catch (NoPokemonStoreException e) {
+                player.sendMessage(Text.literal("No Pokémon found in slot " + slot).formatted(Formatting.RED));
+                return;
+            }
+            moveTemplates = moveNames.stream()
+                    .map(name -> Moves.INSTANCE.getByName(name))
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+        } else {
+            moveTemplates = new ArrayList<>(TutorYAMLReader.getTutorMoves(tutorFileName));
+            for (String type : TutorYAMLReader.getTutorTypeFilters(tutorFileName)) {
+                moveTemplates.addAll(PokemonUtil.getLearnableMovesOfType(pokemon, type, effectiveOptions));
+            }
+            moveTemplates = moveTemplates.stream()
+                    .distinct()
+                    .filter(move -> PokemonUtil.isMoveLearnable(pokemon, move, effectiveOptions))
+                    .filter(move -> !blacklistedMoves.contains(move.getName().toLowerCase()))
+                    .collect(Collectors.toList());
+        }
+
+        if (moveTemplates.isEmpty()) {
+            LangManager.sendLang(player, "Error-No-Tutor-Moves", Map.of("{pokemon}", pokemon.getSpecies().getName()));
+            return;
+        }
+
         moveTemplates = SortingHelper.sortByOption(moveTemplates, currentSortOption);
 
         List<GuiElementBuilder> elements = moveTemplates.stream()
@@ -96,9 +129,9 @@ public class SpecificTutorScreen {
                         try {
                             if (currencyKey.startsWith("ITEMS:")) {
                                 List<ItemStack> requiredItems = ItemEconUtil.getRequiredItemsFromConfig(currencyKey, (int) TutorYAMLReader.getTutorCost(tutorFileName), moveOverrides, moveName);
-                                ItemEconUtil.openConfirmationWindow(player, moveTemplate, slot - 1, gui, requiredItems).open();
+                                ItemEconUtil.openConfirmationWindow(player, moveTemplate, slot - 1, gui, requiredItems, effectiveOptions).open();
                             } else {
-                                EconUtil.openConfirmationWindow(player, moveTemplate, slot - 1, gui, price, currencyKey).open();
+                                EconUtil.openConfirmationWindow(player, moveTemplate, slot - 1, gui, price, currencyKey, effectiveOptions).open();
                             }
                         } catch (NoPokemonStoreException e) {
                             throw new RuntimeException(e);

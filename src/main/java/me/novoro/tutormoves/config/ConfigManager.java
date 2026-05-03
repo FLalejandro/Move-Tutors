@@ -221,7 +221,7 @@ public final class ConfigManager extends VersionedConfig {
 
     @Override
     public double getCurrentConfigVersion() {
-        return 2.0;
+        return 2.4;
     }
 
     @Override

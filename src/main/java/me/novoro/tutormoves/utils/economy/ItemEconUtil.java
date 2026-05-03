@@ -1,6 +1,7 @@
 package me.novoro.tutormoves.utils.economy;
 
 import me.novoro.tutormoves.config.ConfigManager;
+import me.novoro.tutormoves.config.MoveOptions;
 import me.novoro.tutormoves.helper.MoveTeacher;
 import com.cobblemon.mod.common.api.moves.MoveTemplate;
 import com.cobblemon.mod.common.api.moves.Moves;
@@ -82,8 +83,12 @@ public class ItemEconUtil {
      * @return True if the purchase was successful, false otherwise.
      */
     public static boolean purchaseMove(ServerPlayerEntity player, MoveTemplate move, int slot, List<ItemStack> requiredItems) {
+        return purchaseMove(player, move, slot, requiredItems, MoveOptions.fromGlobal());
+    }
+
+    public static boolean purchaseMove(ServerPlayerEntity player, MoveTemplate move, int slot, List<ItemStack> requiredItems, MoveOptions options) {
         if (hasRequiredItems(player, requiredItems)) {
-            if (MoveTeacher.teachMove(player, slot, move)) {
+            if (MoveTeacher.teachMove(player, slot, move, options)) {
                 removeRequiredItems(player, requiredItems);
                 LangManager.sendLang(player, "Successful-Tutor", Map.of(
                         "{pokemon}", player.getName().getString(),
@@ -110,6 +115,10 @@ public class ItemEconUtil {
      * @return The confirmation GUI.
      */
     public static SimpleGui openConfirmationWindow(ServerPlayerEntity player, MoveTemplate moveTemplate, int slot, SimpleGui oldGui, List<ItemStack> requiredItems) throws NoPokemonStoreException {
+        return openConfirmationWindow(player, moveTemplate, slot, oldGui, requiredItems, MoveOptions.fromGlobal());
+    }
+
+    public static SimpleGui openConfirmationWindow(ServerPlayerEntity player, MoveTemplate moveTemplate, int slot, SimpleGui oldGui, List<ItemStack> requiredItems, MoveOptions options) throws NoPokemonStoreException {
         SimpleGui gui = new SimpleGui(ScreenHandlerType.GENERIC_9X3, player, false);
         String guiTitle = ConfigManager.getConfirmationGuiTitle();
         gui.setTitle(ColorUtil.parseColourToText(guiTitle));
@@ -122,7 +131,7 @@ public class ItemEconUtil {
         gui.setSlot(11, GuiElementBuilder.from(ConfigManager.getConfirmItem())
                 .setName(Text.literal("§aConfirm"))
                 .setCallback((x, y, z) -> {
-                    if (purchaseMove(player, moveTemplate, slot, requiredItems)) {
+                    if (purchaseMove(player, moveTemplate, slot, requiredItems, options)) {
                         LangManager.sendLang(player, "Successful-Tutor", Map.of("{pokemon}", player.getName().getString(),
                                 "{move}", moveTemplate.getDisplayName().getString()));
                     }
