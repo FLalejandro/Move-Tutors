@@ -26,13 +26,28 @@ General-Tutor-GUI:
   title: "<gold>General Tutor"
   # The Size of the Main Tutor GUI (2-6)
   size: 6
-  # GUI Elements
+  # GUI Elements — item, name and slot (names support MiniMessage formatting)
+  # Slot values are absolute slot numbers (0 = top-left). Use -1 for auto-placement.
+  # Auto defaults: previous-page=(last row)*9, next-page=(last row)*9+8, exit=(last row)*9+1
+  #                alphabetical=(last row)*9+3, category=(last row)*9+4, type=(last row)*9+5
   previous-page-item: "minecraft:arrow"
+  previous-page-name: "Previous Page"
+  previous-page-slot: -1
   next-page-item: "minecraft:arrow"
+  next-page-name: "Next Page"
+  next-page-slot: -1
   exit-item: "minecraft:barrier"
+  exit-name: "Back"
+  exit-slot: -1
   alphabetical-sort-item: "minecraft:paper"
+  alphabetical-sort-name: "Alphabetical"
+  alphabetical-sort-slot: -1
   category-sort-item: "minecraft:name_tag"
+  category-sort-name: "Category"
+  category-sort-slot: -1
   type-sort-item: "minecraft:gold_ingot"
+  type-sort-name: "Type"
+  type-sort-slot: -1
   filler-item: "minecraft:light_gray_stained_glass_pane"
 Selection-GUI:
     # The GUI Title
@@ -42,9 +57,16 @@ Selection-GUI:
 Confirmation-GUI:
     # The GUI Title
     title: "<yellow>Confirm Move"
-    # GUI Elements
+    # GUI Elements — item, name and slot (names support MiniMessage formatting)
+    # Slot values are absolute slot numbers (0 = top-left). Use -1 for auto-placement.
+    # Auto defaults: confirm=11, display=13, cancel=15
     confirm-item: "minecraft:lime_wool"
+    confirm-name: "<green>Confirm"
+    confirm-slot: -1
     cancel-item: "minecraft:red_wool"
+    cancel-name: "<red>Cancel"
+    cancel-slot: -1
+    display-slot: -1
     filler-item: "minecraft:gray_stained_glass_pane"
 # Override the cost of specific moves
 # Format - move:cost

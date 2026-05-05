@@ -126,10 +126,14 @@ public class ItemEconUtil {
         ItemBuilder moveUtil = new ItemBuilder(Moves.INSTANCE);
         ItemStack itemStack = moveUtil.getGemForMove(moveTemplate, new BigDecimal(requiredItems.getFirst().getCount()), requiredItems.getFirst().getItem().toString()).asStack();
 
-        gui.setSlot(13, GuiElementBuilder.from(itemStack).build());
+        int displaySlot = ConfigManager.getDisplaySlot() >= 0 ? ConfigManager.getDisplaySlot() : 13;
+        int confirmSlot = ConfigManager.getConfirmSlot() >= 0 ? ConfigManager.getConfirmSlot() : 11;
+        int cancelSlot = ConfigManager.getCancelSlot() >= 0 ? ConfigManager.getCancelSlot() : 15;
 
-        gui.setSlot(11, GuiElementBuilder.from(ConfigManager.getConfirmItem())
-                .setName(Text.literal("§aConfirm"))
+        gui.setSlot(displaySlot, GuiElementBuilder.from(itemStack).build());
+
+        gui.setSlot(confirmSlot, GuiElementBuilder.from(ConfigManager.getConfirmItem())
+                .setName(ColorUtil.parseColourToText(ConfigManager.getConfirmName()))
                 .setCallback((x, y, z) -> {
                     if (purchaseMove(player, moveTemplate, slot, requiredItems, options)) {
                         LangManager.sendLang(player, "Successful-Tutor", Map.of("{pokemon}", player.getName().getString(),
@@ -138,8 +142,8 @@ public class ItemEconUtil {
                     oldGui.open();
                 }));
 
-        gui.setSlot(15, GuiElementBuilder.from(ConfigManager.getCancelItem())
-                .setName(Text.literal("§cCancel"))
+        gui.setSlot(cancelSlot, GuiElementBuilder.from(ConfigManager.getCancelItem())
+                .setName(ColorUtil.parseColourToText(ConfigManager.getCancelName()))
                 .setCallback((x, y, z) -> oldGui.open()));
 
         GuiUtil.fillGUI(gui);

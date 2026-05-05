@@ -108,10 +108,14 @@ public class EconUtil {
         ItemBuilder moveUtil = new ItemBuilder(Moves.INSTANCE);
         GuiElementBuilder elementBuilder = moveUtil.getGemForMove(moveTemplate, price, currencyKey);
 
-        gui.setSlot(13, elementBuilder.build());
+        int displaySlot = ConfigManager.getDisplaySlot() >= 0 ? ConfigManager.getDisplaySlot() : 13;
+        int confirmSlot = ConfigManager.getConfirmSlot() >= 0 ? ConfigManager.getConfirmSlot() : 11;
+        int cancelSlot = ConfigManager.getCancelSlot() >= 0 ? ConfigManager.getCancelSlot() : 15;
 
-        gui.setSlot(11, GuiElementBuilder.from(ConfigManager.getConfirmItem())
-                .setName(Text.literal("§aConfirm"))
+        gui.setSlot(displaySlot, elementBuilder.build());
+
+        gui.setSlot(confirmSlot, GuiElementBuilder.from(ConfigManager.getConfirmItem())
+                .setName(ColorUtil.parseColourToText(ConfigManager.getConfirmName()))
                 .setCallback((x, y, z) -> {
                     if (purchaseMove(player, moveTemplate, slot, price, currencyKey, options)) {
                         LangManager.sendLang(player, "Successful-Tutor", Map.of(
@@ -122,8 +126,8 @@ public class EconUtil {
                     oldGui.open();
                 }));
 
-        gui.setSlot(15, GuiElementBuilder.from(ConfigManager.getCancelItem())
-                .setName(Text.literal("§cCancel"))
+        gui.setSlot(cancelSlot, GuiElementBuilder.from(ConfigManager.getCancelItem())
+                .setName(ColorUtil.parseColourToText(ConfigManager.getCancelName()))
                 .setCallback((x, y, z) -> oldGui.open()));
 
         GuiUtil.fillGUI(gui);

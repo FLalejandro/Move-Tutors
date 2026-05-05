@@ -65,7 +65,7 @@ public class SpecificTutorScreen {
         int rows = TutorYAMLReader.getTutorSize(tutorFileName);
         String currencyKey = TutorYAMLReader.getTutorCurrencyKey(tutorFileName);
         BigDecimal defaultPrice = BigDecimal.valueOf(TutorYAMLReader.getTutorCost(tutorFileName));
-        String guiTitle = TutorYAMLReader.getTutorName(tutorFileName);
+        String guiTitle = TutorYAMLReader.getTutorTitle(tutorFileName);
         String fillerItem = TutorYAMLReader.getTutorFillerItem(tutorFileName);
 
         // Fetch tutor-specific settings

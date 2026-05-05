@@ -35,16 +35,20 @@ public class GuiUtil {
      * @param rows The number of rows in the GUI.
      */
     public static void applyPaginationControls(SimpleGui gui, PaginatedSection paginatedSection, int rows) {
-        int controlSlotPrevious = (rows - 1) * 9;
-        int controlSlotNext = controlSlotPrevious + 8;
+        int controlSlotPrevious = ConfigManager.getPreviousPageSlot() >= 0
+                ? ConfigManager.getPreviousPageSlot()
+                : (rows - 1) * 9;
+        int controlSlotNext = ConfigManager.getNextPageSlot() >= 0
+                ? ConfigManager.getNextPageSlot()
+                : (rows - 1) * 9 + 8;
 
-        gui.setSlot(controlSlotPrevious, GuiElementBuilder.from(createPreviousPageItem())
+        gui.setSlot(controlSlotPrevious, GuiElementBuilder.from(createItem(ConfigManager.getPreviousPageItem(), ConfigManager.getPreviousPageName()))
                 .setCallback((x, y, z) -> {
                     paginatedSection.decrementPage();
                     paginatedSection.applyToGui(gui);
                 }).build());
 
-        gui.setSlot(controlSlotNext, GuiElementBuilder.from(createNextPageItem())
+        gui.setSlot(controlSlotNext, GuiElementBuilder.from(createItem(ConfigManager.getNextPageItem(), ConfigManager.getNextPageName()))
                 .setCallback((x, y, z) -> {
                     paginatedSection.incrementPage();
                     paginatedSection.applyToGui(gui);
@@ -61,21 +65,23 @@ public class GuiUtil {
      * @param typeCallback The callback for the type sorting button.
      */
     public static void applySortingButtons(SimpleGui gui, int rows, Runnable alphabeticalCallback, Runnable categoryCallback, Runnable typeCallback) {
-        int sortSlotAlpha = (rows - 1) * 9 + 3;
-        int sortSlotCategory = (rows - 1) * 9 + 4;
-        int sortSlotType = (rows - 1) * 9 + 5;
+        int sortSlotAlpha = ConfigManager.getAlphabeticalSortSlot() >= 0
+                ? ConfigManager.getAlphabeticalSortSlot()
+                : (rows - 1) * 9 + 3;
+        int sortSlotCategory = ConfigManager.getCategorySortSlot() >= 0
+                ? ConfigManager.getCategorySortSlot()
+                : (rows - 1) * 9 + 4;
+        int sortSlotType = ConfigManager.getTypeSortSlot() >= 0
+                ? ConfigManager.getTypeSortSlot()
+                : (rows - 1) * 9 + 5;
 
-
-
-
-
-        gui.setSlot(sortSlotAlpha, GuiElementBuilder.from(createItem(ConfigManager.getAlphabeticalSortItem(), "Alphabetical"))
+        gui.setSlot(sortSlotAlpha, GuiElementBuilder.from(createItem(ConfigManager.getAlphabeticalSortItem(), ConfigManager.getAlphabeticalSortName()))
                 .setCallback((x, y, z) -> alphabeticalCallback.run()).build());
 
-        gui.setSlot(sortSlotCategory, GuiElementBuilder.from(createItem(ConfigManager.getCategorySortItem(), "Category"))
+        gui.setSlot(sortSlotCategory, GuiElementBuilder.from(createItem(ConfigManager.getCategorySortItem(), ConfigManager.getCategorySortName()))
                 .setCallback((x, y, z) -> categoryCallback.run()).build());
 
-        gui.setSlot(sortSlotType, GuiElementBuilder.from(createItem(ConfigManager.getTypeSortItem(), "Type"))
+        gui.setSlot(sortSlotType, GuiElementBuilder.from(createItem(ConfigManager.getTypeSortItem(), ConfigManager.getTypeSortName()))
                 .setCallback((x, y, z) -> typeCallback.run()).build());
     }
 
@@ -87,8 +93,10 @@ public class GuiUtil {
      * @param backCallback The callback for the back button.
      */
     public static void applyBackButton(SimpleGui gui, int rows, Runnable backCallback) {
-        int backButtonSlot = (rows - 1) * 9 + 1;
-        gui.setSlot(backButtonSlot, GuiElementBuilder.from(createItem(ConfigManager.getExitItem(), "Back"))
+        int backButtonSlot = ConfigManager.getExitSlot() >= 0
+                ? ConfigManager.getExitSlot()
+                : (rows - 1) * 9 + 1;
+        gui.setSlot(backButtonSlot, GuiElementBuilder.from(createItem(ConfigManager.getExitItem(), ConfigManager.getExitName()))
                 .setCallback((x, y, z) -> backCallback.run()).build());
     }
 
@@ -103,24 +111,6 @@ public class GuiUtil {
         ItemStack stack = item.copy();
         stack.set(DataComponentTypes.CUSTOM_NAME, ColorUtil.parseColourToText(name));
         return stack;
-    }
-
-    /**
-     * Creates a left arrow ItemStack with a custom name using NBT components.
-     *
-     * @return The modified ItemStack.
-     */
-    private static ItemStack createPreviousPageItem() {
-        return createItem(ConfigManager.getPreviousPageItem(), "Previous Page");
-    }
-
-    /**
-     * Creates a right arrow ItemStack with a custom name using NBT components.
-     *
-     * @return The modified ItemStack.
-     */
-    private static ItemStack createNextPageItem() {
-        return createItem(ConfigManager.getNextPageItem(), "Next Page");
     }
 
     /**

@@ -14,6 +14,7 @@ public final class TutorYAMLReader {
 
     public record TutorConfig(
             String name,
+            String title,
             String mode,
             String permission,
             String currencyKey,
@@ -77,6 +78,7 @@ public final class TutorYAMLReader {
             }
         }
 
+        String title = gui.getString("title", "");
         String fillerItem = gui.getString("filler-item");
         int size = gui.getInt("size");
 
@@ -103,7 +105,7 @@ public final class TutorYAMLReader {
         }
 
         TutorConfig tutorConfig = new TutorConfig(
-                tutorFileName, mode, permission, currencyKey, size, cost, moves, blacklistedPokemon, fillerItem, overrides, moveOptions, blacklistedMoves, typeFilters
+                tutorFileName, title, mode, permission, currencyKey, size, cost, moves, blacklistedPokemon, fillerItem, overrides, moveOptions, blacklistedMoves, typeFilters
         );
 
         tutors.put(tutorFileName, tutorConfig);
@@ -189,6 +191,12 @@ public final class TutorYAMLReader {
     public static String getTutorFillerItem(String tutorName) {
         TutorConfig config = getTutor(tutorName);
         return config != null ? config.fillerItem() : "minecraft:black_stained_glass_pane";
+    }
+
+    public static String getTutorTitle(String tutorName) {
+        TutorConfig config = getTutor(tutorName);
+        if (config == null) return tutorName;
+        return (config.title() != null && !config.title().isEmpty()) ? config.title() : config.name();
     }
 
     public static MoveOptions getEffectiveMoveOptions(String tutorName) {

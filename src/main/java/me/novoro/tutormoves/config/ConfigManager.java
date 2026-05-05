@@ -45,6 +45,30 @@ public final class ConfigManager extends VersionedConfig {
     private static ItemStack confirmItem;
     private static ItemStack cancelItem;
 
+    // Tutor GUI element names
+    private static String previousPageName;
+    private static String nextPageName;
+    private static String exitName;
+    private static String alphabeticalSortName;
+    private static String categorySortName;
+    private static String typeSortName;
+
+    // Tutor GUI element slots (-1 = auto-calculate)
+    private static int previousPageSlot;
+    private static int nextPageSlot;
+    private static int exitSlot;
+    private static int alphabeticalSortSlot;
+    private static int categorySortSlot;
+    private static int typeSortSlot;
+
+    // Confirmation GUI element names
+    private static String confirmName;
+    private static String cancelName;
+
+    // Confirmation GUI element slots (-1 = use defaults)
+    private static int confirmSlot;
+    private static int cancelSlot;
+    private static int displaySlot;
 
     @Override
     protected void reload(Configuration settingsConfig) {
@@ -76,6 +100,32 @@ public final class ConfigManager extends VersionedConfig {
         ConfigManager.confirmationGuiFillerItem = parseItem(settingsConfig.getString("Confirmation-GUI.filler-item"));
         ConfigManager.confirmItem = parseItem(settingsConfig.getString("Confirmation-GUI.confirm-item"));
         ConfigManager.cancelItem = parseItem(settingsConfig.getString("Confirmation-GUI.cancel-item"));
+
+        // Tutor GUI element names (MiniMessage supported)
+        ConfigManager.previousPageName = settingsConfig.getString("General-Tutor-GUI.previous-page-name", "Previous Page");
+        ConfigManager.nextPageName = settingsConfig.getString("General-Tutor-GUI.next-page-name", "Next Page");
+        ConfigManager.exitName = settingsConfig.getString("General-Tutor-GUI.exit-name", "Back");
+        ConfigManager.alphabeticalSortName = settingsConfig.getString("General-Tutor-GUI.alphabetical-sort-name", "Alphabetical");
+        ConfigManager.categorySortName = settingsConfig.getString("General-Tutor-GUI.category-sort-name", "Category");
+        ConfigManager.typeSortName = settingsConfig.getString("General-Tutor-GUI.type-sort-name", "Type");
+
+        // Tutor GUI absolute slot positions (-1 = auto-calculate based on GUI size)
+        ConfigManager.previousPageSlot = settingsConfig.getInt("General-Tutor-GUI.previous-page-slot", -1);
+        ConfigManager.nextPageSlot = settingsConfig.getInt("General-Tutor-GUI.next-page-slot", -1);
+        ConfigManager.exitSlot = settingsConfig.getInt("General-Tutor-GUI.exit-slot", -1);
+        ConfigManager.alphabeticalSortSlot = settingsConfig.getInt("General-Tutor-GUI.alphabetical-sort-slot", -1);
+        ConfigManager.categorySortSlot = settingsConfig.getInt("General-Tutor-GUI.category-sort-slot", -1);
+        ConfigManager.typeSortSlot = settingsConfig.getInt("General-Tutor-GUI.type-sort-slot", -1);
+
+        // Confirmation GUI element names (MiniMessage supported)
+        ConfigManager.confirmName = settingsConfig.getString("Confirmation-GUI.confirm-name", "<green>Confirm");
+        ConfigManager.cancelName = settingsConfig.getString("Confirmation-GUI.cancel-name", "<red>Cancel");
+
+        // Confirmation GUI absolute slot positions (-1 = use defaults: confirm=11, display=13, cancel=15)
+        ConfigManager.confirmSlot = settingsConfig.getInt("Confirmation-GUI.confirm-slot", -1);
+        ConfigManager.cancelSlot = settingsConfig.getInt("Confirmation-GUI.cancel-slot", -1);
+        ConfigManager.displaySlot = settingsConfig.getInt("Confirmation-GUI.display-slot", -1);
+
         List<?> rawList = settingsConfig.getList("Move-Overrides");
         Map<String, Integer> overrides = new HashMap<>();
 
@@ -185,6 +235,74 @@ public final class ConfigManager extends VersionedConfig {
     }
     public static Map<String, Integer> getMoveOverrides() {
         return moveOverrides;
+    }
+
+    public static String getPreviousPageName() {
+        return previousPageName;
+    }
+
+    public static String getNextPageName() {
+        return nextPageName;
+    }
+
+    public static String getExitName() {
+        return exitName;
+    }
+
+    public static String getAlphabeticalSortName() {
+        return alphabeticalSortName;
+    }
+
+    public static String getCategorySortName() {
+        return categorySortName;
+    }
+
+    public static String getTypeSortName() {
+        return typeSortName;
+    }
+
+    public static int getPreviousPageSlot() {
+        return previousPageSlot;
+    }
+
+    public static int getNextPageSlot() {
+        return nextPageSlot;
+    }
+
+    public static int getExitSlot() {
+        return exitSlot;
+    }
+
+    public static int getAlphabeticalSortSlot() {
+        return alphabeticalSortSlot;
+    }
+
+    public static int getCategorySortSlot() {
+        return categorySortSlot;
+    }
+
+    public static int getTypeSortSlot() {
+        return typeSortSlot;
+    }
+
+    public static String getConfirmName() {
+        return confirmName;
+    }
+
+    public static String getCancelName() {
+        return cancelName;
+    }
+
+    public static int getConfirmSlot() {
+        return confirmSlot;
+    }
+
+    public static int getCancelSlot() {
+        return cancelSlot;
+    }
+
+    public static int getDisplaySlot() {
+        return displaySlot;
     }
 
     /**
