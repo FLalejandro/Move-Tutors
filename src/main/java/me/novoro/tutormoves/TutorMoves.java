@@ -42,6 +42,8 @@ public class TutorMoves implements ModInitializer {
     public static boolean isCobbleEconomyAvailable = false;
     public static boolean isImpactorAvailable = false;
     public static boolean isPebblesAvailable = false;
+    public static boolean isBEconomyAvailable = false;
+    public static boolean isUltraEconomyAvailable = false;
 
     public static Map<UUID, String> npcModePlayers = new HashMap<>();
     public static Map<UUID, String> npcEntities = new HashMap<>();
@@ -148,15 +150,10 @@ public class TutorMoves implements ModInitializer {
         isImpactorAvailable = FabricLoader.getInstance().isModLoaded("impactor");
         isPebblesAvailable = FabricLoader.getInstance().isModLoaded("pebbles-economy");
 
-        if (isCobbleEconomyAvailable) {
-            TutorMovesLogger.info("CobbleEconomy is available, enabling CobbleEconomy-specific features.");
-        } else if (isImpactorAvailable) {
-            TutorMovesLogger.info("Impactor API is available, enabling Impactor-specific features.");
-        } else if (isPebblesAvailable) {
-            TutorMovesLogger.info("Pebbles Economy is available, enabling Pebbles-specific features.");
-        } else {
-            TutorMovesLogger.warn("No recognized economy mod found! Economy features will be unavailable.");
-        }
+        if (isCobbleEconomyAvailable) TutorMovesLogger.info("CobbleEconomy is available, enabling CobbleEconomy-specific features.");
+        else if (isImpactorAvailable) TutorMovesLogger.info("Impactor API is available, enabling Impactor-specific features.");
+        else if (isPebblesAvailable) TutorMovesLogger.info("Pebbles Economy is available, enabling Pebbles-specific features.");
+        else TutorMovesLogger.warn("No recognized economy mod found! Economy features will be unavailable.");
     }
 
     /**

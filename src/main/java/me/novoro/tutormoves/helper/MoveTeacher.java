@@ -2,6 +2,7 @@ package me.novoro.tutormoves.helper;
 
 import me.novoro.tutormoves.config.ConfigManager;
 import me.novoro.tutormoves.config.LangManager;
+import me.novoro.tutormoves.config.MoveOptions;
 import com.cobblemon.mod.common.api.moves.BenchedMove;
 import com.cobblemon.mod.common.api.moves.MoveTemplate;
 import com.cobblemon.mod.common.api.pokemon.moves.LearnsetQuery;
@@ -15,6 +16,10 @@ import java.util.Map;
 public class MoveTeacher {
 
     public static boolean teachMove(ServerPlayerEntity player, int slot, MoveTemplate move) {
+        return teachMove(player, slot, move, MoveOptions.fromGlobal());
+    }
+
+    public static boolean teachMove(ServerPlayerEntity player, int slot, MoveTemplate move, MoveOptions options) {
         PlayerPartyStore partyStore;
         partyStore = Cobblemon.INSTANCE.getStorage().getParty(player);
         Pokemon pokemon = partyStore.get(slot);
@@ -24,10 +29,8 @@ public class MoveTeacher {
             return false;
         }
 
-        // TODO: Change this so it revolves around a config setting for all types of moves
-        // TODO: 1.6 and 1.7 have major differences
         // Check if the move is a valid tutor move for the Pokémon
-        if (!isValidMove(pokemon, move)) {
+        if (!isValidMove(pokemon, move, options)) {
             LangManager.sendLang(player, "Error-Not-Tutor", Map.of("{pokemon}", pokemon.getDisplayName(true).getString(), "{move}", move.getDisplayName().getString()));
             return false;
         }
@@ -66,51 +69,43 @@ public class MoveTeacher {
 
     // Checks if the move can be learned by the Pokémon based on enabled move types
     // This prevents pokemon like Corviknight from learning Roost as a TM Move when it's actually an Egg Move
-    private static boolean isValidMove(Pokemon pokemon, MoveTemplate move) {
-        // Check tutor moves if enabled
-        if (ConfigManager.isTutorMovesEnabled() &&
+    private static boolean isValidMove(Pokemon pokemon, MoveTemplate move, MoveOptions options) {
+        if (options.tutorMoves() &&
                 pokemon.getForm().getMoves().getTutorMoves().contains(move)) {
             return true;
         }
 
-        // Check egg moves if enabled
-        if (ConfigManager.isEggMovesEnabled() &&
+        if (options.eggMoves() &&
                 pokemon.getForm().getMoves().getEggMoves().contains(move)) {
             return true;
         }
 
-        // Check TM moves if enabled
-        if (ConfigManager.isTmMovesEnabled() &&
+        if (options.tmMoves() &&
                 pokemon.getForm().getMoves().getTmMoves().contains(move)) {
             return true;
         }
 
-        // Check evolution moves if enabled
-        if (ConfigManager.isEvolutionMoves() &&
+        if (options.evolutionMoves() &&
                 pokemon.getForm().getMoves().getEvolutionMoves().contains(move)) {
             return true;
         }
 
-        // Check level-up moves if enabled
-        if (ConfigManager.isLevelUpMoves() &&
+        if (options.levelUpMoves() &&
                 pokemon.getForm().getMoves().getLevelUpMoves().containsValue(move)) {
             return true;
         }
 
-        // Check form change moves if enabled
-        if (ConfigManager.isFormChangeMoves() &&
+        if (options.formChangeMoves() &&
                 pokemon.getForm().getMoves().getFormChangeMoves().contains(move)) {
             return true;
         }
 
-        // Check legacy moves if enabled
-        if (ConfigManager.isLegacyMoves() &&
+        if (options.legacyMoves() &&
                 pokemon.getForm().getMoves().getLegacyMoves().contains(move)) {
             return true;
         }
 
-        // Check special moves if enabled
-        if (ConfigManager.isSpecialMoves() &&
+        if (options.specialMoves() &&
                 pokemon.getForm().getMoves().getSpecialMoves().contains(move)) {
             return true;
         }

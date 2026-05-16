@@ -14,14 +14,20 @@ public final class TutorYAMLReader {
 
     public record TutorConfig(
             String name,
+            String title,
+            String mode,
             String permission,
             String currencyKey,
+            String currencyName,
             int size,
             int cost,
             List<MoveTemplate> moves,
             List<String> blacklistedPokemon,
             String fillerItem,
-            Map<String, Integer> moveOverrides
+            Map<String, Integer> moveOverrides,
+            MoveOptions moveOptions,
+            List<String> blacklistedMoves,
+            List<String> typeFilters
     ) {}
 
     public static TutorConfig readTutorFile(String tutorFileName) throws Exception {
@@ -42,12 +48,39 @@ public final class TutorYAMLReader {
 
        // TutorMovesLogger.info("Parsing tutor sections for: " + tutorFileName);
 
+        String mode = specific.getString("mode", "specific");
         String permission = specific.getString("permission");
         String currencyKey = specific.getString("currencyKey");
+        String currencyName = specific.getString("currencyName");
         int cost = specific.getInt("cost");
         List<String> blacklistedPokemon = specific.getStringList("Blacklisted-Pokemon");
-        List<MoveTemplate> moves = specific.getMoveTemplateList("moves");
 
+        // Parse Move-Options (optional, null when absent)
+        MoveOptions moveOptions = null;
+        Configuration moveOptionsSection = specific.getSection("Move-Options");
+        if (moveOptionsSection != null && !moveOptionsSection.getKeys().isEmpty()) {
+            moveOptions = MoveOptions.fromConfig(moveOptionsSection);
+        }
+
+        List<String> blacklistedMoves = specific.getStringList("Blacklisted-Moves");
+
+        // Parse moves list manually to handle type:X entries
+        List<String> rawMoves = specific.getStringList("moves");
+        List<MoveTemplate> moves = new ArrayList<>();
+        List<String> typeFilters = new ArrayList<>();
+        for (String entry : rawMoves) {
+            if (entry.regionMatches(true, 0, "type:", 0, 5)) {
+                String typeName = entry.substring(5).trim().toLowerCase();
+                typeFilters.add(typeName);
+            } else {
+                MoveTemplate move = com.cobblemon.mod.common.api.moves.Moves.INSTANCE.getByName(entry);
+                if (move != null) {
+                    moves.add(move);
+                }
+            }
+        }
+
+        String title = gui.getString("title", "");
         String fillerItem = gui.getString("filler-item");
         int size = gui.getInt("size");
 
@@ -74,7 +107,7 @@ public final class TutorYAMLReader {
         }
 
         TutorConfig tutorConfig = new TutorConfig(
-                tutorFileName, permission, currencyKey, size, cost, moves, blacklistedPokemon, fillerItem, overrides
+                tutorFileName, title, mode, permission, currencyKey, currencyName, size, cost, moves, blacklistedPokemon, fillerItem, overrides, moveOptions, blacklistedMoves, typeFilters
         );
 
         tutors.put(tutorFileName, tutorConfig);
@@ -114,6 +147,11 @@ public final class TutorYAMLReader {
     public static String getTutorCurrencyKey(String tutorName) {
         TutorConfig config = getTutor(tutorName);
         return config != null ? config.currencyKey() : "minecraft:diamond";
+    }
+
+    public static String getTutorCurrencyName(String tutorName) {
+        TutorConfig config = getTutor(tutorName);
+        return config != null ? config.currencyName() : null;
     }
 
     public static int getTutorSize(String tutorName) {
@@ -160,5 +198,31 @@ public final class TutorYAMLReader {
     public static String getTutorFillerItem(String tutorName) {
         TutorConfig config = getTutor(tutorName);
         return config != null ? config.fillerItem() : "minecraft:black_stained_glass_pane";
+    }
+
+    public static String getTutorTitle(String tutorName) {
+        TutorConfig config = getTutor(tutorName);
+        if (config == null) return tutorName;
+        return (config.title() != null && !config.title().isEmpty()) ? config.title() : config.name();
+    }
+
+    public static MoveOptions getEffectiveMoveOptions(String tutorName) {
+        TutorConfig config = getTutor(tutorName);
+        return config != null && config.moveOptions() != null ? config.moveOptions() : MoveOptions.fromGlobal();
+    }
+
+    public static List<String> getTutorBlacklistedMoves(String tutorName) {
+        TutorConfig config = getTutor(tutorName);
+        return config != null ? Collections.unmodifiableList(config.blacklistedMoves()) : Collections.emptyList();
+    }
+
+    public static List<String> getTutorTypeFilters(String tutorName) {
+        TutorConfig config = getTutor(tutorName);
+        return config != null ? Collections.unmodifiableList(config.typeFilters()) : Collections.emptyList();
+    }
+
+    public static boolean isGeneralMode(String tutorName) {
+        TutorConfig config = getTutor(tutorName);
+        return config != null && "general".equalsIgnoreCase(config.mode());
     }
 }

@@ -18,6 +18,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Unit;
 
 import java.util.Optional;
 import java.util.Set;
@@ -62,6 +63,7 @@ public class SelectionScreen {
                 // For empty slots, use a default Poké Ball item
                 ItemStack emptyItem = new ItemStack(Registries.ITEM.get(Identifier.of("cobblemon:poke_ball")));
                 emptyItem.set(DataComponentTypes.CUSTOM_NAME, Text.literal("Empty Slot"));
+                emptyItem.set(DataComponentTypes.HIDE_ADDITIONAL_TOOLTIP, Unit.INSTANCE);
                 gui.setSlot(slotIndex, GuiElementBuilder.from(emptyItem));
             }
         }

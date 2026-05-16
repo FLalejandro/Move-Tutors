@@ -89,14 +89,14 @@ public class GeneralTutorScreen {
                     String moveName = moveTemplate.getName().toLowerCase();
                     BigDecimal price = ItemBuilder.getMoveOverrideCost(moveName, defaultPrice, moveOverrides);
 
-                    GuiElementBuilder elementBuilder = moveUtil.getGemForMove(moveTemplate, price, currencyKey);
+                    GuiElementBuilder elementBuilder = moveUtil.getGemForMove(moveTemplate, price, currencyKey, ConfigManager.getCurrencyName());
                     return elementBuilder.setCallback((x, y, z) -> {
                                 try {
                                     if (currencyKey.startsWith("ITEMS:")) {
                                         List<ItemStack> requiredItems = ItemEconUtil.getRequiredItemsFromConfig(currencyKey, defaultPrice.intValue(), moveOverrides, moveName);
-                                        ItemEconUtil.openConfirmationWindow(player, moveTemplate, slot - 1, gui, requiredItems).open();
+                                        ItemEconUtil.openConfirmationWindow(player, moveTemplate, slot - 1, gui, requiredItems, currencyKey, ConfigManager.getCurrencyName()).open();
                                     } else {
-                                        EconUtil.openConfirmationWindow(player, moveTemplate, slot - 1, gui, price, currencyKey).open();
+                                        EconUtil.openConfirmationWindow(player, moveTemplate, slot - 1, gui, price, currencyKey, ConfigManager.getCurrencyName()).open();
                                     }
                                 } catch (NoPokemonStoreException e) {
                                     throw new RuntimeException(e);

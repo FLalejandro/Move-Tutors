@@ -1,5 +1,6 @@
 package me.novoro.tutormoves.guis;
 
+import me.novoro.tutormoves.config.MoveOptions;
 import me.novoro.tutormoves.config.TutorYAMLReader;
 import me.novoro.tutormoves.helper.SortingHelper;
 import me.novoro.tutormoves.config.LangManager;
@@ -15,6 +16,7 @@ import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import me.novoro.tutormoves.utils.economy.EconUtil;
 import me.novoro.tutormoves.utils.economy.ItemEconUtil;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
@@ -22,8 +24,10 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Unit;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -63,8 +67,12 @@ public class SpecificTutorScreen {
         int rows = TutorYAMLReader.getTutorSize(tutorFileName);
         String currencyKey = TutorYAMLReader.getTutorCurrencyKey(tutorFileName);
         BigDecimal defaultPrice = BigDecimal.valueOf(TutorYAMLReader.getTutorCost(tutorFileName));
-        String guiTitle = TutorYAMLReader.getTutorName(tutorFileName);
+        String guiTitle = TutorYAMLReader.getTutorTitle(tutorFileName);
         String fillerItem = TutorYAMLReader.getTutorFillerItem(tutorFileName);
+
+        // Fetch tutor-specific settings
+        MoveOptions effectiveOptions = TutorYAMLReader.getEffectiveMoveOptions(tutorFileName);
+        List<String> blacklistedMoves = TutorYAMLReader.getTutorBlacklistedMoves(tutorFileName);
 
         // Create the GUI
         SimpleGui gui = GuiUtil.createGui(player, rows, ColorUtil.parseColourToText(guiTitle));
@@ -75,10 +83,37 @@ public class SpecificTutorScreen {
         // Fetch the move overrides from the tutor configuration
         Map<String, Integer> moveOverrides = TutorYAMLReader.getTutorMoveOverrides(tutorFileName);
 
-        List<MoveTemplate> moveTemplates = TutorYAMLReader.getTutorMoves(tutorFileName).stream()
-                .filter(Objects::nonNull)
-                .distinct()
-                .collect(Collectors.toList());
+        List<MoveTemplate> moveTemplates;
+
+        if (TutorYAMLReader.isGeneralMode(tutorFileName)) {
+            List<String> moveNames;
+            try {
+                moveNames = PokemonUtil.getMovesForSlot(player, slot, effectiveOptions, blacklistedMoves);
+            } catch (NoPokemonStoreException e) {
+                player.sendMessage(Text.literal("No Pokémon found in slot " + slot).formatted(Formatting.RED));
+                return;
+            }
+            moveTemplates = moveNames.stream()
+                    .map(name -> Moves.INSTANCE.getByName(name))
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+        } else {
+            moveTemplates = new ArrayList<>(TutorYAMLReader.getTutorMoves(tutorFileName));
+            for (String type : TutorYAMLReader.getTutorTypeFilters(tutorFileName)) {
+                moveTemplates.addAll(PokemonUtil.getLearnableMovesOfType(pokemon, type, effectiveOptions));
+            }
+            moveTemplates = moveTemplates.stream()
+                    .distinct()
+                    .filter(move -> PokemonUtil.isMoveLearnable(pokemon, move, effectiveOptions))
+                    .filter(move -> !blacklistedMoves.contains(move.getName().toLowerCase()))
+                    .collect(Collectors.toList());
+        }
+
+        if (moveTemplates.isEmpty()) {
+            LangManager.sendLang(player, "Error-No-Tutor-Moves", Map.of("{pokemon}", pokemon.getSpecies().getName()));
+            return;
+        }
+
         moveTemplates = SortingHelper.sortByOption(moveTemplates, currentSortOption);
 
         List<GuiElementBuilder> elements = moveTemplates.stream()
@@ -91,14 +126,14 @@ public class SpecificTutorScreen {
                     String moveName = moveTemplate.getName().toLowerCase();
                     BigDecimal price = ItemBuilder.getMoveOverrideCost(moveName, defaultPrice, moveOverrides);
 
-                    GuiElementBuilder elementBuilder = moveUtil.getGemForMove(moveTemplate, price, currencyKey);
+                    GuiElementBuilder elementBuilder = moveUtil.getGemForMove(moveTemplate, price, currencyKey, TutorYAMLReader.getTutorCurrencyName(tutorFileName));
                     return elementBuilder.setCallback((x, y, z) -> {
                         try {
                             if (currencyKey.startsWith("ITEMS:")) {
                                 List<ItemStack> requiredItems = ItemEconUtil.getRequiredItemsFromConfig(currencyKey, (int) TutorYAMLReader.getTutorCost(tutorFileName), moveOverrides, moveName);
-                                ItemEconUtil.openConfirmationWindow(player, moveTemplate, slot - 1, gui, requiredItems).open();
+                                ItemEconUtil.openConfirmationWindow(player, moveTemplate, slot - 1, gui, requiredItems, effectiveOptions, currencyKey, TutorYAMLReader.getTutorCurrencyName(tutorFileName)).open();
                             } else {
-                                EconUtil.openConfirmationWindow(player, moveTemplate, slot - 1, gui, price, currencyKey).open();
+                                EconUtil.openConfirmationWindow(player, moveTemplate, slot - 1, gui, price, currencyKey, TutorYAMLReader.getTutorCurrencyName(tutorFileName), effectiveOptions).open();
                             }
                         } catch (NoPokemonStoreException e) {
                             throw new RuntimeException(e);
@@ -111,6 +146,7 @@ public class SpecificTutorScreen {
         Item fillerItemInstance = Registries.ITEM.get(Identifier.of(fillerItem));
 
         ItemStack fillerStack = new ItemStack(fillerItemInstance);
+        fillerStack.set(DataComponentTypes.HIDE_ADDITIONAL_TOOLTIP, Unit.INSTANCE);
 
         PaginatedSection paginatedSection = new PaginatedSection(elements)
                 .setSlotRanges(List.of(new SlotRange(0, rows * 9 - 10)))
