@@ -4,7 +4,7 @@ Specific-Tutor:
   mode: specific
   # Permission needed to open
   permission: tutormoves.open.dragonmaster
-  # Options: impactor:{currency}, ITEMS:{item id}, or ITEMS:{item id}:{customModelData}
+  # Options: impactor:{currency}, pebbles, beconomy:{currencyType}, ultraeconomy:{currencyType}, ITEMS:{item id}, or ITEMS:{item id}:{customModelData}
   currencyKey: ITEMS:minecraft:diamond
   # Optional display name for the item currency (e.g., "Diamonds"). Falls back to item name for ITEMS economy.
   currencyName: "<aqua>Diamonds"

@@ -48,6 +48,10 @@ public class EconUtil {
             playerBalance = ImpactorUtil.getBalance(player, currencyKey);
         } else if (TutorMoves.isPebblesAvailable) {
             playerBalance = PebblesEconomy.getBalance(playerUUID);
+        } else if (TutorMoves.isBEconomyAvailable) {
+            playerBalance = BEconomyUtil.getBalance(playerUUID, currencyKey);
+        } else if (TutorMoves.isUltraEconomyAvailable) {
+            playerBalance = UltraEconomyUtil.getBalance(playerUUID, currencyKey);
         } else {
             return false;
         }
@@ -58,9 +62,15 @@ public class EconUtil {
                 boolean withdrawalSuccess;
                 if (TutorMoves.isImpactorAvailable) {
                     withdrawalSuccess = ImpactorUtil.withdraw(player, priceValue, currencyKey);
-                } else {
+                } else if (TutorMoves.isPebblesAvailable) {
                     PebblesEconomy.withdraw(playerUUID, priceValue);
                     withdrawalSuccess = true;
+                } else if (TutorMoves.isBEconomyAvailable) {
+                    withdrawalSuccess = BEconomyUtil.withdraw(playerUUID, priceValue, currencyKey);
+                } else if (TutorMoves.isUltraEconomyAvailable) {
+                    withdrawalSuccess = UltraEconomyUtil.withdraw(playerUUID, priceValue, currencyKey);
+                } else {
+                    withdrawalSuccess = false;
                 }
 
                 if (withdrawalSuccess) {
