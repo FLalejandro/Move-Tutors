@@ -162,7 +162,6 @@ public class ItemEconUtil {
             return false;
         }
 
-        // Compare custom model data specifically instead of all components
         if (shopItem.getComponents().contains(DataComponentTypes.CUSTOM_MODEL_DATA)) {
             if (!item.getComponents().contains(DataComponentTypes.CUSTOM_MODEL_DATA)) {
                 return false;
@@ -171,7 +170,6 @@ public class ItemEconUtil {
                     .equals(shopItem.get(DataComponentTypes.CUSTOM_MODEL_DATA));
         }
 
-        // Shop item has no CMD requirement — any item of this type matches
         return true;
     }
 
@@ -203,10 +201,8 @@ public class ItemEconUtil {
      * @return List of required ItemStacks.
      */
     public static List<ItemStack> getRequiredItemsFromConfig(String currencyKey, int cost, Map<String, Integer> overrides, String moveName) {
-        // Check for move-specific overrides and return the required items accordingly
         int overriddenCost = overrides.getOrDefault(moveName.toLowerCase(), cost);
 
-        // Correctly parse the item ID and optional custom model data from the currency key
         String remainder = currencyKey.substring("ITEMS:".length());
         String[] parts = remainder.split(":");
         String itemId;
@@ -218,14 +214,12 @@ public class ItemEconUtil {
             } catch (NumberFormatException e) {
                 itemId = remainder;
             }
-        } else {
-            itemId = remainder;
-        }
+        } 
+        else itemId = remainder;
+        
         Item item = Registries.ITEM.get(Identifier.of(itemId));
         ItemStack stack = new ItemStack(item, overriddenCost);
-        if (customModelData != 0) {
-            stack.set(DataComponentTypes.CUSTOM_MODEL_DATA, new CustomModelDataComponent(customModelData));
-        }
+        if (customModelData != 0) stack.set(DataComponentTypes.CUSTOM_MODEL_DATA, new CustomModelDataComponent(customModelData));
         return List.of(stack);
     }
 }
