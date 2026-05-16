@@ -2,6 +2,7 @@ package me.novoro.tutormoves.utils.economy;
 
 import me.novoro.tutormoves.TutorMoves;
 import me.novoro.tutormoves.config.ConfigManager;
+import me.novoro.tutormoves.config.LangManager;
 import me.novoro.tutormoves.config.MoveOptions;
 import me.novoro.tutormoves.helper.MoveTeacher;
 import com.cobblemon.mod.common.api.moves.MoveTemplate;
@@ -11,14 +12,9 @@ import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import me.novoro.tutormoves.utils.ColorUtil;
 import me.novoro.tutormoves.utils.GuiUtil;
-import me.novoro.tutormoves.config.LangManager;
 import me.novoro.tutormoves.utils.ItemBuilder;
-import net.minecraft.item.Items;
-import net.minecraft.registry.Registries;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 
 import java.math.BigDecimal;
 import java.util.Map;
@@ -90,8 +86,9 @@ public class EconUtil {
                                                    int slot,
                                                    SimpleGui oldGui,
                                                    BigDecimal price,
-                                                   String currencyKey) throws NoPokemonStoreException {
-        return openConfirmationWindow(player, moveTemplate, slot, oldGui, price, currencyKey, MoveOptions.fromGlobal());
+                                                   String currencyKey,
+                                                   String currencyName) throws NoPokemonStoreException {
+        return openConfirmationWindow(player, moveTemplate, slot, oldGui, price, currencyKey, currencyName, MoveOptions.fromGlobal());
     }
 
     public static SimpleGui openConfirmationWindow(ServerPlayerEntity player,
@@ -100,13 +97,14 @@ public class EconUtil {
                                                    SimpleGui oldGui,
                                                    BigDecimal price,
                                                    String currencyKey,
+                                                   String currencyName,
                                                    MoveOptions options) throws NoPokemonStoreException {
         SimpleGui gui = new SimpleGui(ScreenHandlerType.GENERIC_9X3, player, false);
         String guiTitle = ConfigManager.getConfirmationGuiTitle();
         gui.setTitle(ColorUtil.parseColourToText(guiTitle));
 
         ItemBuilder moveUtil = new ItemBuilder(Moves.INSTANCE);
-        GuiElementBuilder elementBuilder = moveUtil.getGemForMove(moveTemplate, price, currencyKey);
+        GuiElementBuilder elementBuilder = moveUtil.getGemForMove(moveTemplate, price, currencyKey, currencyName);
 
         int displaySlot = ConfigManager.getDisplaySlot() >= 0 ? ConfigManager.getDisplaySlot() : 13;
         int confirmSlot = ConfigManager.getConfirmSlot() >= 0 ? ConfigManager.getConfirmSlot() : 11;

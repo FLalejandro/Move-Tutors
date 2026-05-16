@@ -13,12 +13,11 @@ import me.novoro.tutormoves.utils.GuiUtil;
 import me.novoro.tutormoves.config.LangManager;
 import me.novoro.tutormoves.utils.ItemBuilder;
 import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.CustomModelDataComponent;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.registry.Registries;
 
@@ -112,19 +111,20 @@ public class ItemEconUtil {
      * @param slot The slot of the Pokémon.
      * @param oldGui The previous GUI.
      * @param requiredItems The items required for the transaction.
+     * @param currencyKey The key defining the currency item.
      * @return The confirmation GUI.
      */
-    public static SimpleGui openConfirmationWindow(ServerPlayerEntity player, MoveTemplate moveTemplate, int slot, SimpleGui oldGui, List<ItemStack> requiredItems) throws NoPokemonStoreException {
-        return openConfirmationWindow(player, moveTemplate, slot, oldGui, requiredItems, MoveOptions.fromGlobal());
+    public static SimpleGui openConfirmationWindow(ServerPlayerEntity player, MoveTemplate moveTemplate, int slot, SimpleGui oldGui, List<ItemStack> requiredItems, String currencyKey, String currencyName) throws NoPokemonStoreException {
+        return openConfirmationWindow(player, moveTemplate, slot, oldGui, requiredItems, MoveOptions.fromGlobal(), currencyKey, currencyName);
     }
 
-    public static SimpleGui openConfirmationWindow(ServerPlayerEntity player, MoveTemplate moveTemplate, int slot, SimpleGui oldGui, List<ItemStack> requiredItems, MoveOptions options) throws NoPokemonStoreException {
+    public static SimpleGui openConfirmationWindow(ServerPlayerEntity player, MoveTemplate moveTemplate, int slot, SimpleGui oldGui, List<ItemStack> requiredItems, MoveOptions options, String currencyKey, String currencyName) throws NoPokemonStoreException {
         SimpleGui gui = new SimpleGui(ScreenHandlerType.GENERIC_9X3, player, false);
         String guiTitle = ConfigManager.getConfirmationGuiTitle();
         gui.setTitle(ColorUtil.parseColourToText(guiTitle));
 
         ItemBuilder moveUtil = new ItemBuilder(Moves.INSTANCE);
-        ItemStack itemStack = moveUtil.getGemForMove(moveTemplate, new BigDecimal(requiredItems.getFirst().getCount()), requiredItems.getFirst().getItem().toString()).asStack();
+        ItemStack itemStack = moveUtil.getGemForMove(moveTemplate, new BigDecimal(requiredItems.getFirst().getCount()), currencyKey, currencyName).asStack();
 
         int displaySlot = ConfigManager.getDisplaySlot() >= 0 ? ConfigManager.getDisplaySlot() : 13;
         int confirmSlot = ConfigManager.getConfirmSlot() >= 0 ? ConfigManager.getConfirmSlot() : 11;
@@ -162,16 +162,17 @@ public class ItemEconUtil {
             return false;
         }
 
-        if (!item.getName().getString().equals(shopItem.getName().getString())) {
-            return false;
+        // Compare custom model data specifically instead of all components
+        if (shopItem.getComponents().contains(DataComponentTypes.CUSTOM_MODEL_DATA)) {
+            if (!item.getComponents().contains(DataComponentTypes.CUSTOM_MODEL_DATA)) {
+                return false;
+            }
+            return item.get(DataComponentTypes.CUSTOM_MODEL_DATA)
+                    .equals(shopItem.get(DataComponentTypes.CUSTOM_MODEL_DATA));
         }
 
-
-        if (item.getComponents().contains(DataComponentTypes.CUSTOM_DATA) && shopItem.getComponents().contains(DataComponentTypes.CUSTOM_DATA)) {
-            return item.getComponents().equals(shopItem.getComponents());
-        }
-
-        return !item.getComponents().contains(DataComponentTypes.CUSTOM_DATA) && !shopItem.getComponents().contains(DataComponentTypes.CUSTOM_DATA);
+        // Shop item has no CMD requirement — any item of this type matches
+        return true;
     }
 
     /**
@@ -205,9 +206,26 @@ public class ItemEconUtil {
         // Check for move-specific overrides and return the required items accordingly
         int overriddenCost = overrides.getOrDefault(moveName.toLowerCase(), cost);
 
-        // Correctly parse the item ID from the currency key
-        String itemId = currencyKey.substring("ITEMS:".length());
+        // Correctly parse the item ID and optional custom model data from the currency key
+        String remainder = currencyKey.substring("ITEMS:".length());
+        String[] parts = remainder.split(":");
+        String itemId;
+        int customModelData = 0;
+        if (parts.length >= 3) {
+            itemId = parts[0] + ":" + parts[1];
+            try {
+                customModelData = Integer.parseInt(parts[2]);
+            } catch (NumberFormatException e) {
+                itemId = remainder;
+            }
+        } else {
+            itemId = remainder;
+        }
         Item item = Registries.ITEM.get(Identifier.of(itemId));
-        return List.of(new ItemStack(item, overriddenCost));
+        ItemStack stack = new ItemStack(item, overriddenCost);
+        if (customModelData != 0) {
+            stack.set(DataComponentTypes.CUSTOM_MODEL_DATA, new CustomModelDataComponent(customModelData));
+        }
+        return List.of(stack);
     }
 }

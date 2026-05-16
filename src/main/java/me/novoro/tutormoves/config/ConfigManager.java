@@ -8,6 +8,7 @@ import net.minecraft.component.type.CustomModelDataComponent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Unit;
 
 import java.util.HashMap;
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.Map;
 
 public final class ConfigManager extends VersionedConfig {
     private static String currencyKey;
+    private static String currencyName;
     private static double cost;
     private static List<String> moveBlacklist;
     private static List<String> pokemonBlacklist;
@@ -53,7 +55,7 @@ public final class ConfigManager extends VersionedConfig {
     private static String categorySortName;
     private static String typeSortName;
 
-    // Tutor GUI element slots (-1 = auto-calculate)
+    // Tutor GUI element slots
     private static int previousPageSlot;
     private static int nextPageSlot;
     private static int exitSlot;
@@ -65,7 +67,7 @@ public final class ConfigManager extends VersionedConfig {
     private static String confirmName;
     private static String cancelName;
 
-    // Confirmation GUI element slots (-1 = use defaults)
+    // Confirmation GUI element slots
     private static int confirmSlot;
     private static int cancelSlot;
     private static int displaySlot;
@@ -74,6 +76,7 @@ public final class ConfigManager extends VersionedConfig {
     protected void reload(Configuration settingsConfig) {
         super.reload(settingsConfig);
         ConfigManager.currencyKey = settingsConfig.getString("TutorMoves.currencyKey");
+        ConfigManager.currencyName = settingsConfig.getString("TutorMoves.currencyName");
         ConfigManager.cost = settingsConfig.getDouble("TutorMoves.cost");
         ConfigManager.moveBlacklist = settingsConfig.getStringList("TutorMoves.Blacklisted-Moves");
         ConfigManager.pokemonBlacklist = settingsConfig.getStringList("TutorMoves.Blacklisted-Pokemon");
@@ -154,6 +157,9 @@ public final class ConfigManager extends VersionedConfig {
 
     public static String getCurrencyKey() {
         return currencyKey;
+    }
+    public static String getCurrencyName() {
+        return currencyName;
     }
     public static double getCost() {
         return cost;
@@ -333,6 +339,7 @@ public final class ConfigManager extends VersionedConfig {
         if (customModelData != 0) {
             stack.set(DataComponentTypes.CUSTOM_MODEL_DATA, new CustomModelDataComponent(customModelData));
         }
+        stack.set(DataComponentTypes.HIDE_ADDITIONAL_TOOLTIP, Unit.INSTANCE);
 
         return stack;
     }

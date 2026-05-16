@@ -6,15 +6,23 @@ package me.novoro.tutormoves.guis.util;
 
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.text.Text;
+import net.minecraft.util.Unit;
 
 import java.util.List;
 
 public class PaginatedSection {
     private List<GuiElementBuilder> guiElements;
-    private GuiElementBuilder fillItem = GuiElementBuilder.from(Items.GRAY_STAINED_GLASS_PANE.getDefaultStack())
-            .setName(Text.of(""));
+    private GuiElementBuilder fillItem;
+
+    {
+        ItemStack defaultFill = Items.GRAY_STAINED_GLASS_PANE.getDefaultStack();
+        defaultFill.set(DataComponentTypes.HIDE_ADDITIONAL_TOOLTIP, Unit.INSTANCE);
+        fillItem = GuiElementBuilder.from(defaultFill).setName(Text.of(""));
+    }
     private List<SlotRange> slotRanges = List.of();
     private int currentPage = 1;
     private int totalPages = 0;

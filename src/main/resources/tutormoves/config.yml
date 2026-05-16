@@ -26,10 +26,7 @@ General-Tutor-GUI:
   title: "<gold>General Tutor"
   # The Size of the Main Tutor GUI (2-6)
   size: 6
-  # GUI Elements — item, name and slot (names support MiniMessage formatting)
-  # Slot values are absolute slot numbers (0 = top-left). Use -1 for auto-placement.
-  # Auto defaults: previous-page=(last row)*9, next-page=(last row)*9+8, exit=(last row)*9+1
-  #                alphabetical=(last row)*9+3, category=(last row)*9+4, type=(last row)*9+5
+  # GUI Elements
   previous-page-item: "minecraft:arrow"
   previous-page-name: "Previous Page"
   previous-page-slot: -1
@@ -57,9 +54,7 @@ Selection-GUI:
 Confirmation-GUI:
     # The GUI Title
     title: "<yellow>Confirm Move"
-    # GUI Elements — item, name and slot (names support MiniMessage formatting)
-    # Slot values are absolute slot numbers (0 = top-left). Use -1 for auto-placement.
-    # Auto defaults: confirm=11, display=13, cancel=15
+    # GUI Elements
     confirm-item: "minecraft:lime_wool"
     confirm-name: "<green>Confirm"
     confirm-slot: -1

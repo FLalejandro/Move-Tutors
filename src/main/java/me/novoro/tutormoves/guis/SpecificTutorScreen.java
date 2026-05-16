@@ -16,6 +16,7 @@ import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import me.novoro.tutormoves.utils.economy.EconUtil;
 import me.novoro.tutormoves.utils.economy.ItemEconUtil;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
@@ -23,6 +24,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Unit;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -124,14 +126,14 @@ public class SpecificTutorScreen {
                     String moveName = moveTemplate.getName().toLowerCase();
                     BigDecimal price = ItemBuilder.getMoveOverrideCost(moveName, defaultPrice, moveOverrides);
 
-                    GuiElementBuilder elementBuilder = moveUtil.getGemForMove(moveTemplate, price, currencyKey);
+                    GuiElementBuilder elementBuilder = moveUtil.getGemForMove(moveTemplate, price, currencyKey, TutorYAMLReader.getTutorCurrencyName(tutorFileName));
                     return elementBuilder.setCallback((x, y, z) -> {
                         try {
                             if (currencyKey.startsWith("ITEMS:")) {
                                 List<ItemStack> requiredItems = ItemEconUtil.getRequiredItemsFromConfig(currencyKey, (int) TutorYAMLReader.getTutorCost(tutorFileName), moveOverrides, moveName);
-                                ItemEconUtil.openConfirmationWindow(player, moveTemplate, slot - 1, gui, requiredItems, effectiveOptions).open();
+                                ItemEconUtil.openConfirmationWindow(player, moveTemplate, slot - 1, gui, requiredItems, effectiveOptions, currencyKey, TutorYAMLReader.getTutorCurrencyName(tutorFileName)).open();
                             } else {
-                                EconUtil.openConfirmationWindow(player, moveTemplate, slot - 1, gui, price, currencyKey, effectiveOptions).open();
+                                EconUtil.openConfirmationWindow(player, moveTemplate, slot - 1, gui, price, currencyKey, TutorYAMLReader.getTutorCurrencyName(tutorFileName), effectiveOptions).open();
                             }
                         } catch (NoPokemonStoreException e) {
                             throw new RuntimeException(e);
@@ -144,6 +146,7 @@ public class SpecificTutorScreen {
         Item fillerItemInstance = Registries.ITEM.get(Identifier.of(fillerItem));
 
         ItemStack fillerStack = new ItemStack(fillerItemInstance);
+        fillerStack.set(DataComponentTypes.HIDE_ADDITIONAL_TOOLTIP, Unit.INSTANCE);
 
         PaginatedSection paginatedSection = new PaginatedSection(elements)
                 .setSlotRanges(List.of(new SlotRange(0, rows * 9 - 10)))

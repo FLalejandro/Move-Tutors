@@ -18,6 +18,7 @@ public final class TutorYAMLReader {
             String mode,
             String permission,
             String currencyKey,
+            String currencyName,
             int size,
             int cost,
             List<MoveTemplate> moves,
@@ -50,6 +51,7 @@ public final class TutorYAMLReader {
         String mode = specific.getString("mode", "specific");
         String permission = specific.getString("permission");
         String currencyKey = specific.getString("currencyKey");
+        String currencyName = specific.getString("currencyName");
         int cost = specific.getInt("cost");
         List<String> blacklistedPokemon = specific.getStringList("Blacklisted-Pokemon");
 
@@ -105,7 +107,7 @@ public final class TutorYAMLReader {
         }
 
         TutorConfig tutorConfig = new TutorConfig(
-                tutorFileName, title, mode, permission, currencyKey, size, cost, moves, blacklistedPokemon, fillerItem, overrides, moveOptions, blacklistedMoves, typeFilters
+                tutorFileName, title, mode, permission, currencyKey, currencyName, size, cost, moves, blacklistedPokemon, fillerItem, overrides, moveOptions, blacklistedMoves, typeFilters
         );
 
         tutors.put(tutorFileName, tutorConfig);
@@ -145,6 +147,11 @@ public final class TutorYAMLReader {
     public static String getTutorCurrencyKey(String tutorName) {
         TutorConfig config = getTutor(tutorName);
         return config != null ? config.currencyKey() : "minecraft:diamond";
+    }
+
+    public static String getTutorCurrencyName(String tutorName) {
+        TutorConfig config = getTutor(tutorName);
+        return config != null ? config.currencyName() : null;
     }
 
     public static int getTutorSize(String tutorName) {

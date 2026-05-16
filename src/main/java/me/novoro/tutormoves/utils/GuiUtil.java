@@ -7,6 +7,7 @@ import eu.pb4.sgui.api.gui.SimpleGui;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandlerType;
+import net.minecraft.util.Unit;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 
@@ -133,7 +134,9 @@ public class GuiUtil {
     public static void fillGUI(SimpleGui gui) {
         int freeslot = gui.getFirstEmptySlot();
         while (freeslot != -1) {
-            gui.setSlot(freeslot, GuiElementBuilder.from(ConfigManager.getConfirmationFillerItem()).setName(Text.literal("")));
+            ItemStack filler = ConfigManager.getConfirmationFillerItem().copy();
+            filler.set(DataComponentTypes.HIDE_ADDITIONAL_TOOLTIP, Unit.INSTANCE);
+            gui.setSlot(freeslot, GuiElementBuilder.from(filler).setName(Text.literal("")));
             freeslot = gui.getFirstEmptySlot();
         }
     }

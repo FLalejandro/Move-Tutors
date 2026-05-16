@@ -10,6 +10,7 @@ import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
 import net.minecraft.text.TextColor;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Unit;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -68,7 +69,7 @@ public class ItemBuilder {
         this.moves = moves;
     }
 
-    public GuiElementBuilder getGemForMove(MoveTemplate move, BigDecimal price, String currencyKey) {
+    public GuiElementBuilder getGemForMove(MoveTemplate move, BigDecimal price, String currencyKey, String currencyName) {
         String gemId = TYPE_GEM_MAP.getOrDefault(move.getElementalType().getName().toUpperCase(), "cobblemon:normal_gem");
         ItemStack itemStack = new ItemStack(Registries.ITEM.get(Identifier.of(gemId)));
 
@@ -95,14 +96,25 @@ public class ItemBuilder {
         // Add price information based on currency type
         lore.add(Text.literal(""));
         lore.add(Text.literal(""));
-        if (currencyKey.startsWith("ITEMS:")) {
-            String itemId = currencyKey.substring("ITEMS:".length());
+        if (currencyName != null && !currencyName.isEmpty()) {
+            lore.add(Text.literal("§6§lPrice§f: " + price.intValue() + " ").append(ColorUtil.parseColourToText(currencyName)));
+        } else if (currencyKey.startsWith("ITEMS:")) {
+            String remainder = currencyKey.substring("ITEMS:".length());
+            String[] parts = remainder.split(":");
+            String itemId;
+            if (parts.length >= 3) {
+                itemId = parts[0] + ":" + parts[1];
+            } else {
+                itemId = remainder;
+            }
             String itemName = Registries.ITEM.get(Identifier.of(itemId)).getName().getString();
             String displayName = capitalize(itemName.replace("_", " "));
             lore.add(Text.literal("§6§lPrice§f: " + price.intValue() + " " + displayName));
         } else {
             lore.add(Text.literal("§6§lPrice:§f $" + price));
         }
+
+        itemStack.set(DataComponentTypes.HIDE_ADDITIONAL_TOOLTIP, Unit.INSTANCE);
 
         // Set the name and lore without colors
         GuiElementBuilder itemBuilder = GuiElementBuilder.from(itemStack)
